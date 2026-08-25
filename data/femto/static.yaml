@@ -378,32 +378,6 @@
   when_not_to_use:
   - You are packaging a library JAR (not an executable)
   - Build time is a constraint (Zopfli mode is slow)
-  vs:
-    name: Maven Shade Plugin
-    url: https://maven.apache.org/plugins/maven-shade-plugin/
-    bottom_line: Use femtojar (with ProGuard) for the smallest possible executable JAR; use Maven Shade for reliable general-purpose packaging.
-    comparison:
-    - feature: What is compressed
-      femto: All classes (cross-class blob)
-      other: Per-entry ZIP
-    - feature: Cross-class dedup
-      femto: ✓
-      other: ✗
-    - feature: Typical size reduction
-      femto: 15–30% (up to 70% w/ ProGuard)
-      other: Minimal
-    - feature: ProGuard integration
-      femto: Optional
-      other: ✗
-    - feature: Works on library JARs
-      femto: ✗
-      other: ✓
-    - feature: Startup overhead
-      femto: None
-      other: None
-    - feature: Maturity
-      femto: Proof-of-concept
-      other: Very mature
   install:
   - label: Maven plugin
     lang: xml
