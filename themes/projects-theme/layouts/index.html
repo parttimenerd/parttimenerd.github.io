@@ -77,19 +77,23 @@
         {{ $talks := site.Data.talks.talks }}
         {{ if $talks }}
         <div class="mb-3">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">Upcoming</p>
-          <div class="flex flex-col gap-1.5">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Upcoming</p>
+          <div class="flex flex-col gap-3">
           {{ range $talks }}
-          <div class="flex items-baseline gap-2 text-sm">
-            <span class="text-gray-400 tabular-nums w-24 shrink-0">{{ .date_display | replaceRE ` - \d+,` "–" | replaceRE `, \d{4}$` "" }}</span>
-            {{ if .conf_url }}
-            <a href="{{ .conf_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 font-medium">{{ .conference }}</a>
-            {{ else }}
-            <span class="font-medium text-gray-800">{{ .conference }}</span>
-            {{ end }}
-            <span class="text-gray-400">{{ .location }}</span>
+          <div class="flex gap-3 items-start">
+            <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 pt-0.5 leading-tight">
+              {{ .date_display | replaceRE ` - \d+,` "–" | replaceRE `, \d{4}$` "" }}
+            </span>
+            <div class="flex flex-col gap-0.5 min-w-0">
+              {{ if .conf_url }}
+              <a href="{{ .conf_url }}" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:text-blue-800 font-medium leading-snug">{{ .conference }} ↗</a>
+              {{ else }}
+              <span class="text-sm font-medium text-gray-900 leading-snug">{{ .conference }}</span>
+              {{ end }}
+              <span class="text-xs text-gray-400">{{ .location }}</span>
+            </div>
             {{ if .link_url }}
-            <a href="{{ .link_url }}" target="_blank" rel="noopener" class="text-gray-400 hover:text-blue-600 ml-auto shrink-0">{{ .link_text }} ↗</a>
+            <a href="{{ .link_url }}" target="_blank" rel="noopener" class="text-xs text-gray-400 hover:text-blue-600 ml-auto shrink-0 pt-0.5">{{ .link_text }} ↗</a>
             {{ end }}
           </div>
           {{ end }}

@@ -36,7 +36,7 @@
 
 - id: meta-agent
   tag: experimental
-  group: "Live JVM Inspection"
+  group: "Agent Development"
   tagline: "Java agent that instruments other agents. Observe how they transform bytecode."
   screenshot: ""
   static_version: ""
