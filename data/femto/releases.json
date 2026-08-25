@@ -1,0 +1,9 @@
+{
+  "entries": {
+    "femtolz4":    { "version": "0.2.1", "date": "2026-08-25", "changelog": "Added readSingleFrame · Fixed clean EOF · Deprecated compressHigh" },
+    "femtocli":    { "version": "0.4.4", "date": "2026-07-30", "changelog": "" },
+    "femtojson":   { "version": "0.4.2", "date": "2026-04-10", "changelog": "" },
+    "femtoschema": { "version": "0.1.2", "date": "2026-03-03", "changelog": "" },
+    "femtojar":    { "version": "0.1.5", "date": "2026-04-30", "changelog": "" }
+  }
+}
