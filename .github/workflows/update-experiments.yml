@@ -1,0 +1,35 @@
+name: Update experiments releases
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * 1'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - run: pip install requests pyyaml
+
+      - name: Fetch releases
+        run: python scripts/fetch_releases.py --section experiments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit if changed
+        run: |
+          git diff --quiet data/experiments/releases.json || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add data/experiments/releases.json
+            git commit -m "chore: update experiments releases"
+            git push
+          )

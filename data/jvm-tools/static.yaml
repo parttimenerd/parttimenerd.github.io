@@ -34,6 +34,36 @@
         java -jar jstall.jar flamegraph <pid>
   note: ""
 
+- id: cf-cli-java-plugin
+  tag: ready
+  group: "Live JVM Inspection"
+  tagline: "Cloud Foundry CLI plugin to inspect and troubleshoot Java apps running on CF."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You run Java apps on Cloud Foundry and need heap dumps, thread dumps, or JFR recordings
+    - You want jstall-style JVM inspection without SSH access to the container
+  when_not_to_use:
+    - You are not using Cloud Foundry
+  vs: ~
+  related:
+    - { label: "jstall", url: "https://github.com/parttimenerd/jstall" }
+  links:
+    - { label: "CF Plugin Registry ↗", url: "https://plugins.cloudfoundry.org/" }
+  no_release: false
+  install:
+    - label: CF CLI
+      lang: bash
+      code: |
+        cf install-plugin -r CF-Community "java"
+  usage:
+    - label: Inspect app
+      lang: bash
+      code: |
+        cf java heap-dump my-app
+        cf java thread-dump my-app
+  note: ""
+
 - id: meta-agent
   tag: experimental
   group: "Agent Development"
@@ -336,6 +366,87 @@
         Open https://parttimenerd.github.io/jdklogs/
         Enter your -Xlog config to see matching log statements.
   note: ""
+
+- id: execjar
+  tag: experimental
+  group: "JAR Packaging"
+  tagline: "CLI and Maven plugin to create self-executable files for JARs."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want users to run your tool directly without typing `java -jar`
+    - You need a single self-contained executable with no launcher script
+  when_not_to_use:
+    - You need JAR size reduction (use femtojar instead)
+    - You are packaging a library rather than an executable
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Maven plugin
+      lang: xml
+      code: |
+        <plugin>
+          <groupId>me.bechberger</groupId>
+          <artifactId>execjar-maven-plugin</artifactId>
+          <version>VERSION</version>
+          <executions>
+            <execution>
+              <goals><goal>execjar</goal></goals>
+            </execution>
+          </executions>
+        </plugin>
+  usage:
+    - label: Build
+      lang: bash
+      code: |
+        mvn package
+        # Output: target/yourapp.run — directly executable
+        ./target/yourapp.run
+  note: ""
+
+- id: writing-a-profiler
+  tag: ready
+  group: "Learning Resources"
+  tagline: "Code companion for the 'Writing a Profiler from Scratch' blog series."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to learn how Java profilers work from the inside
+    - You are following the blog series on mostlynerdless.de or foojay.io
+  when_not_to_use:
+    - You need a ready-to-use profiler (use jstall or the JFR profiling tools)
+  vs: ~
+  related: []
+  links:
+    - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/profiling/" }
+  no_release: true
+  install: ~
+  usage: ~
+  note: "Each chapter has its own tagged commit."
+
+- id: firefox-profiler
+  tag: experimental
+  group: "Learning Resources"
+  tagline: "Fork of the Firefox Profiler web app with JFR-specific patches and JFR file loading."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to view JFR recordings in the Firefox Profiler UI (via jfrtofp)
+    - You need a locally-hosted profiler viewer with custom patches
+  when_not_to_use:
+    - You want the upstream Firefox Profiler without JFR customisations
+  vs: ~
+  related:
+    - { label: "jfrtofp", url: "https://github.com/parttimenerd/jfrtofp" }
+    - { label: "jfrtofp-server", url: "https://github.com/parttimenerd/jfrtofp-server" }
+  links:
+    - { label: "Upstream ↗", url: "https://profiler.firefox.com" }
+  no_release: true
+  install: ~
+  usage: ~
+  note: "Used by jfrtofp-server as the embedded viewer."
 
 - id: jthreaddump
   tag: ready

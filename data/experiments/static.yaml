@@ -1,0 +1,202 @@
+- id: hello-ebpf
+  tag: experimental
+  group: "eBPF"
+  tagline: "The first eBPF library for Java. Write eBPF programs and user-land code in pure Java."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to write eBPF tools without leaving the JVM
+    - You are exploring Linux kernel observability from Java
+    - You need custom schedulers, network filters, or tracing programs in Java
+  when_not_to_use:
+    - You need a production-ready, stable eBPF framework
+    - You need broad Linux kernel version support (requires a recent kernel)
+  vs: ~
+  related: []
+  links:
+    - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/ebpf/" }
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>hello-ebpf</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: Simple tracepoint
+      lang: java
+      code: |
+        // See the blog series for full examples
+        BPFProgram prog = BPFProgram.load(MyProgram.class);
+        prog.autoAttachPrograms();
+        prog.tracePrintLoop(System.out::println);
+  note: ""
+
+- id: concurrency-fuzz-scheduler
+  tag: experimental
+  group: "eBPF"
+  tagline: "Custom Linux scheduler for concurrency fuzzing, written in Java with hello-ebpf."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to stress-test concurrent Java code by controlling thread scheduling
+    - You are fuzzing for race conditions or lock ordering bugs
+  when_not_to_use:
+    - You need a stable, production-ready fuzzing framework
+    - You are not on Linux with a recent kernel
+  vs: ~
+  related:
+    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
+    - { label: "taskcontrol", url: "https://github.com/parttimenerd/taskcontrol" }
+  links: []
+  no_release: true
+  install: ~
+  usage: ~
+  note: ""
+
+- id: taskcontrol
+  tag: experimental
+  group: "eBPF"
+  tagline: "Java API for custom Linux schedulers that enables deterministic concurrency testing."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want fine-grained control over thread scheduling in tests
+    - You are building concurrency testing tooling on Linux
+  when_not_to_use:
+    - You need portable cross-platform scheduling control
+  vs: ~
+  related:
+    - { label: "concurrency-fuzz-scheduler", url: "https://github.com/parttimenerd/concurrency-fuzz-scheduler" }
+  links: []
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>taskcontrol</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage: ~
+  note: ""
+
+- id: sound-of-scheduling
+  tag: poc
+  group: "eBPF"
+  tagline: "A Linux scheduler written in Java that maps scheduling decisions to musical notes."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to hear what your CPU scheduler is doing
+    - You are giving a demo about sched-ext or hello-ebpf
+  when_not_to_use:
+    - You need it for anything practical
+  vs: ~
+  related:
+    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
+  links:
+    - { label: "Blog post ↗", url: "https://mostlynerdless.de/blog/2024/01/02/writing-a-linux-scheduler-in-java-with-ebpf/" }
+  no_release: true
+  install: ~
+  usage: ~
+  note: "Pure fun. Don't use in production."
+
+- id: ebpf-verifier-errors
+  tag: experimental
+  group: "eBPF"
+  tagline: "Curated collection of eBPF verifier errors and their explanations."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You hit an obscure eBPF verifier rejection and can't figure out why
+    - You are learning eBPF and want a reference for common pitfalls
+  when_not_to_use:
+    - You need a search-optimised reference (it's a GitHub repo, not a web app)
+  vs: ~
+  related: []
+  links: []
+  no_release: true
+  install: ~
+  usage: ~
+  note: ""
+
+- id: check-language-version
+  tag: experimental
+  group: "Misc"
+  tagline: "Check which Java language level each source file in your project actually requires."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to lower your project's --release target and need to know what's blocking it
+    - You are auditing a multi-module project for language-level inconsistencies
+  when_not_to_use:
+    - You need a full static analysis tool
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Download
+      lang: bash
+      code: |
+        gh release download --repo parttimenerd/check-language-version \
+          --pattern '*.jar' -D .
+        java -jar check-language-version.jar src/
+  usage:
+    - label: Check
+      lang: bash
+      code: |
+        java -jar check-language-version.jar src/main/java/
+  note: ""
+
+- id: loomylin
+  tag: poc
+  group: "Misc"
+  tagline: "Minimal benchmark for virtual threads (Project Loom)."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want a quick baseline comparison between platform threads and virtual threads
+  when_not_to_use:
+    - You need a production benchmark suite (use JMH instead)
+  vs: ~
+  related: []
+  links: []
+  no_release: true
+  install: ~
+  usage: ~
+  note: ""
+
+- id: temci
+  tag: ready
+  group: "Misc"
+  tagline: "Advanced benchmarking tool with statistical rigour, noise reduction, and report generation."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need statistically sound micro-benchmarks with noise isolation
+    - You want automated comparison reports across benchmark runs
+  when_not_to_use:
+    - You need JVM-native benchmarking (use JMH instead)
+    - You are on Windows (Linux/macOS only)
+  vs: ~
+  related: []
+  links:
+    - { label: "Docs ↗", url: "https://temci.readthedocs.io" }
+  no_release: false
+  install:
+    - label: pip
+      lang: bash
+      code: "pip install temci"
+  usage:
+    - label: Run benchmark
+      lang: bash
+      code: |
+        temci exec --runs 20 "my_program arg1"
+        temci report result.yaml
+  note: ""

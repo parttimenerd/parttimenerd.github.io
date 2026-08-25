@@ -9,4 +9,6 @@ params:
       url: /femto/
     - label: "jvm tools"
       url: /jvm-tools/
+    - label: "experiments"
+      url: /experiments/
   blog_url: "https://mostlynerdless.de"
