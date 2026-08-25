@@ -8,6 +8,7 @@ module.exports = {
     "font-bold", "underline",
     "flex", "hidden",
     { pattern: /^(md|lg):w-(1\/2|1\/3)$/ },
+    "col-span-full",
   ],
   theme: { extend: {} },
   plugins: [],
