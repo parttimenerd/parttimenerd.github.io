@@ -1,0 +1,34 @@
+name: Sync profile README on bio change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/_index.md'
+
+jobs:
+  sync:
+    name: Sync GitHub profile README
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Generate README
+        run: python scripts/gen_profile_readme.py
+      - name: Push to parttimenerd/parttimenerd
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd /tmp
+          gh repo clone parttimenerd/parttimenerd profile-readme -- --depth 1
+          cp $GITHUB_WORKSPACE/docs/profile-README.md profile-readme/README.md
+          cd profile-readme
+          git diff --quiet README.md || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add README.md
+            git commit -m "chore: sync profile README"
+            git push
+          )
