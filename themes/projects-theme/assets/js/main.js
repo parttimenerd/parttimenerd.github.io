@@ -18,10 +18,24 @@ Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
   hljs.highlightAll();
 
-  const nav = document.getElementById('tool-nav');
-  if (!nav) return;
+  // Measure sticky nav stack and set scroll-padding-top dynamically so hash
+  // links always land below both the top nav and the tool nav.
+  const topNav  = document.querySelector('header');
+  const toolNav = document.getElementById('tool-nav');
+  const updateScrollPadding = () => {
+    const h = (topNav?.offsetHeight ?? 0) + (toolNav?.offsetHeight ?? 0);
+    document.documentElement.style.scrollPaddingTop = h + 'px';
+    // Keep scroll-margin-top in sync on all anchored sections
+    document.querySelectorAll('section[id]').forEach(s => {
+      s.style.scrollMarginTop = h + 'px';
+    });
+  };
+  updateScrollPadding();
+  window.addEventListener('resize', updateScrollPadding);
 
-  const links = Array.from(nav.querySelectorAll('a[data-id]'));
+  if (!toolNav) return;
+
+  const links = Array.from(toolNav.querySelectorAll('a[data-id]'));
   if (!links.length) return;
 
   const setActive = (id) => {
@@ -35,12 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // Scroll the tool nav bar horizontally to keep the active link visible.
+  // Use scrollLeft directly — scrollIntoView on nav items can scroll the page.
+  const scrollNavToActive = (id) => {
+    const a = toolNav.querySelector(`a[data-id="${id}"]`);
+    if (!a) return;
+    const navRect  = toolNav.getBoundingClientRect();
+    const linkRect = a.getBoundingClientRect();
+    const leftEdge  = linkRect.left  - navRect.left  + toolNav.scrollLeft;
+    const rightEdge = linkRect.right - navRect.left  + toolNav.scrollLeft;
+    if (rightEdge > toolNav.scrollLeft + navRect.width) {
+      toolNav.scrollLeft = rightEdge - navRect.width + 16;
+    } else if (leftEdge < toolNav.scrollLeft) {
+      toolNav.scrollLeft = leftEdge - 16;
+    }
+  };
+
   const sections = links.map(a => document.getElementById(a.dataset.id)).filter(Boolean);
   const visible = new Set();
 
   const pick = () => {
     if (!visible.size) { setActive(null); return; }
-    // Highlight the topmost visible section
     let best = null;
     for (const s of visible) {
       if (!best || s.offsetTop < best.offsetTop) best = s;
@@ -48,20 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setActive(best.id);
   };
 
-  // Scroll into nav view when active changes (for long nav bars)
-  const scrollNavToActive = (id) => {
-    const a = nav.querySelector(`a[data-id="${id}"]`);
-    if (a) a.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-  };
-
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (entry.isIntersecting) visible.add(entry.target);
       else visible.delete(entry.target);
     }
-    const prev = nav.querySelector('a.text-blue-700')?.dataset.id;
+    const prev = toolNav.querySelector('a.text-blue-700')?.dataset.id;
     pick();
-    const curr = nav.querySelector('a.text-blue-700')?.dataset.id;
+    const curr = toolNav.querySelector('a.text-blue-700')?.dataset.id;
     if (curr && curr !== prev) scrollNavToActive(curr);
   }, { rootMargin: '0px 0px -60% 0px', threshold: 0 });
 

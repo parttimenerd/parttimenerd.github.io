@@ -55,7 +55,12 @@ def b64(data: bytes) -> str:
 
 def make_svg(og_title: str, og_subtitle: str) -> str:
     vollkorn = fetch_font_bytes("Vollkorn", 700)
-    inter = fetch_font_bytes("Inter", 400)
+    inter    = fetch_font_bytes("Inter", 400)
+    inter600 = fetch_font_bytes("Inter", 600)
+
+    title_y    = HEIGHT // 2 - 50
+    subtitle_y = HEIGHT // 2 + 60
+    byline_y   = HEIGHT - 60
 
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg width="{WIDTH}" height="{HEIGHT}" xmlns="http://www.w3.org/2000/svg">
@@ -71,18 +76,34 @@ def make_svg(og_title: str, og_subtitle: str) -> str:
         font-weight: 400;
         src: url('data:font/truetype;base64,{b64(inter)}') format('truetype');
       }}
+      @font-face {{
+        font-family: 'Inter';
+        font-weight: 600;
+        src: url('data:font/truetype;base64,{b64(inter600)}') format('truetype');
+      }}
     </style>
   </defs>
+  <!-- Background -->
   <rect width="{WIDTH}" height="{HEIGHT}" fill="#ffffff"/>
-  <text x="{WIDTH // 2}" y="{HEIGHT // 2 - 30}"
-        font-family="Vollkorn" font-weight="700" font-size="96"
-        fill="#1a1a1a" text-anchor="middle" dominant-baseline="middle">
+  <!-- Top accent bar -->
+  <rect x="0" y="0" width="{WIDTH}" height="6" fill="#2563eb"/>
+  <!-- Title -->
+  <text x="{WIDTH // 2}" y="{title_y}"
+        font-family="Vollkorn" font-weight="700" font-size="108"
+        fill="#111827" text-anchor="middle" dominant-baseline="middle">
     {og_title}
   </text>
-  <text x="{WIDTH // 2}" y="{HEIGHT // 2 + 70}"
-        font-family="Inter" font-weight="400" font-size="28"
+  <!-- Subtitle -->
+  <text x="{WIDTH // 2}" y="{subtitle_y}"
+        font-family="Inter" font-weight="400" font-size="44"
         fill="#6b7280" text-anchor="middle" dominant-baseline="middle">
     {og_subtitle}
+  </text>
+  <!-- Byline -->
+  <text x="{WIDTH // 2}" y="{byline_y}"
+        font-family="Inter" font-weight="600" font-size="26"
+        fill="#9ca3af" text-anchor="middle" dominant-baseline="middle">
+    parttimenerd.github.io
   </text>
 </svg>"""
 

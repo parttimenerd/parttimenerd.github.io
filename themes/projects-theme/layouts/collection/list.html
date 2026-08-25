@@ -86,7 +86,7 @@
     {{ end }}
     {{ $lastGroup3 = .group }}
 
-  <section id="{{ .id }}" class="scroll-mt-24 mt-16 pt-8 border-t border-gray-100 first:border-t-0 first:pt-0 first:mt-0">
+  <section id="{{ .id }}" style="scroll-margin-top: 100px" class="mt-16 pt-8 border-t border-gray-100 first:border-t-0 first:pt-0 first:mt-0">
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
       <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
