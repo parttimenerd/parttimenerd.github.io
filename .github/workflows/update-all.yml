@@ -104,3 +104,38 @@ jobs:
             git commit -m "chore: weekly data update"
             git push
           )
+
+  sync-profile-readme:
+    name: Sync GitHub profile README
+    needs: [blog, talks]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: blog-data
+          path: data
+      - uses: actions/download-artifact@v4
+        with:
+          name: talks-data
+          path: data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Generate README
+        run: python scripts/gen_profile_readme.py
+      - name: Push to parttimenerd/parttimenerd
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd /tmp
+          gh repo clone parttimenerd/parttimenerd profile-readme -- --depth 1
+          cp $GITHUB_WORKSPACE/docs/profile-README.md profile-readme/README.md
+          cd profile-readme
+          git diff --quiet README.md || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add README.md
+            git commit -m "chore: sync profile README"
+            git push
+          )
