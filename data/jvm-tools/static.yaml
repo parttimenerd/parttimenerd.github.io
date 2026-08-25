@@ -157,8 +157,8 @@
   tag: experimental
   group: "JFR / Profiling"
   maven_coordinates: "me.bechberger.condensed:condensed-data"
-  tagline: "Library and tool for storing JFR events in the self-describing .cjfr format. Designed for long-term, low-overhead recording: compresses events significantly compared to raw JFR, supports live-attach, and ships a reader library for querying stored data. Use it when you need to keep weeks of JFR data on disk without filling the drive."
-  tagline_short: "Compact long-term JFR event storage — significantly smaller than raw .jfr."
+  tagline: "CLI tool and Java agent for long-term, low-overhead JFR event storage. Records events from a running JVM via live-attach and compresses them into the self-describing .cjfr format — significantly smaller than raw JFR. Includes a reader library for querying the stored data. Use it when you need weeks of JFR data on disk without filling the drive."
+  tagline_short: "CLI tool and agent for compact long-term JFR event storage — significantly smaller than raw .jfr."
   screenshot: ""
   static_version: "latest"
   when_to_use:
@@ -173,23 +173,14 @@
   links:
     - { label: "Docs ↗", url: "https://parttimenerd.github.io/condensed-data/" }
   no_release: true
-  install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger.condensed</groupId>
-          <artifactId>condensed-data</artifactId>
-          <version>VERSION</version>
-        </dependency>
+  install: ~
   usage:
-    - label: Write .cjfr
-      lang: java
+    - label: Record JFR events
+      lang: bash
       code: |
-        // See https://parttimenerd.github.io/condensed-data/ for full API
-        CJFRWriter writer = new CJFRWriter(outputStream);
-        writer.write(jfrEvent);
-  note: "Releases as a rolling 'latest' snapshot — check the docs for the current version."
+        # See https://parttimenerd.github.io/condensed-data/ for setup
+        condensed-data attach <pid> --output recording.cjfr
+  note: "No stable release yet — rolling snapshots only. Check the docs for the current version."
 
 - id: jfrevents
   tag: ready
