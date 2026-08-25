@@ -1,0 +1,222 @@
+{{ define "main" }}
+{{ $section  := .Section }}
+{{ $static   := index .Site.Data $section "static" }}
+{{ $releases := index .Site.Data $section "releases" }}
+
+<div class="max-w-5xl mx-auto px-4 py-12">
+
+  {{/* Intro */}}
+  <h1 class="font-['Vollkorn'] text-4xl font-bold mb-4">{{ .Title }}</h1>
+  <p class="text-gray-600 text-lg mb-10 max-w-2xl">{{ .Content }}</p>
+
+  {{/* Sticky anchor sub-nav */}}
+  <div class="sticky top-12 z-30 bg-white border-b border-gray-100 -mx-4 px-4 py-2 mb-10 overflow-x-auto whitespace-nowrap text-sm">
+    {{ range $static }}
+    <a href="#{{ .id }}" class="mr-4 text-blue-600 hover:text-blue-800">{{ .id }}</a>
+    {{ end }}
+  </div>
+
+  {{/* Card grid with group headings */}}
+  {{ $lastGroup2 := "" }}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+  {{ range $static }}
+    {{ $rel := index $releases.entries .id }}
+    {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
+    {{ if not $ver }}{{ $ver = .static_version | default "unreleased" }}{{ end }}
+    {{ $date := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
+    {{ $changelog := "" }}{{ with $rel }}{{ $changelog = .changelog }}{{ end }}
+
+    {{/* Group break: close and reopen grid */}}
+    {{ if and .group (ne .group $lastGroup2) }}
+    </div>
+    <h2 class="text-xl font-semibold text-gray-700 mt-10 mb-4 border-b border-gray-200 pb-2">{{ .group }}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+    {{ end }}
+    {{ $lastGroup2 = .group }}
+
+    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
+      <div class="flex items-center justify-between">
+        <span class="font-semibold text-gray-900">{{ .id }}</span>
+        <span class="tag-{{ .tag }}">{{ .tag }}</span>
+      </div>
+      {{ if $ver }}
+      <div class="text-xs text-gray-500">
+        <a href="https://github.com/parttimenerd/{{ .id }}/releases/tag/v{{ $ver }}"
+           target="_blank" rel="noopener" class="hover:text-blue-600">
+          v{{ $ver }} ↗
+        </a>
+        {{ if $date }} · {{ $date }}{{ end }}
+      </div>
+      {{ end }}
+      <p class="text-sm text-gray-700 flex-1">{{ .tagline }}</p>
+      {{ if $changelog }}
+      <p class="text-xs text-gray-500 line-clamp-2">{{ $changelog }}</p>
+      {{ end }}
+      <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
+    </div>
+  {{ end }}
+  </div>
+
+  {{/* Detail sections */}}
+  {{ range $static }}
+    {{ $rel := index $releases.entries .id }}
+    {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
+    {{ if not $ver }}{{ $ver = .static_version | default "unreleased" }}{{ end }}
+    {{ $thisID := .id }}
+
+  <section id="{{ .id }}" class="mb-16 scroll-mt-24">
+    <div class="flex flex-wrap items-center gap-3 mb-2">
+      <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
+      <span class="tag-{{ .tag }}">{{ .tag }}</span>
+      {{ if $ver }}<span class="text-sm text-gray-500">v{{ $ver }}</span>{{ end }}
+      <a href="https://github.com/parttimenerd/{{ .id }}" target="_blank" rel="noopener"
+         class="text-sm text-blue-600 hover:text-blue-800 ml-auto">GitHub ↗</a>
+    </div>
+    <p class="text-gray-700 mb-4">{{ .tagline }}</p>
+
+    {{/* Screenshot lightbox */}}
+    {{ if .screenshot }}
+    <div x-data="{ show: false }" class="mb-6">
+      <img @click="show = true" src="{{ .screenshot }}"
+           class="cursor-pointer rounded shadow max-w-full md:max-w-lg"
+           alt="{{ .id }} screenshot" loading="lazy">
+      <div x-show="show" x-trap="show"
+           @click.self="show = false" @keydown.escape.window="show = false"
+           class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+           style="display:none">
+        <img src="{{ .screenshot }}" class="max-w-full max-h-full rounded"
+             alt="{{ .id }} screenshot">
+      </div>
+    </div>
+    {{ end }}
+
+    {{/* When to use / not use */}}
+    {{ if .when_to_use }}
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
+      <div>
+        <h3 class="font-semibold text-green-700 mb-2">Use this when</h3>
+        <ul class="space-y-1">
+          {{ range .when_to_use }}
+          <li class="text-sm text-gray-700 flex gap-2"><span class="text-green-600 mt-0.5">✓</span><span>{{ . }}</span></li>
+          {{ end }}
+        </ul>
+      </div>
+      {{ if .when_not_to_use }}
+      <div>
+        <h3 class="font-semibold text-red-700 mb-2">Don't use this when</h3>
+        <ul class="space-y-1">
+          {{ range .when_not_to_use }}
+          <li class="text-sm text-gray-700 flex gap-2"><span class="text-red-500 mt-0.5">✗</span><span>{{ . }}</span></li>
+          {{ end }}
+        </ul>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    {{/* vs comparison table */}}
+    {{ with .vs }}
+    <div class="mb-6">
+      <h3 class="font-semibold text-gray-700 mb-2">
+        vs <a href="{{ .url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">{{ .name }} ↗</a>
+      </h3>
+      <div class="table-scroll">
+        <table class="text-sm w-full border-collapse">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-1.5 pr-4 font-medium text-gray-600">Feature</th>
+              <th class="text-left py-1.5 pr-4 font-medium text-blue-700">{{ $thisID }}</th>
+              <th class="text-left py-1.5 font-medium text-gray-600">{{ .name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .comparison }}
+            <tr class="border-b border-gray-100">
+              <td class="py-1.5 pr-4 text-gray-700">{{ .feature }}</td>
+              <td class="py-1.5 pr-4 text-gray-900">{{ .femto }}</td>
+              <td class="py-1.5 text-gray-600">{{ .other }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      {{ if .bottom_line }}
+      <p class="text-xs text-gray-500 mt-2 italic">{{ .bottom_line }}</p>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    {{/* Related */}}
+    {{ if .related }}
+    <div class="mb-4">
+      <h3 class="font-semibold text-gray-700 mb-2">Related</h3>
+      <div class="flex flex-wrap gap-2">
+        {{ range .related }}
+        <a href="{{ .url }}" target="_blank" rel="noopener"
+           class="text-sm text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-2 py-0.5">
+          {{ .label }} ↗
+        </a>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+
+    {{/* Links */}}
+    {{ if .links }}
+    <div class="mb-4 flex flex-wrap gap-3">
+      {{ range .links }}
+      <a href="{{ .url }}" target="_blank" rel="noopener"
+         class="text-sm text-blue-600 hover:text-blue-800">{{ .label }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    {{/* Install tabs */}}
+    {{ if .install }}
+    <div class="mb-4" x-data="{ tab: 0 }">
+      <h3 class="font-semibold text-gray-700 mb-2">Install</h3>
+      <div class="flex gap-2 mb-2 border-b border-gray-200">
+        {{ range $i, $t := .install }}
+        <button @click="tab = {{ $i }}"
+                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-medium' : 'text-gray-500'"
+                class="px-3 py-1.5 text-sm -mb-px">{{ $t.label }}</button>
+        {{ end }}
+      </div>
+      {{ range $i, $t := .install }}
+      {{ $code := replace $t.code "VERSION" $ver }}
+      <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
+        <pre class="language-{{ $t.lang }}">{{ $code }}</pre>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    {{/* Usage tabs */}}
+    {{ if .usage }}
+    <div class="mb-4" x-data="{ tab: 0 }">
+      <h3 class="font-semibold text-gray-700 mb-2">Usage</h3>
+      <div class="flex gap-2 mb-2 border-b border-gray-200">
+        {{ range $i, $t := .usage }}
+        <button @click="tab = {{ $i }}"
+                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-medium' : 'text-gray-500'"
+                class="px-3 py-1.5 text-sm -mb-px">{{ $t.label }}</button>
+        {{ end }}
+      </div>
+      {{ range $i, $t := .usage }}
+      <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
+        <pre class="language-{{ $t.lang }}">{{ $t.code }}</pre>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    {{/* Note */}}
+    {{ if .note }}
+    <p class="text-sm text-gray-500 italic mt-2">{{ .note }}</p>
+    {{ end }}
+
+  </section>
+  {{ end }}
+
+</div>
+{{ end }}
