@@ -12,12 +12,15 @@
   .badge-poc          { @apply bg-rose-50    text-rose-700    border-rose-300; }
 }
 
-/* Code block styling */
+/* Code block styling — pre wraps code.hljs; match background so padding area isn't bare */
 pre {
   @apply rounded overflow-x-auto text-sm font-mono leading-relaxed;
+  background: #f6f8fa;
 }
 pre code.hljs {
-  @apply rounded;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
 }
 
 /* Comparison table mobile scroll */
