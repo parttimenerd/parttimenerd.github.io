@@ -5,6 +5,7 @@
   tagline_short: "Write eBPF programs in pure Java 21+ — tracepoints, kprobes, schedulers."
   screenshot: ""
   static_version: "0.1.4"
+  github_pages: "https://parttimenerd.github.io/hello-ebpf/"
   when_to_use:
     - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
     - You are exploring Linux kernel internals from Java

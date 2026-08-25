@@ -161,6 +161,7 @@
   tagline_short: "CLI tool and agent for compact long-term JFR event storage — significantly smaller than raw .jfr."
   screenshot: ""
   static_version: "latest"
+  github_pages: "https://parttimenerd.github.io/condensed-data/"
   when_to_use:
     - You need long-term storage of JFR recordings with minimal disk usage
     - You want live-attach to a running JVM for continuous event capture
@@ -417,6 +418,7 @@
   tagline_short: "Run the tests most likely to fail first — zero-config test prioritisation for Maven/Gradle."
   screenshot: ""
   static_version: ""
+  github_pages: "https://parttimenerd.github.io/test-order/"
   when_to_use:
     - You want faster feedback in CI by surfacing relevant failures early
     - Your test suite is large enough that waiting for the full run hurts productivity
@@ -565,8 +567,23 @@
       lang: java
       code: |
         ThreadDump dump = ThreadDumpParser.parse(Files.readString(path));
-        dump.getThreads().forEach(t ->
-            System.out.println(t.getName() + ": " + t.getState()));
+        System.out.println("Threads: " + dump.threads().size());
+        for (var thread : dump.threads()) {
+            System.out.println(thread.name() + " - " + thread.state());
+        }
+        if (dump.deadlockInfos() != null && !dump.deadlockInfos().isEmpty()) {
+            System.out.println("Deadlocks detected!");
+        }
+    - label: Capture + parse
+      lang: java
+      code: |
+        String raw = JStackUtil.captureThreadDump(pid);
+        ThreadDump dump = ThreadDumpParser.parse(raw);
+    - label: CLI
+      lang: bash
+      code: |
+        jthreaddump dump.txt      # parse and display summary
+        jstack 12345 | jthreaddump -   # read from stdin
   note: ""
 
 - id: writing-a-profiler
