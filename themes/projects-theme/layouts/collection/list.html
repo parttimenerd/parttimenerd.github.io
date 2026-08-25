@@ -10,7 +10,7 @@
   <p class="text-gray-600 text-lg mb-6 max-w-2xl">{{ .Content }}</p>
 
   {{/* Sticky anchor nav */}}
-  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-100 -mx-4 px-4 mb-10 overflow-x-auto whitespace-nowrap">
+  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-100 -mx-4 px-4 mb-4 overflow-x-auto whitespace-nowrap">
     <div class="flex gap-1 text-sm py-1">
     {{ range $static }}
     <a href="#{{ .id }}" data-id="{{ .id }}"
@@ -21,18 +21,17 @@
 
   {{/* Card grid with group headings */}}
   {{ $lastGroup2 := "" }}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
   {{ range $static }}
     {{ $rel := index $releases.entries .id }}
     {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
     {{ if not $ver }}{{ $ver = .static_version | default "unreleased" }}{{ end }}
     {{ $date := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
 
-    {{/* Group break: close and reopen grid */}}
+    {{/* Group break: close current grid (if open) and open new one with heading */}}
     {{ if and .group (ne .group $lastGroup2) }}
-    </div>
-    <h2 class="text-xl font-semibold text-gray-700 mt-10 mb-4 border-b border-gray-200 pb-2">{{ .group }}</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+    {{ if $lastGroup2 }}</div>{{ end }}
+    <h2 class="text-xl font-semibold text-gray-700 {{ if $lastGroup2 }}mt-10{{ else }}mt-2{{ end }} mb-4 border-b border-gray-200 pb-2">{{ .group }}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
     {{ end }}
     {{ $lastGroup2 = .group }}
 
@@ -76,7 +75,7 @@
     {{ end }}
     {{ $lastGroup3 = .group }}
 
-  <section id="{{ .id }}" class="mb-4 scroll-mt-24 mt-14 first:mt-0">
+  <section id="{{ .id }}" class="scroll-mt-24 mt-16 pt-8 border-t border-gray-100 first:border-t-0 first:pt-0 first:mt-0">
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
       <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
