@@ -4,7 +4,7 @@ I'm a JVM engineer on the SapMachine team at SAP. I work on profiling tooling �
 
 `Profiling` `OpenJDK` `Java` `Java Performance` `Debugging` `eBPF`
 
-🏆 Most Active Speaker 2024 · ☕ Java MVP 2026
+🏆 Sessionize Most Active Speaker 2024 · ☕ Java MVP 2026
 
 ---
 

@@ -61,7 +61,7 @@ def render(bio: str, talks: list[dict], posts: list[dict]) -> str:
     # ── Topics ────────────────────────────────────────────────────────────────
     tags = " ".join(f"`{t}`" for t in TOPICS)
     lines.append(tags + "\n")
-    lines.append("🏆 Most Active Speaker 2024 · ☕ Java MVP 2026\n")
+    lines.append("🏆 Sessionize Most Active Speaker 2024 · ☕ Java MVP 2026\n")
 
     # ── Upcoming talks ────────────────────────────────────────────────────────
     if talks:
