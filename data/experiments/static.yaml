@@ -137,9 +137,26 @@
       code: |
         gh release download --repo parttimenerd/check-language-version \
           --pattern '*.jar' -D .
-  usage:
-    - label: Check
-      lang: bash
-      code: |
-        java -jar check-language-version.jar src/main/java/
   note: ""
+
+- id: local-android-ai
+  tag: experimental
+  group: "Misc"
+  tagline: "Sample project that runs AI models locally on Android devices and exposes them as a server — useful for privacy-preserving on-device inference without cloud APIs. Demonstrates how to integrate LLM inference into an Android app and serve it over a local network."
+  tagline_short: "Run AI models locally on Android and expose them as a server."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to run LLM inference on-device without sending data to the cloud
+    - You are building an Android app that needs local AI capabilities
+    - You want a starting point for on-device model serving on Android
+  when_not_to_use:
+    - You need production-grade model serving or high-throughput inference
+    - You are targeting iOS or desktop platforms
+  vs: ~
+  related: []
+  links: []
+  no_release: true
+  install: ~
+  usage: ~
+  note: "Sample / reference project — not a library."

@@ -6,20 +6,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ if .Title }}{{ .Title }} — {{ end }}parttimenerd</title>
-  <meta name="description" content="{{ .Params.description | default "Johannes Bechberger — JVM engineer, tiny libraries and JVM tools." }}">
+  <title>{{ if .IsHome }}Johannes Bechberger @parttimenerd{{ else if .Title }}{{ .Title }} — parttimenerd{{ else }}parttimenerd{{ end }}</title>
+  <meta name="description" content="{{ .Params.description | default "Johannes Bechberger — JVM engineer, profiling tools, eBPF, and tiny open-source libraries." }}">
+  <meta name="author" content="Johannes Bechberger">
+  <meta name="robots" content="index, follow">
   <style>:root { --nav-h: {{ $navH }}px; --tool-nav-h: {{ $toolNavH }}px; }</style>
   <!-- Open Graph -->
-  <meta property="og:title" content="{{ .Params.og_title | default .Title | default "parttimenerd" }}">
-  <meta property="og:description" content="{{ .Params.description | default "Johannes Bechberger" }}">
+  <meta property="og:type" content="{{ if .IsHome }}profile{{ else }}website{{ end }}">
+  <meta property="og:site_name" content="parttimenerd">
+  <meta property="og:title" content="{{ .Params.og_title | default .Title | default "Johannes Bechberger @parttimenerd" }}">
+  <meta property="og:description" content="{{ .Params.description | default "JVM engineer, profiling tools, eBPF, and open-source libraries." }}">
   <meta property="og:url" content="{{ .Permalink }}">
   {{ with .Params.og_out }}
   <meta property="og:image" content="{{ site.BaseURL }}{{ . }}">
+  {{ end }}
+  <!-- Twitter/X card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@parttimen3rd">
+  <meta name="twitter:creator" content="@parttimen3rd">
+  <meta name="twitter:title" content="{{ .Params.og_title | default .Title | default "Johannes Bechberger @parttimenerd" }}">
+  <meta name="twitter:description" content="{{ .Params.description | default "JVM engineer, profiling tools, eBPF, and open-source libraries." }}">
+  {{ with .Params.og_out }}
+  <meta name="twitter:image" content="{{ site.BaseURL }}{{ . }}">
   {{ end }}
   <link rel="canonical" href="{{ .Permalink }}">
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 Free -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <!-- CSS (built by Tailwind CLI in CI) -->
   <link rel="stylesheet" href="/main.css">
   <!-- Alpine.js via Hugo esbuild -->
@@ -38,7 +53,7 @@
         <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
         {{ end }}
         <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900 font-medium">blog ↗</a>
+           class="text-gray-600 hover:text-gray-900 font-medium">blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
       </nav>
       <!-- Mobile hamburger -->
       <button @click="open = !open" aria-label="Toggle navigation menu"
@@ -56,7 +71,7 @@
       <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
       {{ end }}
       <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-         class="text-gray-600 hover:text-gray-900 font-medium">blog ↗</a>
+         class="text-gray-600 hover:text-gray-900 font-medium">blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
     </nav>
   </header>
 
@@ -66,8 +81,8 @@
 
   <footer class="border-t border-gray-200 mt-16 py-6 text-center text-sm text-gray-500">
     Johannes Bechberger · SAP ·
-    <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="hover:text-gray-900">GitHub ↗</a> ·
-    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="hover:text-gray-900">Blog ↗</a>
+    <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="hover:text-gray-900"><i class="fa-brands fa-github"></i> GitHub</a> ·
+    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="hover:text-gray-900">Blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
   </footer>
 </body>
 </html>

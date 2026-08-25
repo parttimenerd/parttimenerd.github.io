@@ -12,15 +12,15 @@
       {{/* Social links */}}
       <div class="flex flex-wrap gap-3 text-sm">
         <a href="https://github.com/parttimenerd" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900">GitHub</a>
+           class="text-gray-600 hover:text-gray-900"><i class="fa-brands fa-github"></i> GitHub</a>
         <a href="https://twitter.com/parttimen3rd" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900">Twitter/X</a>
+           class="text-gray-600 hover:text-gray-900"><i class="fa-brands fa-x-twitter"></i> Twitter/X</a>
         <a href="https://fosstodon.org/@parttimenerd" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900">Mastodon</a>
+           class="text-gray-600 hover:text-gray-900"><i class="fa-brands fa-mastodon"></i> Mastodon</a>
         <a href="https://www.linkedin.com/in/johannes-bechberger" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900">LinkedIn</a>
+           class="text-gray-600 hover:text-gray-900"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
         <a href="https://mostlynerdless.de" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900">Blog</a>
+           class="text-gray-600 hover:text-gray-900"><i class="fa-solid fa-rss"></i> Blog</a>
       </div>
     </div>
   </div>
@@ -33,8 +33,8 @@
     {{ range (slice "Profiling" "OpenJDK" "Java" "Java Performance" "Debugging" "eBPF") }}
     <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{{ . }}</span>
     {{ end }}
-    <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">⭐ Most Active Speaker 2024</span>
-    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">☕ Java MVP 2026</span>
+    <span class="award-badge award-badge-gold"><i class="fa-solid fa-star"></i> Most Active Speaker 2024</span>
+    <span class="award-badge award-badge-java"><i class="fa-solid fa-mug-hot"></i> Java Champion 2026</span>
   </div>
 
   {{/* Sections */}}
@@ -45,15 +45,15 @@
       <div class="flex flex-col gap-2">
         <a href="/femto/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
           <span class="font-medium">femto libs</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">→ Tiny Java libraries: LZ4, CLI, JSON, schema, JAR analysis</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600"><i class="fa-solid fa-arrow-right fa-xs"></i> Tiny Java libraries: LZ4, CLI, JSON, schema, JAR analysis</span>
         </a>
         <a href="/jvm-tools/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
           <span class="font-medium">jvm tools</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">→ Diagnose, profile, and understand running JVMs</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600"><i class="fa-solid fa-arrow-right fa-xs"></i> Diagnose, profile, and understand running JVMs</span>
         </a>
         <a href="/experiments/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
           <span class="font-medium">experiments</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">→ eBPF, schedulers, benchmarking, and weekend hacks</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600"><i class="fa-solid fa-arrow-right fa-xs"></i> eBPF, schedulers, benchmarking, and weekend hacks</span>
         </a>
       </div>
     </div>
@@ -63,23 +63,28 @@
       <div class="flex flex-col gap-2">
         <a href="https://github.com/parttimenerd/hello-ebpf" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">hello-ebpf</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">🔗 The first eBPF library for Java</span>
+          <span class="font-medium">hello-ebpf <i class="fa-brands fa-github fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">The first eBPF library for Java</span>
         </a>
         <a href="https://github.com/parttimenerd/tiny-profiler" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">tiny-profiler</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">🔗 Async-profiler based sampling profiler — annotate methods, get flamegraphs</span>
+          <span class="font-medium">tiny-profiler <i class="fa-brands fa-github fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Async-profiler based sampling profiler — annotate methods, get flamegraphs</span>
         </a>
         <a href="https://github.com/parttimenerd/jstall" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">jstall</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">🔗 One-shot CLI inspector for running JVMs — deadlocks, hot threads, flamegraphs</span>
+          <span class="font-medium">jstall <i class="fa-brands fa-github fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">One-shot CLI inspector for running JVMs — deadlocks, hot threads, flamegraphs</span>
         </a>
         <a href="https://github.com/SAP/cf-cli-java-plugin" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">cf-cli-java-plugin</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">🔗 Heap dumps, thread dumps, and JFR recordings from the CF CLI</span>
+          <span class="font-medium">cf-cli-java-plugin <i class="fa-brands fa-github fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Heap dumps, thread dumps, and JFR recordings from the CF CLI</span>
+        </a>
+        <a href="https://github.com/parttimenerd/local-android-ai" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">local-android-ai <i class="fa-brands fa-github fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Run AI models locally on Android and expose them as a server</span>
         </a>
       </div>
     </div>
@@ -104,7 +109,7 @@
               {{ end }}
               <div class="flex items-center gap-1.5 flex-wrap">
                 {{ if .conf_url }}
-                <a href="{{ .conf_url }}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:text-blue-800">{{ .conference }} ↗</a>
+                <a href="{{ .conf_url }}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:text-blue-800">{{ .conference }} <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
                 {{ else }}
                 <span class="text-xs text-gray-500">{{ .conference }}</span>
                 {{ end }}
@@ -116,7 +121,7 @@
                 {{ end }}
                 {{ if .link_url }}
                 <span class="text-xs text-gray-300">·</span>
-                <a href="{{ .link_url }}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:text-blue-800">{{ .link_text }} ↗</a>
+                <a href="{{ .link_url }}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:text-blue-800">{{ .link_text }} <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
                 {{ end }}
               </div>
             </div>
@@ -127,18 +132,18 @@
         {{ end }}
         <a href="https://github.com/SAP/SapMachine/wiki/Presentations" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">All presentations</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Slides and recordings from conferences and meetups</span>
+          <span class="font-medium">All presentations <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Slides and recordings from conferences and meetups</span>
         </a>
         <a href="https://sessionize.com/johannes-bechberger" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">Sessionize profile</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Speaker bio and sessions</span>
+          <span class="font-medium">Sessionize profile <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Speaker bio and sessions</span>
         </a>
         <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">Blog — Mostly Nerdless</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Deep dives into profiling, debugging, and the JVM</span>
+          <span class="font-medium">Blog — Mostly Nerdless <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">Deep dives into profiling, debugging, and the JVM</span>
         </a>
       </div>
     </div>
