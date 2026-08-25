@@ -363,27 +363,25 @@
       String jsonSchema = Schemas.toJsonSchemaString(schema);
       TypeSchema imported = Schemas.fromJsonSchemaString(jsonSchema);
 - id: femtojar
-  tag: poc
+  tag: experimental
   maven_coordinates: me.bechberger:femtojar
   tagline: Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class
     files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard
     integration for up to 70% total size reduction. Use it when you need the smallest possible executable
-    JAR and are willing to accept early-stage tooling.
+    JAR.
   tagline_short: Maven plugin that shrinks fat JARs via cross-class compression — up to 70% smaller with
     ProGuard.
   when_to_use:
   - You need the smallest possible executable JAR
-  - You are willing to add a build step and can tolerate early-stage tooling
+  - You are willing to add a build step
   - You want optional ProGuard integration for up to 70% size reduction
   when_not_to_use:
   - You are packaging a library JAR (not an executable)
-  - You need a stable, production-ready tool
   - Build time is a constraint (Zopfli mode is slow)
   vs:
     name: Maven Shade Plugin
     url: https://maven.apache.org/plugins/maven-shade-plugin/
-    bottom_line: Use femtojar (with ProGuard) for the smallest possible executable JAR if you can tolerate
-      early-stage tooling; use Maven Shade for reliable packaging.
+    bottom_line: Use femtojar (with ProGuard) for the smallest possible executable JAR; use Maven Shade for reliable general-purpose packaging.
     comparison:
     - feature: What is compressed
       femto: All classes (cross-class blob)
@@ -427,4 +425,4 @@
       # Add the plugin to pom.xml, then:
       mvn package
       # Output: target/yourapp-shaded-femto.jar
-  note: Early proof-of-concept. Always black-box test after enabling ProGuard.
+  note: Always black-box test after enabling ProGuard.
