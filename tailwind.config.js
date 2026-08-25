@@ -7,6 +7,7 @@ module.exports = {
   safelist: [
     "font-bold", "underline",
     "flex", "hidden",
+    { pattern: /^(md|lg):w-(1\/2|1\/3)$/ },
   ],
   theme: { extend: {} },
   plugins: [],
