@@ -90,11 +90,11 @@
           {{ end }}
           <p class="text-sm text-gray-700 flex-1">{{ .tagline_short | default .tagline }}</p>
           {{ with index .when_to_use 0 }}
-          <p class="text-xs text-gray-500">Use when: {{ . }}</p>
+          <p class="text-xs text-gray-400 italic">{{ . }}</p>
           {{ else }}{{ with index .features 0 }}
           <p class="text-xs text-gray-500">{{ . }}</p>
           {{ end }}{{ end }}
-          <a href="#{{ .id }}" class="icon-details text-sm text-blue-600 hover:text-blue-800 mt-auto">details</a>
+          <a href="#{{ .id }}" class="icon-details text-sm font-medium text-blue-600 hover:text-blue-800 mt-auto">details</a>
         </div>
       {{ end }}
       </div>
@@ -132,8 +132,9 @@
       <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
       {{ if $isReleased }}<a href="{{ $verURL }}" target="_blank" rel="noopener" class="text-sm text-gray-500 hover:text-blue-600">v{{ $ver }}</a>{{ with $rel }}{{ if .date }}<span class="text-sm text-gray-400">· {{ .date }}</span>{{ end }}{{ end }}{{ end }}
       {{ with .github_pages }}
+      {{ $label := "Web app" }}{{ if strings.Contains . "github.io" }}{{ $label = "Docs" }}{{ end }}
       <a href="{{ . }}" target="_blank" rel="noopener"
-         class="icon-ext text-sm text-blue-600 hover:text-blue-800">Web app</a>
+         class="icon-ext text-sm text-blue-600 hover:text-blue-800">{{ $label }}</a>
       {{ end }}
       <a href="{{ .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}" target="_blank" rel="noopener"
          class="icon-github text-sm text-blue-600 hover:text-blue-800 ml-auto">GitHub</a>

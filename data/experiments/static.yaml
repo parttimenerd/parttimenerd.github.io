@@ -109,7 +109,7 @@
   related:
     - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
   links:
-    - { label: "Blog post ↗", url: "https://mostlynerdless.de/blog/2024/01/02/writing-a-linux-scheduler-in-java-with-ebpf/" }
+    - { label: "Blog post ↗", url: "https://mostlynerdless.de/blog/2026/01/26/reproducing-a-tricky-bug-in-minutes-with-a-custom-linux-scheduler-written-in-java/" }
   no_release: true
   install: ~
   usage: ~

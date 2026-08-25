@@ -31,8 +31,8 @@
       "changelog": "hserr redaction as there is now a far better tool for it (jhserr) \u00b7 `jfr-redact.jar` - Executable JAR file (requires Java 21+) \u00b7 `jfr-redact` - Standalone binary"
     },
     "hprof-analyzer": {
-      "version": "0.2.0",
-      "date": "2026-08-10",
+      "version": "0.1.0",
+      "date": "2026-07-20",
       "changelog": ""
     },
     "hprof-redact": {

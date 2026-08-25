@@ -207,40 +207,6 @@
   usage: ~
   note: "Canonical site is at sap.github.io/jfrevents/"
 
-- id: jfr-redact
-  tag: poc
-  group: "JFR / Profiling"
-  maven_coordinates: "me.bechberger:jfr-redact"
-  tagline: "Strips sensitive strings, file paths, environment variables, and other PII from JFR recordings before you share them, while preserving the recording structure and all non-sensitive event data. Use it when you need to hand off a JFR recording but it may contain passwords, tokens, or internal paths."
-  tagline_short: "Strip PII and secrets from JFR recordings before sharing."
-  screenshot: ""
-  static_version: ""
-  when_to_use:
-    - You need to share a JFR recording but it contains passwords, tokens, or paths
-    - You need to comply with data privacy requirements before sharing recordings
-  when_not_to_use:
-    - You need guaranteed complete redaction for highly sensitive data (proof-of-concept)
-    - You need to redact hs_err crash files (use jhserr instead)
-  vs: ~
-  related: []
-  links: []
-  no_release: false
-  install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger</groupId>
-          <artifactId>jfr-redact</artifactId>
-          <version>VERSION</version>
-        </dependency>
-  usage:
-    - label: CLI
-      lang: bash
-      code: |
-        java -jar jfr-redact.jar input.jfr output-redacted.jfr
-  note: "Early proof-of-concept."
-
 - id: tiny-profiler
   tag: demo
   group: "JFR / Profiling"
