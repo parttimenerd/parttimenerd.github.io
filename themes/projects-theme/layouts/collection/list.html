@@ -4,7 +4,7 @@
 {{ $releases := index .Site.Data $section "releases" }}
 {{ $ids      := slice }}{{ range $static }}{{ $ids = $ids | append .id }}{{ end }}
 
-{{/* Pre-compute entries per group so we can render small groups inline */}}
+{{/* Pre-compute entries per group */}}
 {{ $groups := slice }}
 {{ $currentGroup := "" }}
 {{ $currentEntries := slice }}
@@ -23,33 +23,34 @@
   {{ $groups = $groups | append (dict "name" $currentGroup "entries" $currentEntries) }}
 {{ end }}
 
-<div class="max-w-5xl mx-auto px-4 py-12">
+<div class="max-w-5xl mx-auto px-4 py-10">
 
-  {{/* Intro */}}
-  <h1 class="font-['Vollkorn'] text-4xl font-bold mb-4">{{ .Title }}</h1>
-  <p class="text-gray-600 text-lg mb-6 max-w-2xl">{{ .Content }}</p>
+  {{/* Page header */}}
+  <div class="mb-8">
+    <h1 class="font-['Vollkorn'] text-4xl font-bold mb-3">{{ .Title }}</h1>
+    <p class="text-gray-600 text-lg max-w-2xl leading-relaxed">{{ .Content }}</p>
+  </div>
 
   {{/* Sticky anchor nav */}}
-  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-100 -mx-4 px-4 mb-4 overflow-x-auto whitespace-nowrap">
-    <div class="flex gap-1 text-sm py-1">
+  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-200 -mx-4 px-4 mb-8 overflow-x-auto">
+    <div class="flex gap-0.5 text-sm py-1.5 min-w-max">
     {{ range $static }}
     <a href="#{{ .id }}" data-id="{{ .id }}"
        title="{{ .tagline_short | default .tagline }}"
-       class="px-3 py-2 text-gray-500 hover:text-blue-700 transition-colors">{{ .id }}</a>
+       class="px-3 py-1.5 rounded text-gray-500 hover:text-blue-700 hover:bg-blue-50 transition-colors whitespace-nowrap">{{ .id }}</a>
     {{ end }}
     </div>
   </div>
 
-  {{/* Card grid — multi-entry groups are full-width; single-entry groups share columns */}}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6 mb-8 mt-8 items-start">
+  {{/* Card grid */}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16 items-start">
   {{ range $groups }}
     {{ $grpName    := .name }}
     {{ $grpEntries := .entries }}
     {{ $isSingle   := eq (len $grpEntries) 1 }}
-    {{/* Multi-entry: full row + inner 3-col grid. Single-entry: 1 column. */}}
     <div class="{{ if $isSingle }}lg:col-span-1{{ else }}col-span-full{{ end }}">
       {{ if $grpName }}
-      <h2 class="text-base font-semibold text-gray-500 uppercase tracking-wide mb-3 border-b border-gray-200 pb-1">{{ $grpName }}</h2>
+      <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 mt-1">{{ $grpName }}</h2>
       {{ end }}
       <div class="{{ if $isSingle }}grid grid-cols-1{{ else }}grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3{{ end }} gap-4">
       {{ range $grpEntries }}
@@ -68,33 +69,36 @@
           {{ $verURL = printf "https://crates.io/crates/%s/%s" . $ver }}
         {{ end }}
 
-        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-semibold text-gray-900">{{ .id }}</span>
-            <div class="flex items-center gap-2 ml-auto shrink-0">
-              <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
-              <a href="{{ $ghLink }}" target="_blank" rel="noopener"
-                 class="icon-ext text-gray-400 hover:text-blue-600 transition-colors" title="{{ if .github_pages }}Web app{{ else }}GitHub{{ end }}"></a>
+        <div class="project-card group">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 min-w-0 flex-1">
+              <span class="font-semibold text-gray-900 leading-snug">{{ .id }}</span>
+              <span class="badge badge-{{ .tag }} flex-shrink-0" title="{{ if eq .tag `ready` }}Production-ready{{ else if eq .tag `experimental` }}Experimental — API may change{{ else if eq .tag `poc` }}Proof of concept{{ else if eq .tag `demo` }}Demo only{{ end }}">{{ .tag }}</span>
             </div>
+            <a href="{{ $ghLink }}" target="_blank" rel="noopener"
+               class="text-gray-300 hover:text-blue-500 transition-colors flex-shrink-0 mt-0.5" title="{{ if .github_pages }}Docs / web app{{ else }}GitHub{{ end }}">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
           </div>
           {{ if $isReleased }}
-          <div class="text-xs text-gray-500">
-            <a href="{{ $verURL }}"
-               target="_blank" rel="noopener" class="hover:text-blue-600">
-              v{{ $ver }}
-            </a>
-            {{ if $date }} · {{ $date }}{{ end }}
+          <div class="flex items-center gap-1.5 text-xs text-gray-400">
+            <a href="{{ $verURL }}" target="_blank" rel="noopener"
+               class="font-mono hover:text-blue-600 transition-colors">v{{ $ver }}</a>
+            {{ if $date }}<span>·</span><span>{{ $date }}</span>{{ end }}
           </div>
           {{ else if .static_version }}
-          <div class="text-xs text-gray-500">{{ .static_version }}</div>
+          <div class="text-xs text-gray-400 font-mono">{{ .static_version }}</div>
           {{ end }}
-          <p class="text-sm text-gray-700 flex-1">{{ .tagline_short | default .tagline }}</p>
+          <p class="text-sm text-gray-700 leading-relaxed flex-1">{{ .tagline_short | default .tagline }}</p>
           {{ with index .when_to_use 0 }}
-          <p class="text-xs text-gray-400 italic">{{ . }}</p>
+          <p class="text-xs text-gray-400 italic leading-snug border-l-2 border-gray-200 pl-2">{{ . }}</p>
           {{ else }}{{ with index .features 0 }}
-          <p class="text-xs text-gray-500">{{ . }}</p>
+          <p class="text-xs text-gray-500 leading-snug border-l-2 border-gray-200 pl-2">{{ . }}</p>
           {{ end }}{{ end }}
-          <a href="#{{ .id }}" class="icon-details text-sm font-medium text-blue-600 hover:text-blue-800 mt-auto">details</a>
+          <a href="#{{ .id }}" class="text-xs font-medium text-blue-600 hover:text-blue-800 mt-1 inline-flex items-center gap-1">
+            Details
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </a>
         </div>
       {{ end }}
       </div>
@@ -120,50 +124,64 @@
       {{ $verURL = printf "https://crates.io/crates/%s/%s" . $ver }}
     {{ end }}
 
-    {{/* Group heading in detail view */}}
+    {{/* Group heading */}}
     {{ if and .group (ne .group $lastGroup3) }}
-    <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mt-16 mb-0">{{ .group }}</h2>
+    <div class="mt-16 mb-2">
+      <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ .group }}</span>
+    </div>
     {{ end }}
     {{ $lastGroup3 = .group }}
 
-  <section id="{{ .id }}" style="scroll-margin-top: 100px" class="mt-16 pt-8 border-t border-gray-100 first:border-t-0 first:pt-0 first:mt-0">
-    <div class="flex flex-wrap items-center gap-3 mb-2">
+  <section id="{{ .id }}" class="detail-section">
+
+    {{/* Section header */}}
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-1">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
-      <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
-      {{ if $isReleased }}<a href="{{ $verURL }}" target="_blank" rel="noopener" class="text-sm text-gray-500 hover:text-blue-600">v{{ $ver }}</a>{{ with $rel }}{{ if .date }}<span class="text-sm text-gray-400">· {{ .date }}</span>{{ end }}{{ end }}{{ end }}
+      <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready{{ else if eq .tag `experimental` }}Experimental — API may change{{ else if eq .tag `poc` }}Proof of concept{{ else if eq .tag `demo` }}Demo only{{ end }}">{{ .tag }}</span>
+      {{ if $isReleased }}
+      <a href="{{ $verURL }}" target="_blank" rel="noopener"
+         class="font-mono text-sm text-gray-500 hover:text-blue-600 transition-colors">v{{ $ver }}</a>
+      {{ with $rel }}{{ if .date }}<span class="text-sm text-gray-400">· {{ .date }}</span>{{ end }}{{ end }}
+      {{ end }}
       {{ with .github_pages }}
-      {{ $label := "Web app" }}{{ if strings.Contains . "github.io" }}{{ $label = "Docs" }}{{ end }}
+      {{ $label := "Docs" }}{{ if not (strings.Contains . "github.io") }}{{ $label = "Web app" }}{{ end }}
       <a href="{{ . }}" target="_blank" rel="noopener"
          class="icon-ext text-sm text-blue-600 hover:text-blue-800">{{ $label }}</a>
       {{ end }}
       <a href="{{ .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}" target="_blank" rel="noopener"
          class="icon-github text-sm text-blue-600 hover:text-blue-800 ml-auto">GitHub</a>
     </div>
-    <p class="text-gray-700 mb-4">{{ .tagline }}</p>
+
+    <p class="text-gray-700 leading-relaxed mb-5">{{ .tagline }}</p>
 
     {{/* Screenshot lightbox */}}
     {{ if .screenshot }}
     <div x-data="{ show: false }" class="mb-6">
       <img @click="show = true" src="{{ .screenshot }}"
-           class="cursor-pointer rounded shadow max-w-full md:max-w-lg"
+           class="cursor-pointer rounded-lg shadow-sm border border-gray-200 max-w-full md:max-w-lg hover:shadow-md transition-shadow"
            alt="{{ .id }} screenshot" loading="lazy">
       <div x-show="show" x-trap="show"
            @click.self="show = false" @keydown.escape.window="show = false"
            class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
            style="display:none">
-        <img src="{{ .screenshot }}" class="max-w-full max-h-full rounded"
+        <img src="{{ .screenshot }}" class="max-w-full max-h-full rounded-lg"
              alt="{{ .id }} screenshot">
       </div>
     </div>
     {{ end }}
 
-    {{/* Features list (for demos) */}}
+    {{/* Features list */}}
     {{ if .features }}
-    <div class="mb-6">
-      <h3 class="font-semibold text-gray-700 mb-2">Features</h3>
-      <ul class="space-y-1">
+    <div class="mb-5 bg-gray-50 rounded-lg p-4 border border-gray-100">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Features</h3>
+      <ul class="space-y-2">
         {{ range .features }}
-        <li class="icon-bullet text-sm text-gray-700">{{ . }}</li>
+        <li class="flex gap-2 items-start text-sm text-gray-700">
+          <span class="text-blue-500 mt-0.5 flex-shrink-0">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </span>
+          {{ . }}
+        </li>
         {{ end }}
       </ul>
     </div>
@@ -171,21 +189,21 @@
 
     {{/* When to use / not use */}}
     {{ if .when_to_use }}
-    <div class="grid md:grid-cols-2 gap-4 mb-6">
-      <div>
-        <h3 class="font-semibold text-green-700 mb-2">When to use</h3>
-        <ul class="space-y-1">
+    <div class="grid md:grid-cols-2 gap-4 mb-5">
+      <div class="bg-green-50 rounded-lg p-4 border border-green-100">
+        <h3 class="text-xs font-bold text-green-700 uppercase tracking-wide mb-3">When to use</h3>
+        <ul class="wtu-list space-y-2">
           {{ range .when_to_use }}
-          <li class="icon-check text-sm text-gray-700">{{ . }}</li>
+          <li>{{ . }}</li>
           {{ end }}
         </ul>
       </div>
       {{ if .when_not_to_use }}
-      <div>
-        <h3 class="font-semibold text-red-700 mb-2">When not to use</h3>
-        <ul class="space-y-1">
+      <div class="bg-red-50 rounded-lg p-4 border border-red-100">
+        <h3 class="text-xs font-bold text-red-700 uppercase tracking-wide mb-3">When not to use</h3>
+        <ul class="wnu-list space-y-2">
           {{ range .when_not_to_use }}
-          <li class="icon-cross text-sm text-gray-700">{{ . }}</li>
+          <li>{{ . }}</li>
           {{ end }}
         </ul>
       </div>
@@ -195,52 +213,52 @@
 
     {{/* vs comparison table */}}
     {{ with .vs }}
-    <div class="mb-6">
-      <h3 class="font-semibold text-gray-700 mb-2">
-        vs <a href="{{ .url }}" target="_blank" rel="noopener" class="icon-ext text-blue-600 hover:text-blue-800">{{ .name }}</a>
+    <div class="mb-5">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">
+        vs <a href="{{ .url }}" target="_blank" rel="noopener" class="icon-ext text-blue-600 hover:text-blue-800 normal-case font-semibold">{{ .name }}</a>
       </h3>
       <div class="table-scroll">
-        <table class="text-sm w-full border-collapse">
+        <table>
           <thead>
-            <tr class="border-b border-gray-200">
-              <th class="text-left py-1.5 pr-4 font-medium text-gray-600">Feature</th>
-              <th class="text-left py-1.5 pr-4 font-medium text-blue-700">{{ $thisID }}</th>
-              <th class="text-left py-1.5 font-medium text-gray-600">{{ .name }}</th>
+            <tr>
+              <th>Feature</th>
+              <th class="col-highlight">{{ $thisID }}</th>
+              <th>{{ .name }}</th>
             </tr>
           </thead>
           <tbody>
             {{ range .comparison }}
-            <tr class="border-b border-gray-100">
-              <td class="py-1.5 pr-4 text-gray-700">{{ .feature }}</td>
-              <td class="py-1.5 pr-4 text-gray-900">{{ .femto }}</td>
-              <td class="py-1.5 text-gray-600">{{ .other }}</td>
+            <tr>
+              <td class="font-medium text-gray-600">{{ .feature }}</td>
+              <td class="col-highlight">{{ .femto }}</td>
+              <td>{{ .other }}</td>
             </tr>
             {{ end }}
           </tbody>
         </table>
       </div>
       {{ if .bottom_line }}
-      <p class="text-xs text-gray-500 mt-2 italic">{{ .bottom_line }}</p>
+      <p class="text-xs text-gray-500 mt-2 italic pl-1">{{ .bottom_line }}</p>
       {{ end }}
     </div>
     {{ end }}
 
-    {{/* Related — use internal anchor if the project is in this collection */}}
+    {{/* Related */}}
     {{ if .related }}
-    <div class="mb-4">
-      <h3 class="font-semibold text-gray-700 mb-2">Related</h3>
+    <div class="mb-5">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Related</h3>
       <div class="flex flex-wrap gap-2">
         {{ range .related }}
         {{ $relID := .label | lower | replaceRE `\s+🔗$` "" | replaceRE `\s+↗$` "" | replaceRE `\s+` "-" }}
         {{ $isLocal := in $ids $relID }}
         {{ if $isLocal }}
         <a href="#{{ $relID }}"
-           class="text-sm text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-2 py-0.5">
+           class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 transition-colors hover:bg-blue-100">
           {{ .label }}
         </a>
         {{ else }}
         <a href="{{ .url }}" target="_blank" rel="noopener"
-           class="icon-ext text-sm text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-2 py-0.5">
+           class="icon-ext inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 transition-colors hover:bg-blue-100">
           {{ .label }}
         </a>
         {{ end }}
@@ -251,34 +269,35 @@
 
     {{/* Links */}}
     {{ if .links }}
-    <div class="mb-4 flex flex-wrap gap-3">
+    <div class="mb-5 flex flex-wrap gap-3">
       {{ range .links }}
       <a href="{{ .url }}" target="_blank" rel="noopener"
-         class="icon-ext text-sm text-blue-600 hover:text-blue-800">{{ .label | replaceRE `\s+[↗🔗]$` "" }}</a>
+         class="icon-ext text-sm text-blue-600 hover:text-blue-800 font-medium">{{ .label | replaceRE `\s+[↗🔗]$` "" }}</a>
       {{ end }}
     </div>
     {{ end }}
 
     {{/* Install tabs */}}
     {{ if .install }}
-    <div class="mb-4" x-data="{ tab: 0 }">
-      <h3 class="font-semibold text-gray-700 mb-2">Install</h3>
+    <div class="mb-5" x-data="{ tab: 0 }">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Install</h3>
       {{ if $isReleased }}
-      <div class="flex gap-2 mb-2 border-b border-gray-200">
+      <div class="flex gap-1 mb-3 border-b border-gray-200">
         {{ range $i, $t := .install }}
         <button @click="tab = {{ $i }}"
-                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-medium' : 'text-gray-500'"
-                class="px-3 py-1.5 text-sm -mb-px">{{ $t.label }}</button>
+                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                class="px-3 py-2 text-sm -mb-px transition-colors">{{ $t.label }}</button>
         {{ end }}
       </div>
       {{ range $i, $t := .install }}
       {{ $code := replace $t.code "VERSION" $ver }}
-      <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
+      <div x-show="tab === {{ $i }}" {{ if ne $i 0 }}style="display:none"{{ end }} class="code-block-wrap">
+        <button class="copy-btn">Copy</button>
         <pre><code class="language-{{ $t.lang }}">{{ $code | htmlEscape | safeHTML }}</code></pre>
       </div>
       {{ end }}
       {{ else }}
-      <p class="text-sm text-gray-500">No stable release yet — check
+      <p class="text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-200 p-4">No stable release yet — check
         <a href="{{ .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}" target="_blank" rel="noopener" class="icon-ext text-blue-600 hover:text-blue-800">GitHub</a>
         for build instructions.</p>
       {{ end }}
@@ -287,17 +306,18 @@
 
     {{/* Usage tabs */}}
     {{ if .usage }}
-    <div class="mb-4" x-data="{ tab: 0 }">
-      <h3 class="font-semibold text-gray-700 mb-2">Usage</h3>
-      <div class="flex gap-2 mb-2 border-b border-gray-200">
+    <div class="mb-5" x-data="{ tab: 0 }">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Usage</h3>
+      <div class="flex gap-1 mb-3 border-b border-gray-200">
         {{ range $i, $t := .usage }}
         <button @click="tab = {{ $i }}"
-                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-medium' : 'text-gray-500'"
-                class="px-3 py-1.5 text-sm -mb-px">{{ $t.label }}</button>
+                :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                class="px-3 py-2 text-sm -mb-px transition-colors">{{ $t.label }}</button>
         {{ end }}
       </div>
       {{ range $i, $t := .usage }}
-      <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
+      <div x-show="tab === {{ $i }}" {{ if ne $i 0 }}style="display:none"{{ end }} class="code-block-wrap">
+        <button class="copy-btn">Copy</button>
         <pre><code class="language-{{ $t.lang }}">{{ $t.code | htmlEscape | safeHTML }}</code></pre>
       </div>
       {{ end }}
@@ -306,22 +326,32 @@
 
     {{/* Changelog */}}
     {{ if $changelog }}
-    <details class="mt-4">
-      <summary class="cursor-pointer text-sm text-gray-500 hover:text-gray-700">Latest release notes</summary>
-      <ul class="mt-2 space-y-1 pl-2">
-        {{ range split $changelog " · " }}
-        {{ $item := trim . " " }}
-        {{ if $item }}
-        <li class="icon-bullet text-sm text-gray-600">{{ $item }}</li>
-        {{ end }}
-        {{ end }}
-      </ul>
+    <details class="mt-4 group">
+      <summary class="cursor-pointer text-sm text-gray-500 hover:text-gray-700 list-none flex items-center gap-1.5 select-none w-fit">
+        <svg class="w-3.5 h-3.5 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        Latest release notes
+      </summary>
+      <div class="mt-3 bg-gray-50 rounded-lg border border-gray-100 p-4">
+        <ul class="space-y-1.5">
+          {{ range split $changelog " · " }}
+          {{ $item := trim . " " }}
+          {{ if $item }}
+          <li class="flex gap-2 items-start text-sm text-gray-600">
+            <span class="text-blue-400 mt-0.5 flex-shrink-0">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+            </span>
+            {{ $item }}
+          </li>
+          {{ end }}
+          {{ end }}
+        </ul>
+      </div>
     </details>
     {{ end }}
 
     {{/* Note */}}
     {{ if .note }}
-    <p class="text-sm text-gray-500 italic mt-2">{{ .note }}</p>
+    <p class="text-sm text-gray-500 italic mt-3 bg-amber-50 border border-amber-100 rounded-lg px-4 py-2">{{ .note }}</p>
     {{ end }}
 
   </section>

@@ -18,14 +18,30 @@ Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
   hljs.highlightAll();
 
-  // Measure sticky nav stack and set scroll-padding-top dynamically so hash
-  // links always land below both the top nav and the tool nav.
+  // Copy-to-clipboard for code blocks
+  document.querySelectorAll('.code-block-wrap').forEach(wrap => {
+    const pre = wrap.querySelector('pre');
+    const btn = wrap.querySelector('.copy-btn');
+    if (!pre || !btn) return;
+    btn.addEventListener('click', () => {
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-green-600');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('text-green-600');
+        }, 1500);
+      });
+    });
+  });
+
+  // Measure sticky nav stack and set scroll-padding-top dynamically
   const topNav  = document.querySelector('header');
   const toolNav = document.getElementById('tool-nav');
   const updateScrollPadding = () => {
     const h = (topNav?.offsetHeight ?? 0) + (toolNav?.offsetHeight ?? 0);
     document.documentElement.style.scrollPaddingTop = h + 'px';
-    // Keep scroll-margin-top in sync on all anchored sections
     document.querySelectorAll('section[id]').forEach(s => {
       s.style.scrollMarginTop = h + 'px';
     });
@@ -45,12 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
       a.classList.toggle('font-semibold',   active);
       a.classList.toggle('border-b-2',      active);
       a.classList.toggle('border-blue-600', active);
+      a.classList.toggle('bg-blue-50',      active);
+      a.classList.toggle('rounded',         active);
       a.classList.toggle('text-gray-500',  !active);
     });
   };
 
-  // Scroll the tool nav bar horizontally to keep the active link visible.
-  // Use scrollLeft directly — scrollIntoView on nav items can scroll the page.
   const scrollNavToActive = (id) => {
     const a = toolNav.querySelector(`a[data-id="${id}"]`);
     if (!a) return;
