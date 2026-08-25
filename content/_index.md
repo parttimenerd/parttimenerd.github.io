@@ -6,4 +6,4 @@ og_subtitle: "JVM · Profiling · eBPF · Open Source"
 og_out: "home-og.png"
 ---
 
-I'm a JVM engineer on the SapMachine team at SAP. I work on profiling tooling — async-profiler, JFR, FirefoxProfiler for Java — and created hello-ebpf, the first eBPF library for Java. I write about profiling, debugging, and the JVM internals at [Mostly Nerdless](https://mostlynerdless.de).
+I'm a JVM specialist focused on profiling technology, working on the SapMachine team at SAP. I work on enhancements to async-profiler, a JFR event type viewer, and improvements to the FirefoxProfiler for Java. I also created hello-ebpf, the first eBPF library for Java. I write about advanced profiling, debugging, and JVM internals at [Mostly Nerdless](https://mostlynerdless.de).
