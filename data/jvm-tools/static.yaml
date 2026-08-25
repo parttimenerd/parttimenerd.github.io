@@ -1,7 +1,7 @@
 - id: jstall
   tag: ready
   group: "Live JVM Inspection"
-  tagline: "One-shot CLI inspector for running JVMs: deadlock detection, hot threads, flamegraphs, live TUI."
+  tagline: "One-shot CLI inspector for running JVMs. Detects deadlocks, identifies hot threads, captures short-burst flamegraphs via async-profiler, and provides a live TUI — all without a persistent agent or IDE attachment."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -37,7 +37,7 @@
 - id: cf-cli-java-plugin
   tag: ready
   group: "Live JVM Inspection"
-  tagline: "Cloud Foundry CLI plugin to inspect and troubleshoot Java apps running on CF."
+  tagline: "Cloud Foundry CLI plugin to troubleshoot Java apps running on CF without SSH. Trigger heap dumps, thread dumps, and JFR recordings from the cf command line, with the results streamed back to your machine."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -67,12 +67,12 @@
 - id: meta-agent
   tag: experimental
   group: "Agent Development"
-  tagline: "Java agent that instruments other agents. Observe how they transform bytecode."
+  tagline: "Java agent that wraps another agent and intercepts its ClassFileTransformer calls. Lets you see exactly which classes get transformed, what the bytecode looks like before and after, and how long each transformation takes."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You need to understand or debug what a Java agent is doing to class files
-    - You are developing or testing a ClassFileTransformer and need visibility
+    - You are developing or testing a ClassFileTransformer and need visibility into its behaviour
   when_not_to_use:
     - You need a production-safe monitoring tool
     - You want end-user JVM observability (use jstall instead)
@@ -97,10 +97,44 @@
           -jar yourapp.jar
   note: ""
 
+- id: tiny-profiler
+  tag: experimental
+  group: "JFR / Profiling"
+  tagline: "Educational sampling profiler for Java 17+, written entirely in Java. Uses Thread.getAllStackTraces() to collect samples and outputs method tables and interactive HTML flamegraphs via d3-flame-graph. Simple enough to read in an afternoon."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to understand how a sampling profiler works from the inside
+    - You need a dead-simple profiler with no native code, no agents, no setup
+    - You are teaching or learning about profiling and want something readable
+  when_not_to_use:
+    - You need accurate profiling (safepoint bias affects results)
+    - You need allocation or wall-clock profiling (use async-profiler or JFR instead)
+  vs: ~
+  related:
+    - { label: "writing-a-profiler", url: "https://github.com/parttimenerd/writing-a-profiler" }
+  links:
+    - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/profiling/" }
+  no_release: true
+  install:
+    - label: Build
+      lang: bash
+      code: |
+        git clone https://github.com/parttimenerd/tiny-profiler
+        cd tiny-profiler && mvn package
+  usage:
+    - label: Profile
+      lang: bash
+      code: |
+        java -javaagent:target/tiny-profiler.jar=flamegraph=flames.html \
+          -jar yourapp.jar
+        # Opens flames.html with an interactive flamegraph
+  note: "Safepoint-biased — good for learning, not for production profiling decisions."
+
 - id: jfr-profiling
   tag: ready
   group: "JFR / Profiling"
-  tagline: "JFR-based profiling ecosystem: convert, view, and analyze JFR recordings in Firefox Profiler and IntelliJ."
+  tagline: "Ecosystem of tools to convert, view, and share JFR recordings. Converts JFR files to the Firefox Profiler JSON format, bundles a patched Firefox Profiler instance as a server, and provides an IntelliJ plugin that profiles and views results directly in the IDE."
   screenshot: "https://mostlynerdless.de/wp-content/uploads/2023/01/Screenshot-2023-01-27-at-12.31.55-2048x1230.png"
   static_version: "2026-07"
   when_to_use:
@@ -124,20 +158,20 @@
     - label: Convert JFR
       lang: bash
       code: |
-        # Using jfrtofp CLI
         java -jar jfrtofp.jar recording.jfr -o profile.json
-        # Then open in Firefox Profiler
+        # Then open in Firefox Profiler or via jfrtofp-server
   note: ""
 
 - id: jfr-query
   tag: experimental
   group: "JFR / Profiling"
-  tagline: "Query JFR recordings with SQL via DuckDB. Notebook UI with charts and built-in views."
+  tagline: "Turns JFR recordings into a DuckDB database and exposes them through an in-browser notebook UI. Write SQL, get charts, explore event distributions, and use built-in views for common analyses — without installing anything."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You want to run ad-hoc SQL queries over JFR event data
     - You need charts and notebook-style exploration of recordings
+    - You want to correlate events across types (GC, allocations, CPU) in one query
   when_not_to_use:
     - You need a stable, production-ready tool (schema may change)
     - You need IDE integration (use the profiler plugin instead)
@@ -158,13 +192,13 @@
 - id: condensed-data
   tag: experimental
   group: "JFR / Profiling"
-  tagline: "Compress and store JFR events long-term in the self-describing .cjfr format."
+  tagline: "Library and tool for storing JFR events in the self-describing .cjfr format. Designed for long-term, low-overhead recording: compresses events significantly compared to raw JFR, supports live-attach, and ships a reader library for querying stored data."
   screenshot: ""
-  static_version: ""
+  static_version: "latest"
   when_to_use:
     - You need long-term storage of JFR recordings with minimal disk usage
     - You want live-attach to a running JVM for continuous event capture
-    - You are storing GC or other continuous JFR data over days/weeks
+    - You are storing GC or other continuous JFR data over days or weeks
   when_not_to_use:
     - You need immediate full JFR replay compatibility without a reader library
     - You need a stable format (early development, format may change)
@@ -172,7 +206,7 @@
   related: []
   links:
     - { label: "Docs ↗", url: "https://parttimenerd.github.io/condensed-data/" }
-  no_release: false
+  no_release: true
   install:
     - label: Maven
       lang: xml
@@ -189,17 +223,18 @@
         // See https://parttimenerd.github.io/condensed-data/ for full API
         CJFRWriter writer = new CJFRWriter(outputStream);
         writer.write(jfrEvent);
-  note: ""
+  note: "Releases as a rolling 'latest' snapshot — check the docs for the current version."
 
 - id: jfrevents
   tag: ready
   group: "JFR / Profiling"
-  tagline: "Metadata for all JFR events across JDK versions: descriptions, fields, and benchmark examples."
+  tagline: "Reference site listing every JFR event across JDK versions, with field names, types, descriptions, and benchmark-derived examples showing which events fire at what rate. Maintained as part of SapMachine."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You need to know what fields a JFR event has across JDK versions
     - You are writing JFR tooling and need event documentation
+    - You want to understand which events are worth subscribing to for a given use case
   when_not_to_use:
     - You need a programmatic API (this is a reference site)
   vs: ~
@@ -214,7 +249,7 @@
 - id: jfr-redact
   tag: poc
   group: "JFR / Profiling"
-  tagline: "Redact sensitive strings, paths, and env vars from JFR recordings."
+  tagline: "Strips sensitive strings, file paths, environment variables, and other PII from JFR recordings before you share them, while preserving the recording structure and all non-sensitive event data."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -246,20 +281,20 @@
 - id: hprof-analyzer
   tag: experimental
   group: "Heap Dump Analysis"
-  tagline: "Fast CLI heap dump analyzer: System Overview, Leak Suspects, Top Consumers, Threads."
+  tagline: "Fast heap dump analyser written in Rust with a Java CLI frontend. Reproduces the key Eclipse MAT views — System Overview, Leak Suspects, Top Consumers, Threads — with a fraction of the memory overhead, and handles dumps larger than 10 GiB that MAT cannot open. Also available as an in-browser WASM tool for smaller dumps."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You need to analyze a heap dump without Eclipse MAT's memory overhead
+    - You need to analyse a heap dump without Eclipse MAT's memory overhead
     - You have a very large heap dump (>10 GiB) that MAT cannot handle
-    - You want a quick in-browser analyzer for smaller dumps (up to 3 GiB)
+    - You want a quick in-browser analyser for smaller dumps (up to ~3 GiB)
   when_not_to_use:
     - You need full MAT feature coverage (OQL queries, custom reports)
     - You need Windows support (native binary currently linux/mac only)
   vs: ~
   related: []
   links:
-    - { label: "Web analyzer ↗", url: "https://parttimenerd.github.io/hprof-analyzer/" }
+    - { label: "Web analyser ↗", url: "https://parttimenerd.github.io/hprof-analyzer/" }
   no_release: false
   install:
     - label: Download
@@ -267,9 +302,8 @@
       code: |
         curl -L https://github.com/parttimenerd/hprof-analyzer/releases/latest/download/hprof-analyzer \
           -o hprof-analyzer && chmod +x hprof-analyzer
-        ./hprof-analyzer heap.hprof
   usage:
-    - label: Analyze dump
+    - label: Analyse dump
       lang: bash
       code: |
         ./hprof-analyzer heap.hprof
@@ -279,12 +313,12 @@
 - id: hprof-redact
   tag: poc
   group: "Heap Dump Analysis"
-  tagline: "Stream-based redaction of primitive values and strings from Java heap dumps."
+  tagline: "Stream-based tool that redacts primitive values and strings from HPROF heap dumps without loading the full dump into memory, preserving the binary structure so the result remains a valid HPROF file."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You need to share a heap dump but it contains sensitive string data
-    - You need to redact HPROF files while preserving their structure
+    - You need to redact HPROF files while preserving their structure for further analysis
   when_not_to_use:
     - You need guaranteed complete privacy (proof-of-concept, not audited)
     - You need to redact JFR recordings (use jfr-redact instead)
@@ -311,7 +345,7 @@
 - id: jhserr
   tag: poc
   group: "Crash / Log Diagnostics"
-  tagline: "Parse, transform, and redact HotSpot hs_err_pid crash reports."
+  tagline: "Parser and transformer for HotSpot hs_err_pid crash files. Turns the raw crash report into a typed Java model you can query, redact, or re-render. Also available as a web UI for one-off redaction without installing anything."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -345,12 +379,13 @@
 - id: jdklogs
   tag: ready
   group: "Crash / Log Diagnostics"
-  tagline: "Interactive browser tool showing which OpenJDK -Xlog statements fire for a given config."
+  tagline: "Interactive browser tool for exploring OpenJDK's -Xlog subsystem. Enter a log config and see exactly which log statements match, with source context and cross-version coverage so you know what to expect before you deploy."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You need to understand JDK logging output and what -Xlog config produces it
     - You want to explore -Xlog tags across JDK versions with source context
+    - You are tuning GC or JIT logging flags and want to preview the output
   when_not_to_use:
     - You need offline access (web-only tool)
   vs: ~
@@ -370,7 +405,7 @@
 - id: execjar
   tag: experimental
   group: "JAR Packaging"
-  tagline: "CLI and Maven plugin to create self-executable files for JARs."
+  tagline: "CLI tool and Maven plugin that wraps a fat JAR in a small shell stub, producing a single self-contained file that is directly executable on Linux and macOS without a launcher script or explicit java -jar invocation."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -402,23 +437,23 @@
       lang: bash
       code: |
         mvn package
-        # Output: target/yourapp.run — directly executable
         ./target/yourapp.run
   note: ""
 
 - id: writing-a-profiler
   tag: ready
   group: "Learning Resources"
-  tagline: "Code companion for the 'Writing a Profiler from Scratch' blog series."
+  tagline: "Code companion for the 'Writing a Profiler from Scratch' blog series on mostlynerdless.de and foojay.io. Each chapter has its own tagged commit, so you can follow along from a basic safepoint-biased sampler all the way to an AsyncGetCallTrace-based profiler."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You want to learn how Java profilers work from the inside
+    - You want to learn how Java profilers work from the inside out
     - You are following the blog series on mostlynerdless.de or foojay.io
   when_not_to_use:
     - You need a ready-to-use profiler (use jstall or the JFR profiling tools)
   vs: ~
-  related: []
+  related:
+    - { label: "tiny-profiler", url: "https://github.com/parttimenerd/tiny-profiler" }
   links:
     - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/profiling/" }
   no_release: true
@@ -429,12 +464,12 @@
 - id: firefox-profiler
   tag: experimental
   group: "Learning Resources"
-  tagline: "Fork of the Firefox Profiler web app with JFR-specific patches and JFR file loading."
+  tagline: "Fork of the Firefox Profiler web app with patches that add native JFR file loading and JFR-specific UI improvements. Used as the embedded viewer in jfrtofp-server, and available for local hosting when you need a customised profiler UI."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You want to view JFR recordings in the Firefox Profiler UI (via jfrtofp)
-    - You need a locally-hosted profiler viewer with custom patches
+    - You need a locally-hosted profiler viewer with JFR-specific patches
   when_not_to_use:
     - You want the upstream Firefox Profiler without JFR customisations
   vs: ~
@@ -451,12 +486,13 @@
 - id: jthreaddump
   tag: ready
   group: "Libraries"
-  tagline: "Parser for jstack/jcmd thread dump output into a typed Java model."
+  tagline: "Java library for parsing thread dump output from jstack and jcmd into a typed model. Handles all major thread dump formats across JDK versions, including virtual threads, giving you structured access to thread states, stack frames, and lock information."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You need to programmatically parse and analyze Java thread dumps
+    - You need to programmatically parse and analyse Java thread dumps
     - You are building tooling that processes jstack or jcmd output
+    - You want to diff thread dumps or detect recurring blocking patterns
   when_not_to_use:
     - You need live thread inspection (use jstall instead)
     - You need profiling data (use the JFR profiling tools instead)

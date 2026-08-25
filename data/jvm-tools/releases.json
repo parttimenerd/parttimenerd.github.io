@@ -1,17 +1,16 @@
 {
   "entries": {
-    "jstall":              { "version": "0.7.1",    "date": "2026-05-17", "changelog": "" },
-    "meta-agent":          { "version": "0.0.4",    "date": "2025-11-18", "changelog": "" },
-    "execjar":             { "version": "unreleased", "date": "", "changelog": "" },
-    "cf-cli-java-plugin":  { "version": "unreleased", "date": "", "changelog": "" },
+    "jstall":              { "version": "0.7.1",  "date": "2026-05-17", "changelog": "" },
+    "cf-cli-java-plugin":  { "version": "snapshot", "date": "2026-05-28", "changelog": "" },
+    "meta-agent":          { "version": "0.0.4",  "date": "2025-11-18", "changelog": "" },
     "jfr-query":           { "version": "snapshot", "date": "2026-08-03", "changelog": "" },
-    "condensed-data":      { "version": "latest",   "date": "2026-08-05", "changelog": "" },
-    "jfrevents":           { "version": "0.7",      "date": "2025-09-26", "changelog": "" },
-    "jfr-redact":          { "version": "0.3.0",    "date": "2026-03-31", "changelog": "" },
-    "hprof-analyzer":      { "version": "0.1.0",    "date": "2026-07-20", "changelog": "" },
-    "hprof-redact":        { "version": "0.3.0",    "date": "2026-06-24", "changelog": "" },
-    "jhserr":              { "version": "0.1.0",    "date": "2026-03-30", "changelog": "" },
-    "jthreaddump":         { "version": "0.5.8",    "date": "2026-01-28", "changelog": "" }
+    "jfrevents":           { "version": "0.7",    "date": "2025-09-26", "changelog": "" },
+    "jfr-redact":          { "version": "0.3.0",  "date": "2026-03-31", "changelog": "" },
+    "hprof-analyzer":      { "version": "0.1.0",  "date": "2026-07-20", "changelog": "" },
+    "hprof-redact":        { "version": "0.3.0",  "date": "2026-06-24", "changelog": "" },
+    "jhserr":              { "version": "0.1.0",  "date": "2026-03-30", "changelog": "" },
+    "execjar":             { "version": "0.1.2",  "date": "2026-08-12", "changelog": "" },
+    "jthreaddump":         { "version": "0.5.8",  "date": "2026-01-28", "changelog": "" }
   }
 }
 

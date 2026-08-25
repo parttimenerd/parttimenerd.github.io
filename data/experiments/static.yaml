@@ -1,16 +1,17 @@
 - id: hello-ebpf
   tag: experimental
   group: "eBPF"
-  tagline: "The first eBPF library for Java. Write eBPF programs and user-land code in pure Java."
+  tagline: "The first eBPF library for Java. Write eBPF programs and the accompanying user-land code in pure Java 21+, without leaving the JVM. Covers tracepoints, kprobes, uprobes, network filters, and custom Linux schedulers via sched-ext."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You want to write eBPF tools without leaving the JVM
-    - You are exploring Linux kernel observability from Java
-    - You need custom schedulers, network filters, or tracing programs in Java
+    - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
+    - You are exploring Linux kernel internals from Java
+    - You want to follow the accompanying blog series and build understanding step by step
   when_not_to_use:
     - You need a production-ready, stable eBPF framework
-    - You need broad Linux kernel version support (requires a recent kernel)
+    - You need broad kernel version support (requires a recent kernel with BTF)
+    - You are on macOS or Windows
   vs: ~
   related: []
   links:
@@ -38,15 +39,15 @@
 - id: concurrency-fuzz-scheduler
   tag: experimental
   group: "eBPF"
-  tagline: "Custom Linux scheduler for concurrency fuzzing, written in Java with hello-ebpf."
+  tagline: "Custom Linux sched-ext scheduler written in Java with hello-ebpf that deliberately perturbs thread scheduling to expose race conditions and lock ordering bugs in concurrent Java code."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You want to stress-test concurrent Java code by controlling thread scheduling
-    - You are fuzzing for race conditions or lock ordering bugs
+    - You want to stress-test concurrent Java code by controlling thread interleaving
+    - You are fuzzing for race conditions or lock ordering bugs that only surface under unusual scheduling
   when_not_to_use:
     - You need a stable, production-ready fuzzing framework
-    - You are not on Linux with a recent kernel
+    - You are not on Linux with a recent kernel supporting sched-ext
   vs: ~
   related:
     - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
@@ -60,12 +61,12 @@
 - id: taskcontrol
   tag: experimental
   group: "eBPF"
-  tagline: "Java API for custom Linux schedulers that enables deterministic concurrency testing."
+  tagline: "Java API that sits on top of hello-ebpf and exposes fine-grained control over Linux thread scheduling, letting tests pause, resume, and reorder threads to reproduce hard-to-trigger concurrency bugs."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You want fine-grained control over thread scheduling in tests
-    - You are building concurrency testing tooling on Linux
+    - You want deterministic control over thread interleaving in tests
+    - You are building concurrency testing or fuzzing tooling on Linux
   when_not_to_use:
     - You need portable cross-platform scheduling control
   vs: ~
@@ -88,12 +89,12 @@
 - id: sound-of-scheduling
   tag: poc
   group: "eBPF"
-  tagline: "A Linux scheduler written in Java that maps scheduling decisions to musical notes."
+  tagline: "A Linux scheduler written in Java using hello-ebpf that translates scheduling decisions into MIDI notes in real time — each CPU core gets a voice, and context switches become music."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You want to hear what your CPU scheduler is doing
-    - You are giving a demo about sched-ext or hello-ebpf
+    - You are giving a live demo about sched-ext or hello-ebpf and want something memorable
   when_not_to_use:
     - You need it for anything practical
   vs: ~
@@ -106,36 +107,18 @@
   usage: ~
   note: "Pure fun. Don't use in production."
 
-- id: ebpf-verifier-errors
-  tag: experimental
-  group: "eBPF"
-  tagline: "Curated collection of eBPF verifier errors and their explanations."
-  screenshot: ""
-  static_version: ""
-  when_to_use:
-    - You hit an obscure eBPF verifier rejection and can't figure out why
-    - You are learning eBPF and want a reference for common pitfalls
-  when_not_to_use:
-    - You need a search-optimised reference (it's a GitHub repo, not a web app)
-  vs: ~
-  related: []
-  links: []
-  no_release: true
-  install: ~
-  usage: ~
-  note: ""
-
 - id: check-language-version
   tag: experimental
   group: "Misc"
-  tagline: "Check which Java language level each source file in your project actually requires."
+  tagline: "Static analyser that scans your Java source tree and reports the minimum language level each file actually requires, so you know exactly what is preventing you from lowering --release."
   screenshot: ""
   static_version: ""
   when_to_use:
     - You want to lower your project's --release target and need to know what's blocking it
     - You are auditing a multi-module project for language-level inconsistencies
+    - You want a quick per-file breakdown before a Java version migration
   when_not_to_use:
-    - You need a full static analysis tool
+    - You need a full static analysis tool with broader scope
   vs: ~
   related: []
   links: []
@@ -146,57 +129,9 @@
       code: |
         gh release download --repo parttimenerd/check-language-version \
           --pattern '*.jar' -D .
-        java -jar check-language-version.jar src/
   usage:
     - label: Check
       lang: bash
       code: |
         java -jar check-language-version.jar src/main/java/
-  note: ""
-
-- id: loomylin
-  tag: poc
-  group: "Misc"
-  tagline: "Minimal benchmark for virtual threads (Project Loom)."
-  screenshot: ""
-  static_version: ""
-  when_to_use:
-    - You want a quick baseline comparison between platform threads and virtual threads
-  when_not_to_use:
-    - You need a production benchmark suite (use JMH instead)
-  vs: ~
-  related: []
-  links: []
-  no_release: true
-  install: ~
-  usage: ~
-  note: ""
-
-- id: temci
-  tag: ready
-  group: "Misc"
-  tagline: "Advanced benchmarking tool with statistical rigour, noise reduction, and report generation."
-  screenshot: ""
-  static_version: ""
-  when_to_use:
-    - You need statistically sound micro-benchmarks with noise isolation
-    - You want automated comparison reports across benchmark runs
-  when_not_to_use:
-    - You need JVM-native benchmarking (use JMH instead)
-    - You are on Windows (Linux/macOS only)
-  vs: ~
-  related: []
-  links:
-    - { label: "Docs ↗", url: "https://temci.readthedocs.io" }
-  no_release: false
-  install:
-    - label: pip
-      lang: bash
-      code: "pip install temci"
-  usage:
-    - label: Run benchmark
-      lang: bash
-      code: |
-        temci exec --runs 20 "my_program arg1"
-        temci report result.yaml
   note: ""

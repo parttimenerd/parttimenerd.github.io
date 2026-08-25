@@ -1,13 +1,14 @@
 - id: femtolz4
   tag: ready
   group: ""
-  tagline: "LZ4 frame compression for Java. 50 KB, no dependencies."
+  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - JAR size matters (agents, embedded tools, minimal distributions)
+    - JAR size matters — Java agents, embedded tools, minimal distributions
     - You want a drop-in lz4-java replacement with zero transitive deps
     - You need readSingleFrame support (e.g. reading CJFR files)
+    - You only need linux/amd64 or darwin/aarch64 native acceleration
   when_not_to_use:
     - You need native acceleration on Windows or non-amd64 Linux
     - You need lz4opt compression (levels 10–12)
@@ -61,11 +62,11 @@
 - id: femtocli
   tag: ready
   group: ""
-  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, no dependencies."
+  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands, option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - JAR size matters (Java agents, jstall-style installers, embedded tools)
+    - JAR size matters — Java agents, jstall-style installers, embedded tools
     - You want picocli-style annotations without the weight
     - You need agent-args mode or dynamic command removal at runtime
   when_not_to_use:
@@ -127,7 +128,7 @@
 - id: femtojson
   tag: ready
   group: ""
-  tagline: "Tiny JSON parser for Java. Zero dependencies, straightforward API."
+  tagline: "Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API — no POJO binding, no annotations, just parse and go."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -180,7 +181,7 @@
 - id: femtoschema
   tag: poc
   group: ""
-  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies."
+  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically, export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -239,7 +240,7 @@
 - id: femtojar
   tag: ready
   group: ""
-  tagline: "Maven plugin that shrinks executable JARs via cross-class compression."
+  tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction."
   screenshot: ""
   static_version: ""
   when_to_use:
