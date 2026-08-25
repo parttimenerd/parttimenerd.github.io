@@ -6,8 +6,10 @@ Reads  data/<section>/static.yaml
 Writes data/<section>/releases.json  (only if any version changed)
 
 Version resolution order (first hit wins):
-  1. crates.io    — if entry has cargo_crate: "<crate-name>"
-  2. Maven Central — if entry has maven_coordinates: "groupId:artifactId"
+  1. cargo CLI  — if entry has cargo_crate: "<crate-name>"
+     Falls back to crates.io REST if cargo is unavailable.
+  2. mvn CLI    — if entry has maven_coordinates: "groupId:artifactId"
+     Falls back to Maven Central REST if mvn is unavailable.
   3. GitHub releases — parttimenerd/<id>/releases, skipping rolling tags
                        (tag names matching snapshot/nightly/latest/rc/alpha/beta
                         are skipped; the most recent stable release is used)
@@ -17,6 +19,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,6 +32,19 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 # Tag names (case-insensitive) treated as rolling/pre-release — skipped when
 # looking for the latest stable release.
 ROLLING_TAGS = re.compile(r"^(snapshot|nightly|latest|rc[\d.-]|alpha[\d.-]|beta[\d.-])", re.IGNORECASE)
+
+
+def _run(cmd: list[str], timeout: int = 30) -> str | None:
+    """Run a subprocess, return stdout or None on failure."""
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout
+        )
+        if result.returncode == 0:
+            return result.stdout
+        return None
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
 
 
 def process_changelog(body: str) -> str:
@@ -47,8 +63,24 @@ def process_changelog(body: str) -> str:
     return result
 
 
+# ---------------------------------------------------------------------------
+# Cargo / crates.io
+# ---------------------------------------------------------------------------
+
+def fetch_from_cargo_cli(crate_name: str) -> dict | None:
+    """Use `cargo search` to get latest version from crates.io."""
+    out = _run(["cargo", "search", "--limit", "1", crate_name])
+    if out is None:
+        return None
+    # Output: crate_name = "x.y.z"  # description
+    m = re.match(rf'^{re.escape(crate_name)}\s*=\s*"([^"]+)"', out.strip())
+    if m:
+        return {"version": m.group(1), "date": "", "changelog": ""}
+    return None
+
+
 def fetch_from_crates_io(crate_name: str) -> dict | None:
-    """Fetch latest stable version from crates.io."""
+    """Fetch latest stable version from crates.io REST API."""
     url = f"https://crates.io/api/v1/crates/{crate_name}"
     headers = {"User-Agent": "parttimenerd-site-builder/1.0 (https://parttimenerd.github.io)"}
     try:
@@ -66,6 +98,49 @@ def fetch_from_crates_io(crate_name: str) -> dict | None:
     except Exception as exc:
         print(f"  crates.io lookup failed for {crate_name}: {exc}", file=sys.stderr)
         return None
+
+
+def fetch_cargo(crate_name: str) -> dict | None:
+    """Try cargo CLI first, fall back to crates.io REST."""
+    result = fetch_from_cargo_cli(crate_name)
+    if result:
+        return result
+    return fetch_from_crates_io(crate_name)
+
+
+# ---------------------------------------------------------------------------
+# Maven / Maven Central
+# ---------------------------------------------------------------------------
+
+def fetch_from_mvn_cli(coordinates: str) -> dict | None:
+    """
+    Use `mvn dependency:get` to resolve the latest version via the local
+    Maven resolver. We pass LATEST as version and let Maven resolve it.
+    """
+    group_id, artifact_id = coordinates.split(":", 1)
+    out = _run([
+        "mvn", "--batch-mode", "--no-transfer-progress",
+        "dependency:get",
+        f"-Dartifact={group_id}:{artifact_id}:RELEASE",
+    ], timeout=60)
+    if out is None:
+        return None
+    # Look for a line like "Downloading from central: …/artifact/X.Y.Z/…"
+    # or "Resolved: …:X.Y.Z"
+    m = re.search(
+        rf"{re.escape(artifact_id)}-(\d[^/\s\"']+?)(?:\.jar|-sources|-javadoc)",
+        out
+    )
+    if m:
+        return {"version": m.group(1), "date": "", "changelog": ""}
+    # Alternative: parse "[INFO] Resolved: group:artifact:jar:X.Y.Z"
+    m2 = re.search(
+        rf"{re.escape(group_id)}:{re.escape(artifact_id)}:jar:([^\s]+)",
+        out
+    )
+    if m2:
+        return {"version": m2.group(1), "date": "", "changelog": ""}
+    return None
 
 
 def fetch_from_maven_central(coordinates: str) -> dict | None:
@@ -92,6 +167,18 @@ def fetch_from_maven_central(coordinates: str) -> dict | None:
         print(f"  Maven Central lookup failed for {coordinates}: {exc}", file=sys.stderr)
         return None
 
+
+def fetch_maven(coordinates: str) -> dict | None:
+    """Try mvn CLI first, fall back to Maven Central REST."""
+    result = fetch_from_mvn_cli(coordinates)
+    if result:
+        return result
+    return fetch_from_maven_central(coordinates)
+
+
+# ---------------------------------------------------------------------------
+# GitHub
+# ---------------------------------------------------------------------------
 
 def fetch_from_github(repo_id: str) -> dict | None:
     """Fetch latest stable release from GitHub, skipping rolling tags."""
@@ -132,24 +219,28 @@ def fetch_from_github(repo_id: str) -> dict | None:
     return None
 
 
+# ---------------------------------------------------------------------------
+# Dispatch
+# ---------------------------------------------------------------------------
+
 def fetch_latest_release(entry: dict) -> dict | None:
     repo_id = entry["id"]
 
     cargo = entry.get("cargo_crate")
     if cargo:
-        result = fetch_from_crates_io(cargo)
+        result = fetch_cargo(cargo)
         if result:
-            print(f"  {repo_id}: crates.io → {result['version']}")
+            print(f"  {repo_id}: cargo/crates.io → {result['version']}")
             return result
-        print(f"  {repo_id}: crates.io miss, falling back to GitHub")
+        print(f"  {repo_id}: cargo/crates.io miss, falling back to GitHub")
 
     maven = entry.get("maven_coordinates")
     if maven:
-        result = fetch_from_maven_central(maven)
+        result = fetch_maven(maven)
         if result:
-            print(f"  {repo_id}: Maven Central → {result['version']}")
+            print(f"  {repo_id}: mvn/Maven Central → {result['version']}")
             return result
-        print(f"  {repo_id}: Maven Central miss, falling back to GitHub")
+        print(f"  {repo_id}: mvn/Maven Central miss, falling back to GitHub")
 
     return fetch_from_github(repo_id)
 

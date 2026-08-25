@@ -22,6 +22,7 @@
 
   {{/* Card grid with group headings */}}
   {{ $lastGroup2 := "" }}
+  {{ $gridOpen := false }}
   {{ range $static }}
     {{ $rel := index $releases.entries .id }}
     {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
@@ -29,11 +30,15 @@
     {{ $date := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
     {{ $isReleased := and $ver (ne $ver "unreleased") (ne $ver "latest") (ne $ver "snapshot") }}
 
-    {{/* Group break: close current grid (if open) and open new one with heading */}}
+    {{/* Group break: emit heading and reopen grid */}}
     {{ if and .group (ne .group $lastGroup2) }}
-    {{ if $lastGroup2 }}</div>{{ end }}
-    <h2 class="text-xl font-semibold text-gray-700 {{ if $lastGroup2 }}mt-10{{ else }}mt-2{{ end }} mb-4 border-b border-gray-200 pb-2">{{ .group }}</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      {{ if $gridOpen }}</div>{{ end }}
+      <h2 class="text-xl font-semibold text-gray-700 {{ if $lastGroup2 }}mt-10{{ else }}mt-2{{ end }} mb-4 border-b border-gray-200 pb-2">{{ .group }}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      {{ $gridOpen = true }}
+    {{ else if not $gridOpen }}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      {{ $gridOpen = true }}
     {{ end }}
     {{ $lastGroup2 = .group }}
 
@@ -62,8 +67,8 @@
       <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
     </div>
   {{ end }}
-  {{/* Close the last group's grid div */}}
-  {{ if $lastGroup2 }}</div>{{ end }}
+  {{/* Close the grid */}}
+  {{ if $gridOpen }}</div>{{ end }}
 
   {{/* Detail sections */}}
   {{ $lastGroup3 := "" }}

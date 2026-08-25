@@ -1,8 +1,8 @@
 - id: femtolz4
   tag: ready
   group: ""
-  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64."
-  tagline_short: "LZ4 frame compression for Java — ~50 KB, zero dependencies, optional native acceleration."
+  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64. Use it when JAR size or transitive dependency count matters — Java agents, embedded tools, and minimal distributions where lz4-java's 870 KB is too heavy."
+  tagline_short: "LZ4 compression for Java — ~50 KB, zero dependencies, drop-in for size-sensitive projects."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -63,8 +63,8 @@
 - id: femtocli
   tag: ready
   group: ""
-  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands, option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime."
-  tagline_short: "Annotation-driven CLI framework for Java — under 65 KB, zero dependencies."
+  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands, option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime. Use it when you need picocli-style annotations in a Java agent, an embedded tool, or any context where pulling in picocli's ~500 KB is not acceptable."
+  tagline_short: "Picocli-style CLI framework for Java — under 65 KB, zero dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -130,8 +130,8 @@
 - id: femtojson
   tag: ready
   group: ""
-  tagline: "Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API — no POJO binding, no annotations, just parse and go."
-  tagline_short: "Tiny zero-dependency JSON parser and pretty-printer for Java."
+  tagline: "Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API — no POJO binding, no annotations, just parse and go. Use it when you need to handle ad-hoc JSON structures in a size-sensitive context and don't want to pull in Jackson or Gson."
+  tagline_short: "Tiny zero-dependency JSON parser and pretty-printer — parse ad-hoc JSON without Jackson."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -184,8 +184,8 @@
 - id: femtoschema
   tag: poc
   group: ""
-  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically, export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages."
-  tagline_short: "Lightweight JSON Schema validator for Java with zero dependencies."
+  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically, export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages. Use it when you are already using femtojson and want lightweight structural validation without bringing in a full schema validator."
+  tagline_short: "Lightweight zero-dependency JSON Schema validator — fluent API, path-aware errors."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -244,8 +244,8 @@
 - id: femtojar
   tag: ready
   group: ""
-  tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction."
-  tagline_short: "Reduces fat JAR size by stripping unused classes and resources."
+  tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction. Use it when you need the smallest possible executable JAR and are willing to accept early-stage tooling."
+  tagline_short: "Maven plugin that shrinks fat JARs via cross-class compression — up to 70% smaller with ProGuard."
   screenshot: ""
   static_version: ""
   when_to_use:
