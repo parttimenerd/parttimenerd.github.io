@@ -1,0 +1,38 @@
+name: Update all releases (scheduled)
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'  # every Monday at 04:23 UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - run: pip install requests pyyaml
+
+      - name: Fetch releases (all sections)
+        run: |
+          python scripts/fetch_releases.py --section femto
+          python scripts/fetch_releases.py --section jvm-tools
+          python scripts/fetch_releases.py --section experiments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit if changed
+        run: |
+          git diff --quiet -- data/femto/releases.json data/jvm-tools/releases.json data/experiments/releases.json || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add data/femto/releases.json data/jvm-tools/releases.json data/experiments/releases.json
+            git commit -m "chore: weekly release update"
+            git push
+          )

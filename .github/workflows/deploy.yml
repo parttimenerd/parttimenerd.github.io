@@ -41,13 +41,6 @@ jobs:
           sudo apt-get install -y libcairo2-dev libpango1.0-dev
           pip install cairosvg requests pyyaml
 
-      - name: Refresh data (talks + releases)
-        run: |
-          python scripts/fetch_talks.py
-          python scripts/fetch_releases.py --section femto
-          python scripts/fetch_releases.py --section jvm-tools
-          python scripts/fetch_releases.py --section experiments
-
       - name: Generate og-images
         run: python scripts/gen_og_image.py
 
