@@ -39,7 +39,7 @@
     <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <span class="font-semibold text-gray-900">{{ .id }}</span>
-        <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ end }}">{{ .tag }}</span>
+        <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
       </div>
       {{ if $ver }}
       <div class="text-xs text-gray-500">
@@ -53,7 +53,9 @@
       <p class="text-sm text-gray-700 flex-1">{{ .tagline }}</p>
       {{ with index .when_to_use 0 }}
       <p class="text-xs text-gray-500">Use when: {{ . }}</p>
-      {{ end }}
+      {{ else }}{{ with index .features 0 }}
+      <p class="text-xs text-gray-500">{{ . }}</p>
+      {{ end }}{{ end }}
       <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
     </div>
   {{ end }}
@@ -77,7 +79,7 @@
   <section id="{{ .id }}" class="mb-4 scroll-mt-24 mt-14 first:mt-0">
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
-      <span class="tag-{{ .tag }}">{{ .tag }}</span>
+      <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
       {{ if $ver }}<span class="text-sm text-gray-500">v{{ $ver }}</span>{{ end }}
       <a href="https://github.com/parttimenerd/{{ .id }}" target="_blank" rel="noopener"
          class="text-sm text-blue-600 hover:text-blue-800 ml-auto">GitHub ↗</a>
@@ -97,6 +99,18 @@
         <img src="{{ .screenshot }}" class="max-w-full max-h-full rounded"
              alt="{{ .id }} screenshot">
       </div>
+    </div>
+    {{ end }}
+
+    {{/* Features list (for demos) */}}
+    {{ if .features }}
+    <div class="mb-6">
+      <h3 class="font-semibold text-gray-700 mb-2">Features</h3>
+      <ul class="space-y-1">
+        {{ range .features }}
+        <li class="text-sm text-gray-700 flex gap-2"><span class="text-blue-500 mt-0.5">→</span><span>{{ . }}</span></li>
+        {{ end }}
+      </ul>
     </div>
     {{ end }}
 

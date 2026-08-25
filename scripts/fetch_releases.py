@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Usage: python fetch_releases.py --section femto|supportability
+Usage: python fetch_releases.py --section femto|jvm-tools|experiments
 
 Reads  data/<section>/static.yaml
 Writes data/<section>/releases.json  (only if any version changed)
+
+Version resolution order (first hit wins):
+  1. Maven Central  — if entry has maven_coordinates: "groupId:artifactId"
+  2. GitHub releases — parttimenerd/<id>/releases/latest
 """
 
 import argparse
@@ -36,7 +40,33 @@ def process_changelog(body: str) -> str:
     return result
 
 
-def fetch_latest_release(repo_id: str) -> dict | None:
+def fetch_from_maven_central(coordinates: str) -> dict | None:
+    """Fetch latest version from Maven Central search API."""
+    group_id, artifact_id = coordinates.split(":", 1)
+    url = (
+        "https://search.maven.org/solrsearch/select"
+        f"?q=g:{group_id}+AND+a:{artifact_id}&rows=1&wt=json"
+    )
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        docs = resp.json()["response"]["docs"]
+        if not docs:
+            return None
+        version = docs[0].get("latestVersion", "")
+        timestamp_ms = docs[0].get("timestamp", 0)
+        date = ""
+        if timestamp_ms:
+            from datetime import datetime, timezone
+            date = datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
+        return {"version": version, "date": date, "changelog": ""}
+    except Exception as exc:
+        print(f"  Maven Central lookup failed for {coordinates}: {exc}", file=sys.stderr)
+        return None
+
+
+def fetch_from_github(repo_id: str) -> dict | None:
+    """Fetch latest release from GitHub."""
     url = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases/latest"
     headers = {"Accept": "application/vnd.github.v3+json"}
     if GITHUB_TOKEN:
@@ -50,6 +80,20 @@ def fetch_latest_release(repo_id: str) -> dict | None:
     date = (data.get("published_at") or "")[:10]
     changelog = process_changelog(data.get("body", ""))
     return {"version": version, "date": date, "changelog": changelog}
+
+
+def fetch_latest_release(entry: dict) -> dict | None:
+    repo_id = entry["id"]
+    maven = entry.get("maven_coordinates")
+
+    if maven:
+        result = fetch_from_maven_central(maven)
+        if result:
+            print(f"  {repo_id}: Maven Central → {result['version']}")
+            return result
+        print(f"  {repo_id}: Maven Central miss, falling back to GitHub")
+
+    return fetch_from_github(repo_id)
 
 
 def main():
@@ -78,7 +122,7 @@ def main():
         tool_id = entry["id"]
         if entry.get("no_release"):
             continue
-        result = fetch_latest_release(tool_id)
+        result = fetch_latest_release(entry)
         if result is None:
             print(f"  {tool_id}: no release found, keeping existing")
             if tool_id not in new_entries:

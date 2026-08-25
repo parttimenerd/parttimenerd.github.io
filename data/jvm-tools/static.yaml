@@ -98,18 +98,18 @@
   note: ""
 
 - id: tiny-profiler
-  tag: experimental
+  tag: demo
   group: "JFR / Profiling"
   tagline: "Educational sampling profiler for Java 17+, written entirely in Java. Uses Thread.getAllStackTraces() to collect samples and outputs method tables and interactive HTML flamegraphs via d3-flame-graph. Simple enough to read in an afternoon."
   screenshot: ""
   static_version: ""
-  when_to_use:
-    - You want to understand how a sampling profiler works from the inside
-    - You need a dead-simple profiler with no native code, no agents, no setup
-    - You are teaching or learning about profiling and want something readable
-  when_not_to_use:
-    - You need accurate profiling (safepoint bias affects results)
-    - You need allocation or wall-clock profiling (use async-profiler or JFR instead)
+  features:
+    - Pure Java — no native code, no JVM agents, no setup beyond a JAR
+    - Outputs method tables and interactive HTML flamegraphs (d3-flame-graph)
+    - Safepoint-biased sampling via Thread.getAllStackTraces() — intentionally simple
+    - Small enough to read the entire source in a single sitting
+  when_to_use: ~
+  when_not_to_use: ~
   vs: ~
   related:
     - { label: "writing-a-profiler", url: "https://github.com/parttimenerd/writing-a-profiler" }

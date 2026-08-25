@@ -87,16 +87,18 @@
   note: ""
 
 - id: sound-of-scheduling
-  tag: poc
+  tag: demo
   group: "eBPF"
   tagline: "A Linux scheduler written in Java using hello-ebpf that translates scheduling decisions into MIDI notes in real time — each CPU core gets a voice, and context switches become music."
   screenshot: ""
   static_version: ""
-  when_to_use:
-    - You want to hear what your CPU scheduler is doing
-    - You are giving a live demo about sched-ext or hello-ebpf and want something memorable
-  when_not_to_use:
-    - You need it for anything practical
+  features:
+    - Each CPU core maps to a distinct MIDI instrument voice
+    - Context switches and wakeups trigger notes in real time
+    - Built on hello-ebpf's sched-ext Java API
+    - Great for live demos of eBPF and Java scheduling
+  when_to_use: ~
+  when_not_to_use: ~
   vs: ~
   related:
     - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
