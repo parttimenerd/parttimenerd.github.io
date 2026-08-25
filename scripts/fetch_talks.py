@@ -6,7 +6,15 @@ Writes data/talks.json  (list of upcoming talks sorted by date ascending).
 Each entry:
   { "date": "2026-09-08", "date_display": "Sep 8 - 9, 2026",
     "conference": "JavaZone", "conf_url": "https://...",
-    "location": "Oslo, Norway", "link_text": "Schedule", "link_url": "https://..." }
+    "location": "Oslo, Norway",
+    "title": "My Talk Title",
+    "co_speaker": "Jane Smith",   # optional
+    "link_text": "Schedule", "link_url": "https://..." }
+
+Talk title is taken from the nearest preceding H2/H3 heading or bold paragraph
+that acts as a section title (lines like "### Title" or "**Title**\n------").
+Co-speaker is parsed from the links column when it contains plain text like
+"joint talk with Name" alongside any markdown links.
 """
 
 import json
@@ -48,24 +56,56 @@ def first_md_link(text: str) -> tuple[str, str]:
     return "", ""
 
 
+def parse_co_speaker(link_raw: str) -> str:
+    """Extract co-speaker from text like 'joint talk with Jake Hillion'."""
+    # Remove all markdown links first
+    plain = re.sub(r"\[([^\]]+)\]\([^)]+\)", "", link_raw).strip()
+    # Strip trailing/leading punctuation left by link removal
+    plain = re.sub(r"^[,\s]+|[,\s]+$", "", plain)
+    m = re.search(r"(?:joint talk with|w/)\s+(.+)", plain, re.IGNORECASE)
+    if m:
+        return m.group(1).strip().rstrip(".")
+    return ""
+
+
 def parse_tables(md: str) -> list[dict]:
     """
     Parse all GFM tables whose header contains 'Date' and 'Event'.
-    Returns rows as dicts with keys: date_raw, conf_raw, loc_raw, link_raw.
+    Attach the nearest preceding section title to each table's rows.
+    Returns rows as dicts with keys: date_raw, conf_raw, loc_raw, link_raw, title.
     """
     rows = []
     lines = md.splitlines()
+    current_title = ""
+
     i = 0
     while i < len(lines):
         line = lines[i]
+
+        # Track section title: ATX heading (## / ###) or setext underline (-----)
+        atx = re.match(r"^#{2,3}\s+(.+)$", line)
+        if atx:
+            t = atx.group(1).strip()
+            # Ignore structural headings like "Non-Java Presentations"
+            if not re.search(r"Presentation|Speaker|Schedule|Upcoming|Past", t, re.I):
+                current_title = t
+            i += 1
+            continue
+
+        setext = (i + 1 < len(lines) and re.match(r"^-{3,}$", lines[i + 1].strip()))
+        if setext and line.strip() and not re.match(r"^[-|]", line):
+            t = line.strip()
+            if not re.search(r"Presentation|Speaker|Schedule|Upcoming|Past|Date\s*\|", t, re.I):
+                current_title = t
+            i += 2
+            continue
+
         # Detect header row
         if re.search(r"Date\s*\|.*Event", line):
-            # Next line must be a separator (only dashes, pipes, spaces)
             if i + 1 < len(lines) and re.match(r"^[-| ]+$", lines[i + 1]):
                 i += 2  # skip header + separator
                 while i < len(lines) and lines[i].strip() and "|" in lines[i]:
                     cols = [c.strip() for c in lines[i].split("|")]
-                    # Strip \xa0 (non-breaking space)
                     cols = [c.replace("\xa0", " ").strip() for c in cols]
                     if len(cols) >= 2:
                         rows.append({
@@ -73,9 +113,11 @@ def parse_tables(md: str) -> list[dict]:
                             "conf_raw": cols[1] if len(cols) > 1 else "",
                             "loc_raw":  cols[2] if len(cols) > 2 else "",
                             "link_raw": cols[3] if len(cols) > 3 else "",
+                            "title":    current_title,
                         })
                     i += 1
                 continue
+
         i += 1
     return rows
 
@@ -99,21 +141,27 @@ def fetch() -> list[dict]:
             conf_name = row["conf_raw"]
 
         link_label, link_url = first_md_link(row["link_raw"])
+        co_speaker = parse_co_speaker(row["link_raw"])
 
         key = (d.isoformat(), conf_name)
         if key in seen:
             continue
         seen.add(key)
 
-        upcoming.append({
+        entry: dict = {
             "date":         d.isoformat(),
             "date_display": row["date_raw"],
             "conference":   conf_name,
             "conf_url":     conf_url,
             "location":     row["loc_raw"],
+            "title":        row["title"],
             "link_text":    link_label,
             "link_url":     link_url,
-        })
+        }
+        if co_speaker:
+            entry["co_speaker"] = co_speaker
+
+        upcoming.append(entry)
 
     upcoming.sort(key=lambda t: t["date"])
     return upcoming

@@ -2,6 +2,7 @@
   tag: ready
   group: "Live JVM Inspection"
   tagline: "One-shot CLI inspector for running JVMs. Detects deadlocks, identifies hot threads, captures short-burst flamegraphs via async-profiler, and provides a live TUI — all without a persistent agent or IDE attachment."
+  tagline_short: "One-shot CLI inspector: deadlocks, hot threads, flamegraphs — no agent needed."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -38,6 +39,7 @@
   tag: ready
   group: "Live JVM Inspection"
   tagline: "Cloud Foundry CLI plugin to troubleshoot Java apps running on CF without SSH. Trigger heap dumps, thread dumps, and JFR recordings from the cf command line, with the results streamed back to your machine."
+  tagline_short: "Trigger heap dumps, thread dumps, and JFR recordings from the CF CLI."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -68,6 +70,7 @@
   tag: experimental
   group: "Agent Development"
   tagline: "Java agent that wraps another agent and intercepts its ClassFileTransformer calls. Lets you see exactly which classes get transformed, what the bytecode looks like before and after, and how long each transformation takes."
+  tagline_short: "Wraps any Java agent and logs exactly which classes it transforms."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -101,6 +104,7 @@
   tag: demo
   group: "JFR / Profiling"
   tagline: "Educational sampling profiler for Java 17+, written entirely in Java. Uses Thread.getAllStackTraces() to collect samples and outputs method tables and interactive HTML flamegraphs via d3-flame-graph. Simple enough to read in an afternoon."
+  tagline_short: "Educational Java profiler — pure Java, flamegraph output, reads in an afternoon."
   screenshot: ""
   static_version: ""
   features:
@@ -135,6 +139,7 @@
   tag: ready
   group: "JFR / Profiling"
   tagline: "Ecosystem of tools to convert, view, and share JFR recordings. Converts JFR files to the Firefox Profiler JSON format, bundles a patched Firefox Profiler instance as a server, and provides an IntelliJ plugin that profiles and views results directly in the IDE."
+  tagline_short: "View and share JFR recordings as Firefox Profiler flame graphs."
   screenshot: "https://mostlynerdless.de/wp-content/uploads/2023/01/Screenshot-2023-01-27-at-12.31.55-2048x1230.png"
   static_version: "2026-07"
   when_to_use:
@@ -166,8 +171,10 @@
   tag: experimental
   group: "JFR / Profiling"
   tagline: "Turns JFR recordings into a DuckDB database and exposes them through an in-browser notebook UI. Write SQL, get charts, explore event distributions, and use built-in views for common analyses — without installing anything."
+  tagline_short: "SQL notebook for JFR recordings via an in-browser DuckDB interface."
   screenshot: ""
   static_version: ""
+  github_pages: "https://parttimenerd.github.io/jfr-query/"
   when_to_use:
     - You want to run ad-hoc SQL queries over JFR event data
     - You need charts and notebook-style exploration of recordings
@@ -193,6 +200,7 @@
   tag: experimental
   group: "JFR / Profiling"
   tagline: "Library and tool for storing JFR events in the self-describing .cjfr format. Designed for long-term, low-overhead recording: compresses events significantly compared to raw JFR, supports live-attach, and ships a reader library for querying stored data."
+  tagline_short: "Compact long-term JFR event storage in the self-describing .cjfr format."
   screenshot: ""
   static_version: "latest"
   when_to_use:
@@ -229,8 +237,10 @@
   tag: ready
   group: "JFR / Profiling"
   tagline: "Reference site listing every JFR event across JDK versions, with field names, types, descriptions, and benchmark-derived examples showing which events fire at what rate. Maintained as part of SapMachine."
+  tagline_short: "Reference site for every JFR event across JDK versions."
   screenshot: ""
   static_version: ""
+  github_pages: "https://sap.github.io/jfrevents/"
   when_to_use:
     - You need to know what fields a JFR event has across JDK versions
     - You are writing JFR tooling and need event documentation
@@ -250,6 +260,7 @@
   tag: poc
   group: "JFR / Profiling"
   tagline: "Strips sensitive strings, file paths, environment variables, and other PII from JFR recordings before you share them, while preserving the recording structure and all non-sensitive event data."
+  tagline_short: "Strips PII and secrets from JFR recordings before sharing."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -282,8 +293,11 @@
   tag: experimental
   group: "Heap Dump Analysis"
   tagline: "Fast heap dump analyser written in Rust with a Java CLI frontend. Reproduces the key Eclipse MAT views — System Overview, Leak Suspects, Top Consumers, Threads — with a fraction of the memory overhead, and handles dumps larger than 10 GiB that MAT cannot open. Also available as an in-browser WASM tool for smaller dumps."
+  tagline_short: "Fast Rust-based heap dump analyser — handles >10 GiB dumps MAT cannot open."
   screenshot: ""
   static_version: ""
+  cargo_crate: "hprof-analyzer"
+  github_pages: "https://parttimenerd.github.io/hprof-analyzer/"
   when_to_use:
     - You need to analyse a heap dump without Eclipse MAT's memory overhead
     - You have a very large heap dump (>10 GiB) that MAT cannot handle
@@ -314,6 +328,7 @@
   tag: poc
   group: "Heap Dump Analysis"
   tagline: "Stream-based tool that redacts primitive values and strings from HPROF heap dumps without loading the full dump into memory, preserving the binary structure so the result remains a valid HPROF file."
+  tagline_short: "Stream-redacts strings from HPROF heap dumps without loading them into memory."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -346,8 +361,10 @@
   tag: poc
   group: "Crash / Log Diagnostics"
   tagline: "Parser and transformer for HotSpot hs_err_pid crash files. Turns the raw crash report into a typed Java model you can query, redact, or re-render. Also available as a web UI for one-off redaction without installing anything."
+  tagline_short: "Parses and redacts HotSpot hs_err_pid crash files."
   screenshot: ""
   static_version: ""
+  github_pages: "https://parttimenerd.github.io/jhserr/"
   when_to_use:
     - You need to parse hs_err crash files into a typed Java model
     - You need to redact sensitive paths or env vars before sharing crash reports
@@ -380,8 +397,10 @@
   tag: ready
   group: "Crash / Log Diagnostics"
   tagline: "Interactive browser tool for exploring OpenJDK's -Xlog subsystem. Enter a log config and see exactly which log statements match, with source context and cross-version coverage so you know what to expect before you deploy."
+  tagline_short: "Interactive browser tool for exploring OpenJDK's -Xlog subsystem."
   screenshot: ""
   static_version: ""
+  github_pages: "https://parttimenerd.github.io/jdklogs/"
   when_to_use:
     - You need to understand JDK logging output and what -Xlog config produces it
     - You want to explore -Xlog tags across JDK versions with source context
@@ -406,6 +425,7 @@
   tag: experimental
   group: "JAR Packaging"
   tagline: "CLI tool and Maven plugin that wraps a fat JAR in a small shell stub, producing a single self-contained file that is directly executable on Linux and macOS without a launcher script or explicit java -jar invocation."
+  tagline_short: "Wraps a fat JAR into a directly executable file on Linux and macOS."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -444,6 +464,7 @@
   tag: ready
   group: "Learning Resources"
   tagline: "Code companion for the 'Writing a Profiler from Scratch' blog series on mostlynerdless.de and foojay.io. Each chapter has its own tagged commit, so you can follow along from a basic safepoint-biased sampler all the way to an AsyncGetCallTrace-based profiler."
+  tagline_short: "Code companion for the 'Writing a Profiler from Scratch' blog series."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -463,15 +484,18 @@
 
 - id: firefox-profiler
   tag: experimental
-  group: "Learning Resources"
-  tagline: "Fork of the Firefox Profiler web app with patches that add native JFR file loading and JFR-specific UI improvements. Used as the embedded viewer in jfrtofp-server, and available for local hosting when you need a customised profiler UI."
+  group: "JFR / Profiling"
+  tagline: "Fork of the Firefox Profiler web app with patches that add native JFR file loading and JFR-specific UI improvements. Open a JFR recording directly in the browser — no server, no conversion step. Used as the embedded viewer in jfrtofp-server."
+  tagline_short: "Fork of Firefox Profiler that opens JFR recordings natively in the browser."
   screenshot: ""
   static_version: ""
   when_to_use:
-    - You want to view JFR recordings in the Firefox Profiler UI (via jfrtofp)
+    - You want to open a JFR recording directly in the Firefox Profiler UI without a conversion step
+    - You are using jfrtofp-server and want the embedded profiler viewer
     - You need a locally-hosted profiler viewer with JFR-specific patches
   when_not_to_use:
     - You want the upstream Firefox Profiler without JFR customisations
+    - You are not working with JFR recordings
   vs: ~
   related:
     - { label: "jfrtofp", url: "https://github.com/parttimenerd/jfrtofp" }
@@ -483,10 +507,55 @@
   usage: ~
   note: "Used by jfrtofp-server as the embedded viewer."
 
+- id: test-order
+  tag: experimental
+  group: "Testing"
+  tagline: "Maven and Gradle plugin that reorders your test suite so tests covering recently changed code run first. Uses bytecode instrumentation to track class-to-test coverage, then on the next run promotes affected tests to the front — without any annotations or configuration."
+  tagline_short: "Runs the tests most likely to fail first, based on your recent code changes."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want faster feedback in CI by surfacing relevant failures early
+    - Your test suite is large enough that waiting for the full run hurts productivity
+    - You want zero-config test prioritisation with Maven or Gradle
+  when_not_to_use:
+    - You need cross-module coverage tracking (single-module only for now)
+    - You are not using Maven or Gradle
+  vs: ~
+  related: []
+  links:
+    - { label: "Docs ↗", url: "https://parttimenerd.github.io/test-order/" }
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <plugin>
+          <groupId>me.bechberger</groupId>
+          <artifactId>test-order-maven-plugin</artifactId>
+          <version>VERSION</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <goals><goal>prepare</goal></goals>
+            </execution>
+          </executions>
+        </plugin>
+  usage:
+    - label: Run tests
+      lang: bash
+      code: |
+        mvn test          # first run: learns coverage
+        mvn test          # second run: affected tests go first
+        mvn test-order:show      # inspect ranking
+        mvn test-order:dashboard # HTML report
+  note: ""
+
 - id: jthreaddump
   tag: ready
   group: "Libraries"
   tagline: "Java library for parsing thread dump output from jstack and jcmd into a typed model. Handles all major thread dump formats across JDK versions, including virtual threads, giving you structured access to thread states, stack frames, and lock information."
+  tagline_short: "Parse jstack/jcmd thread dumps into a typed Java model."
   screenshot: ""
   static_version: ""
   when_to_use:

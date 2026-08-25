@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --nav-h: 3rem; /* matches h-12 on the sticky top bar */
+}
+
 /* Tag badge colours */
 @layer components {
   .badge {

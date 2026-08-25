@@ -6,8 +6,11 @@ Reads  data/<section>/static.yaml
 Writes data/<section>/releases.json  (only if any version changed)
 
 Version resolution order (first hit wins):
-  1. Maven Central  — if entry has maven_coordinates: "groupId:artifactId"
-  2. GitHub releases — parttimenerd/<id>/releases/latest
+  1. crates.io    — if entry has cargo_crate: "<crate-name>"
+  2. Maven Central — if entry has maven_coordinates: "groupId:artifactId"
+  3. GitHub releases — parttimenerd/<id>/releases, skipping rolling tags
+                       (tag names matching snapshot/nightly/latest/rc/alpha/beta
+                        are skipped; the most recent stable release is used)
 """
 
 import argparse
@@ -22,6 +25,10 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+
+# Tag names (case-insensitive) treated as rolling/pre-release — skipped when
+# looking for the latest stable release.
+ROLLING_TAGS = re.compile(r"^(snapshot|nightly|latest|rc[\d.-]|alpha[\d.-]|beta[\d.-])", re.IGNORECASE)
 
 
 def process_changelog(body: str) -> str:
@@ -38,6 +45,27 @@ def process_changelog(body: str) -> str:
     if len(result) > 300:
         result = result[:297] + "…"
     return result
+
+
+def fetch_from_crates_io(crate_name: str) -> dict | None:
+    """Fetch latest stable version from crates.io."""
+    url = f"https://crates.io/api/v1/crates/{crate_name}"
+    headers = {"User-Agent": "parttimenerd-site-builder/1.0 (https://parttimenerd.github.io)"}
+    try:
+        resp = requests.get(url, headers=headers, timeout=10)
+        if resp.status_code == 404:
+            return None
+        resp.raise_for_status()
+        data = resp.json()
+        crate = data.get("crate", {})
+        version = crate.get("newest_version", "")
+        updated = (crate.get("updated_at") or "")[:10]
+        if not version:
+            return None
+        return {"version": version, "date": updated, "changelog": ""}
+    except Exception as exc:
+        print(f"  crates.io lookup failed for {crate_name}: {exc}", file=sys.stderr)
+        return None
 
 
 def fetch_from_maven_central(coordinates: str) -> dict | None:
@@ -66,26 +94,56 @@ def fetch_from_maven_central(coordinates: str) -> dict | None:
 
 
 def fetch_from_github(repo_id: str) -> dict | None:
-    """Fetch latest release from GitHub."""
-    url = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases/latest"
+    """Fetch latest stable release from GitHub, skipping rolling tags."""
     headers = {"Accept": "application/vnd.github.v3+json"}
     if GITHUB_TOKEN:
         headers["Authorization"] = f"token {GITHUB_TOKEN}"
-    resp = requests.get(url, headers=headers, timeout=10)
-    if resp.status_code == 404:
+
+    # First try /releases/latest — fastest path for repos with proper releases
+    url_latest = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases/latest"
+    resp = requests.get(url_latest, headers=headers, timeout=10)
+    if resp.status_code == 200:
+        data = resp.json()
+        tag = data.get("tag_name", "")
+        if not ROLLING_TAGS.match(tag) and not data.get("prerelease") and not data.get("draft"):
+            version = tag.lstrip("v")
+            date = (data.get("published_at") or "")[:10]
+            changelog = process_changelog(data.get("body", ""))
+            return {"version": version, "date": date, "changelog": changelog}
+
+    # /releases/latest returned a rolling tag or 404 — scan the list for the
+    # most recent non-rolling, non-prerelease release
+    url_list = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases?per_page=20"
+    resp2 = requests.get(url_list, headers=headers, timeout=10)
+    if resp2.status_code != 200:
         return None
-    resp.raise_for_status()
-    data = resp.json()
-    version = data.get("tag_name", "").lstrip("v")
-    date = (data.get("published_at") or "")[:10]
-    changelog = process_changelog(data.get("body", ""))
-    return {"version": version, "date": date, "changelog": changelog}
+    releases = resp2.json()
+    for rel in releases:
+        if rel.get("prerelease") or rel.get("draft"):
+            continue
+        tag = rel.get("tag_name", "")
+        if ROLLING_TAGS.match(tag):
+            continue
+        version = tag.lstrip("v")
+        date = (rel.get("published_at") or "")[:10]
+        changelog = process_changelog(rel.get("body", ""))
+        return {"version": version, "date": date, "changelog": changelog}
+
+    return None
 
 
 def fetch_latest_release(entry: dict) -> dict | None:
     repo_id = entry["id"]
-    maven = entry.get("maven_coordinates")
 
+    cargo = entry.get("cargo_crate")
+    if cargo:
+        result = fetch_from_crates_io(cargo)
+        if result:
+            print(f"  {repo_id}: crates.io → {result['version']}")
+            return result
+        print(f"  {repo_id}: crates.io miss, falling back to GitHub")
+
+    maven = entry.get("maven_coordinates")
     if maven:
         result = fetch_from_maven_central(maven)
         if result:
@@ -126,7 +184,7 @@ def main():
         if result is None:
             print(f"  {tool_id}: no release found, keeping existing")
             if tool_id not in new_entries:
-                new_entries[tool_id] = {"version": "unreleased", "date": "", "changelog": ""}
+                new_entries[tool_id] = {"version": "", "date": "", "changelog": ""}
             continue
         prev = existing.get(tool_id, {})
         if result["version"] != prev.get("version"):

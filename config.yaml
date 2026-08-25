@@ -12,3 +12,7 @@ params:
     - label: "experiments"
       url: /experiments/
   blog_url: "https://mostlynerdless.de"
+  # Top bar height in px — used for scroll-padding and sticky offsets
+  nav_height_px: 48
+  # Tool-nav bar height in px (the secondary sticky bar on collection pages)
+  tool_nav_height_px: 40

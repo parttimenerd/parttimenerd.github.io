@@ -2,8 +2,9 @@
   tag: experimental
   group: "eBPF"
   tagline: "The first eBPF library for Java. Write eBPF programs and the accompanying user-land code in pure Java 21+, without leaving the JVM. Covers tracepoints, kprobes, uprobes, network filters, and custom Linux schedulers via sched-ext."
+  tagline_short: "Write eBPF programs in pure Java 21+ — tracepoints, kprobes, schedulers."
   screenshot: ""
-  static_version: ""
+  static_version: "0.1.4"
   when_to_use:
     - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
     - You are exploring Linux kernel internals from Java
@@ -40,6 +41,7 @@
   tag: experimental
   group: "eBPF"
   tagline: "Custom Linux sched-ext scheduler written in Java with hello-ebpf that deliberately perturbs thread scheduling to expose race conditions and lock ordering bugs in concurrent Java code."
+  tagline_short: "eBPF scheduler that perturbs thread scheduling to surface race conditions."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -62,6 +64,7 @@
   tag: experimental
   group: "eBPF"
   tagline: "Java API that sits on top of hello-ebpf and exposes fine-grained control over Linux thread scheduling, letting tests pause, resume, and reorder threads to reproduce hard-to-trigger concurrency bugs."
+  tagline_short: "Fine-grained Java API to pause, resume, and reorder threads in tests."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -71,6 +74,7 @@
     - You need portable cross-platform scheduling control
   vs: ~
   related:
+    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
     - { label: "concurrency-fuzz-scheduler", url: "https://github.com/parttimenerd/concurrency-fuzz-scheduler" }
   links: []
   no_release: false
@@ -90,6 +94,7 @@
   tag: demo
   group: "eBPF"
   tagline: "A Linux scheduler written in Java using hello-ebpf that translates scheduling decisions into MIDI notes in real time — each CPU core gets a voice, and context switches become music."
+  tagline_short: "Linux scheduler written in Java that turns context switches into MIDI music."
   screenshot: ""
   static_version: ""
   features:
@@ -113,6 +118,7 @@
   tag: experimental
   group: "Misc"
   tagline: "Static analyser that scans your Java source tree and reports the minimum language level each file actually requires, so you know exactly what is preventing you from lowering --release."
+  tagline_short: "Reports the minimum Java language level each source file actually requires."
   screenshot: ""
   static_version: ""
   when_to_use:

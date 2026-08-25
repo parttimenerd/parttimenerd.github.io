@@ -6,6 +6,7 @@
       "conference": "JavaZone",
       "conf_url": "https://javazone.no",
       "location": "Oslo, Norway",
+      "title": "Let's create a tiny AI library together",
       "link_text": "",
       "link_url": ""
     },
@@ -15,6 +16,7 @@
       "conference": "Berlin Expert Days",
       "conf_url": "https://www.bed-con.org",
       "location": "Berlin, Germany",
+      "title": "Let's create a tiny AI library together",
       "link_text": "",
       "link_url": ""
     },
@@ -24,6 +26,7 @@
       "conference": "BaselOne",
       "conf_url": "https://baselone.org/",
       "location": "Basel, Switzerland",
+      "title": "You Are Running the Wrong Tests First",
       "link_text": "Program",
       "link_url": "https://baselone.org/#programm"
     },
@@ -33,8 +36,10 @@
       "conference": "Hello Stavanger",
       "conf_url": "https://www.hellostavanger.no/",
       "location": "Stavanger, Norway",
+      "title": "You Are Running the Wrong Tests First",
       "link_text": "",
-      "link_url": ""
+      "link_url": "",
+      "co_speaker": "Jake Hillion"
     },
     {
       "date": "2026-12-07",
@@ -42,6 +47,7 @@
       "conference": "Frankfurter IT-Tage",
       "conf_url": "https://www.ittage.informatik-aktuell.de",
       "location": "Frankfurt, Germany",
+      "title": "You Are Running the Wrong Tests First",
       "link_text": "",
       "link_url": ""
     }

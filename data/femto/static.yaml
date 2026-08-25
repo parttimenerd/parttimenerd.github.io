@@ -2,6 +2,7 @@
   tag: ready
   group: ""
   tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64."
+  tagline_short: "LZ4 frame compression for Java — ~50 KB, zero dependencies, optional native acceleration."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -63,6 +64,7 @@
   tag: ready
   group: ""
   tagline: "Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands, option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime."
+  tagline_short: "Annotation-driven CLI framework for Java — under 65 KB, zero dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -129,6 +131,7 @@
   tag: ready
   group: ""
   tagline: "Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API — no POJO binding, no annotations, just parse and go."
+  tagline_short: "Tiny zero-dependency JSON parser and pretty-printer for Java."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -182,6 +185,7 @@
   tag: poc
   group: ""
   tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically, export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages."
+  tagline_short: "Lightweight JSON Schema validator for Java with zero dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -241,6 +245,7 @@
   tag: ready
   group: ""
   tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction."
+  tagline_short: "Reduces fat JAR size by stripping unused classes and resources."
   screenshot: ""
   static_version: ""
   when_to_use:
