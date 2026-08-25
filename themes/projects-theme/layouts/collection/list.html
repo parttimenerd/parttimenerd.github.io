@@ -70,11 +70,11 @@
 
     {{/* Group heading in detail view */}}
     {{ if and .group (ne .group $lastGroup3) }}
-    <h2 class="text-2xl font-bold text-gray-800 mt-16 mb-2 border-b-2 border-gray-300 pb-2">{{ .group }}</h2>
+    <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mt-16 mb-0">{{ .group }}</h2>
     {{ end }}
     {{ $lastGroup3 = .group }}
 
-  <section id="{{ .id }}" class="mb-4 scroll-mt-24 border-t-2 border-gray-200 pt-10 mt-10 first:border-t-0 first:mt-0 first:pt-0">
+  <section id="{{ .id }}" class="mb-4 scroll-mt-24 mt-14 first:mt-0">
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
       <span class="tag-{{ .tag }}">{{ .tag }}</span>

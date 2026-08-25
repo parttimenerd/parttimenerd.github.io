@@ -119,10 +119,10 @@
   install: ~
   usage:
     - label: Open web app
-      lang: bash
+      lang: text
       code: |
-        # Open https://parttimenerd.github.io/jfr-query/
-        # Drag and drop your .jfr file
+        Open https://parttimenerd.github.io/jfr-query/
+        Drag and drop your .jfr file to get started.
   note: ""
 
 - id: condensed-data
@@ -331,10 +331,10 @@
   install: ~
   usage:
     - label: Use online
-      lang: bash
+      lang: text
       code: |
-        # Open https://parttimenerd.github.io/jdklogs/
-        # Enter your -Xlog config to see matching log statements
+        Open https://parttimenerd.github.io/jdklogs/
+        Enter your -Xlog config to see matching log statements.
   note: ""
 
 - id: jthreaddump
