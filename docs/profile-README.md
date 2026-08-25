@@ -1,11 +1,5 @@
 ## Johannes Bechberger (@parttimenerd)
 
-> JVM Engineer · SapMachine team at SAP
-
-[GitHub](https://github.com/parttimenerd) · [Twitter/X](https://twitter.com/parttimen3rd) · [Mastodon](https://fosstodon.org/@parttimenerd) · [LinkedIn](https://www.linkedin.com/in/johannes-bechberger) · [Blog](https://mostlynerdless.de) · [Website](https://parttimenerd.github.io/)
-
----
-
 I'm a JVM engineer on the SapMachine team at SAP. I work on profiling tooling — async-profiler, JFR, FirefoxProfiler for Java — and created hello-ebpf, the first eBPF library for Java. I write about profiling, debugging, and the JVM internals at [Mostly Nerdless](https://mostlynerdless.de).
 
 `Profiling` `OpenJDK` `Java` `Java Performance` `Debugging` `eBPF`

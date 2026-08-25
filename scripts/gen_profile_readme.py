@@ -23,15 +23,6 @@ OUT  = ROOT / "docs" / "profile-README.md"
 
 TOPICS = ["Profiling", "OpenJDK", "Java", "Java Performance", "Debugging", "eBPF"]
 
-SOCIAL = [
-    ("GitHub",    "https://github.com/parttimenerd"),
-    ("Twitter/X", "https://twitter.com/parttimen3rd"),
-    ("Mastodon",  "https://fosstodon.org/@parttimenerd"),
-    ("LinkedIn",  "https://www.linkedin.com/in/johannes-bechberger"),
-    ("Blog",      "https://mostlynerdless.de"),
-    ("Website",   "https://parttimenerd.github.io/"),
-]
-
 
 def read_bio() -> str:
     raw = (ROOT / "content" / "_index.md").read_text()
@@ -63,14 +54,8 @@ def render(bio: str, talks: list[dict], posts: list[dict]) -> str:
 
     # ── Header ───────────────────────────────────────────────────────────────
     lines.append("## Johannes Bechberger (@parttimenerd)\n")
-    lines.append("> JVM Engineer · SapMachine team at SAP\n")
-
-    # ── Social links ─────────────────────────────────────────────────────────
-    social_md = " · ".join(f"[{label}]({url})" for label, url in SOCIAL)
-    lines.append(social_md + "\n")
 
     # ── Bio ───────────────────────────────────────────────────────────────────
-    lines.append("---\n")
     lines.append(bio + "\n")
 
     # ── Topics ────────────────────────────────────────────────────────────────
