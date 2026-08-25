@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {{ $navH := site.Params.nav_height_px | default 48 }}
 {{ $toolNavH := site.Params.tool_nav_height_px | default 40 }}
-{{ $scrollPad := add $navH $toolNavH }}
 <html lang="en" style="scroll-padding-top: 100px">
 <head>
   <meta charset="UTF-8">
@@ -41,19 +40,23 @@
   {{ $js := resources.Get "js/main.js" | js.Build (dict "minify" true "target" "es2017") | fingerprint }}
   <script src="{{ $js.RelPermalink }}" defer></script>
 </head>
-<body class="font-['Inter'] text-gray-900 bg-white min-h-screen flex flex-col">
+<body class="font-['Inter'] text-gray-900 min-h-screen flex flex-col" style="background:var(--page-bg)">
 
   <!-- Top nav -->
-  <header class="sticky top-0 z-40 bg-white border-b border-gray-200" x-data="{ open: false }">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm" x-data="{ open: false }">
     <div class="max-w-5xl mx-auto px-4 h-12 flex items-center justify-between">
-      <a href="/" class="font-['Vollkorn'] font-bold text-lg text-gray-900 hover:text-gray-600">Johannes Bechberger <span class="text-gray-400 font-normal text-base">@parttimenerd</span></a>
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="font-mono text-blue-600 text-sm font-bold group-hover:text-blue-700 transition-colors select-none">&gt;_</span>
+        <span class="font-['Vollkorn'] font-bold text-lg text-gray-900 group-hover:text-gray-700 transition-colors">Johannes Bechberger</span>
+        <span class="text-gray-400 font-mono text-xs hidden sm:inline">@parttimenerd</span>
+      </a>
       <!-- Desktop nav -->
-      <nav class="hidden md:flex items-center gap-6 text-sm">
+      <nav class="hidden md:flex items-center gap-1 text-sm">
         {{ range site.Params.nav }}
-        <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
+        <a href="{{ .url }}" class="px-3 py-1.5 rounded text-gray-500 hover:text-gray-900 hover:bg-gray-100 font-medium transition-colors font-mono text-xs">{{ .label }}</a>
         {{ end }}
         <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-           class="icon-ext text-gray-600 hover:text-gray-900 font-medium">blog</a>
+           class="icon-ext px-3 py-1.5 rounded text-gray-500 hover:text-gray-900 hover:bg-gray-100 font-medium transition-colors font-mono text-xs">blog</a>
       </nav>
       <!-- Mobile hamburger -->
       <button @click="open = !open" aria-label="Toggle navigation menu"
@@ -66,12 +69,12 @@
     </div>
     <!-- Mobile menu -->
     <nav x-show="open" x-cloak @keydown.escape.window="open = false"
-         class="md:hidden border-t border-gray-200 bg-white px-4 py-3 flex flex-col gap-3 text-sm">
+         class="md:hidden border-t border-gray-200 bg-white px-4 py-3 flex flex-col gap-1 text-sm">
       {{ range site.Params.nav }}
-      <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
+      <a href="{{ .url }}" class="px-3 py-2 rounded text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-mono text-xs font-medium">{{ .label }}</a>
       {{ end }}
       <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-         class="icon-ext text-gray-600 hover:text-gray-900 font-medium">blog</a>
+         class="icon-ext px-3 py-2 rounded text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-mono text-xs font-medium">blog</a>
     </nav>
   </header>
 
@@ -79,10 +82,15 @@
     {{ block "main" . }}{{ end }}
   </main>
 
-  <footer class="border-t border-gray-200 mt-16 py-6 text-center text-sm text-gray-500">
-    Johannes Bechberger · SAP ·
-    <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="icon-github hover:text-gray-900">GitHub</a> ·
-    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="icon-ext hover:text-gray-900">Blog</a>
+  <footer class="border-t border-gray-200 mt-16 py-8" style="background:white">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
+      <span class="font-mono text-xs">// Johannes Bechberger · SAP SapMachine</span>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="icon-github hover:text-gray-700 transition-colors">GitHub</a>
+        <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="icon-ext hover:text-gray-700 transition-colors">Blog</a>
+        <a href="https://twitter.com/parttimen3rd" target="_blank" rel="noopener" class="hover:text-gray-700 transition-colors">@parttimen3rd</a>
+      </div>
+    </div>
   </footer>
 </body>
 </html>

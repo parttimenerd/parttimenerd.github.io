@@ -7,51 +7,56 @@
   {{ end }}
 {{ end }}
 
-<div class="max-w-3xl mx-auto px-4 py-12">
+<div class="max-w-2xl mx-auto px-4 py-10">
 
-  {{/* Profile header */}}
-  <div class="flex flex-col sm:flex-row gap-6 items-start mb-8">
+  {{/* ── Hero ─────────────────────────────────────────────────────────── */}}
+  <div class="flex flex-row gap-5 items-center mb-7">
     <img src="https://cdn.sessionize.com/image/6e22-400o400o2-P7HsDi55B4EQDRADmnt3vC.jpg"
          alt="Johannes Bechberger"
-         class="w-28 h-28 rounded-full object-cover flex-shrink-0 border-2 border-gray-100 shadow-sm">
+         style="width:5rem;height:5rem;border-radius:9999px;object-fit:cover;flex-shrink:0"
+         class="ring-2 ring-blue-100 shadow">
     <div>
-      <h1 class="font-['Vollkorn'] text-3xl font-bold mb-1">Johannes Bechberger</h1>
-      <p class="text-gray-500 mb-3">JVM Engineer · SapMachine team at SAP</p>
+      <h1 class="font-['Vollkorn'] text-2xl font-bold leading-tight mb-0.5">Johannes Bechberger</h1>
+      <p class="text-sm text-gray-500 mb-2.5 font-mono">JVM Engineer · SapMachine @ SAP</p>
       <div class="flex flex-wrap gap-3 text-sm">
         <a href="https://github.com/parttimenerd" target="_blank" rel="noopener"
-           class="icon-social-github text-gray-600 hover:text-gray-900 transition-colors">GitHub</a>
+           class="icon-social-github text-gray-500 hover:text-gray-900 transition-colors">GitHub</a>
         <a href="https://twitter.com/parttimen3rd" target="_blank" rel="noopener"
-           class="icon-social-twitter text-gray-600 hover:text-gray-900 transition-colors">Twitter/X</a>
+           class="icon-social-twitter text-gray-500 hover:text-gray-900 transition-colors">Twitter/X</a>
         <a href="https://fosstodon.org/@parttimenerd" target="_blank" rel="noopener"
-           class="icon-social-mastodon text-gray-600 hover:text-gray-900 transition-colors">Mastodon</a>
+           class="icon-social-mastodon text-gray-500 hover:text-gray-900 transition-colors">Mastodon</a>
         <a href="https://www.linkedin.com/in/johannes-bechberger" target="_blank" rel="noopener"
-           class="icon-social-linkedin text-gray-600 hover:text-gray-900 transition-colors">LinkedIn</a>
+           class="icon-social-linkedin text-gray-500 hover:text-gray-900 transition-colors">LinkedIn</a>
         <a href="https://mostlynerdless.de" target="_blank" rel="noopener"
-           class="icon-social-blog text-gray-600 hover:text-gray-900 transition-colors">Blog</a>
+           class="icon-social-blog text-gray-500 hover:text-gray-900 transition-colors">Blog</a>
       </div>
     </div>
   </div>
 
-  {{/* Bio */}}
-  <div class="text-gray-700 leading-relaxed mb-6">{{ .Content }}</div>
+  {{/* ── Bio ─────────────────────────────────────────────────────────── */}}
+  <p class="text-gray-700 leading-relaxed mb-6">{{ .Content }}</p>
 
-  {{/* Topics + awards */}}
-  <div class="flex flex-wrap gap-2 mb-10">
+  {{/* ── Topics ───────────────────────────────────────────────────────── */}}
+  <div class="flex flex-wrap gap-1.5 mb-3">
     {{ range (slice "Profiling" "OpenJDK" "Java" "Java Performance" "Debugging" "eBPF") }}
-    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">{{ . }}</span>
+    <span class="px-2.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-mono border border-gray-200">{{ . }}</span>
     {{ end }}
-    <span class="award-badge award-badge-gold">Sessionize Most Active Speaker 2024</span>
-    <span class="award-badge award-badge-java">Java MVP 2026</span>
   </div>
 
-  <div class="grid gap-8">
+  {{/* ── Awards ───────────────────────────────────────────────────────── */}}
+  <div class="flex flex-wrap gap-2 mb-9">
+    <span class="award-badge award-badge-gold text-xs">Sessionize Most Active Speaker 2024</span>
+    <span class="award-badge award-badge-java text-xs">Java MVP 2026</span>
+  </div>
 
-    {{/* Notable Projects */}}
+  <div class="flex flex-col gap-9">
+
+    {{/* ── Notable Projects ─────────────────────────────────────────── */}}
     {{ $notable := hugo.Data.notable_projects }}
     {{ if $notable }}
     <div>
-      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-4">Notable Projects</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="sec-heading mb-3"><span>Notable Projects</span></div>
+      <div class="flex flex-col">
         {{ range $notable }}
           {{ $proj  := index $allProjects .id }}
           {{ $tag   := .tagline }}
@@ -65,30 +70,26 @@
             {{ end }}
           {{ end }}
         <a href="{{ $ghURL }}" target="_blank" rel="noopener"
-           class="group flex items-start gap-3 p-3 rounded-lg border border-gray-100 hover:border-blue-200 hover:bg-blue-50/40 transition-all">
-          <span class="icon-social-github text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 mt-0.5"></span>
-          <div class="min-w-0">
-            <span class="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors text-sm block">{{ .id }}</span>
-            {{ if $tag }}<span class="text-xs text-gray-500 leading-snug block mt-0.5">{{ $tag }}</span>{{ end }}
-          </div>
+           class="group flex items-baseline gap-3 py-2 border-b border-gray-100 last:border-0 hover:bg-blue-50/50 -mx-2 px-2 rounded transition-colors">
+          <span class="font-mono text-sm font-semibold text-gray-900 group-hover:text-blue-700 transition-colors shrink-0">{{ .id }}</span>
+          {{ if $tag }}<span class="text-xs text-gray-400 leading-snug truncate">{{ $tag }}</span>{{ end }}
+          <span class="ml-auto text-gray-300 group-hover:text-blue-400 transition-colors text-xs shrink-0">→</span>
         </a>
         {{ end }}
       </div>
     </div>
     {{ end }}
 
-    {{/* Talks */}}
+    {{/* ── Talks ────────────────────────────────────────────────────── */}}
     <div>
-      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-4">Talks &amp; Presentations</h2>
+      <div class="sec-heading mb-3"><span>Talks &amp; Presentations</span></div>
       {{ $talks := hugo.Data.talks.talks }}
       {{ if $talks }}
-      <div class="mb-4">
-        <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Upcoming</p>
-        <div class="flex flex-col divide-y divide-gray-100">
+      <div class="flex flex-col mb-4">
         {{ range $talks }}
-        <div class="flex gap-3 items-start py-3 first:pt-0 last:pb-0">
-          <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 pt-0.5 leading-tight font-medium">
-            {{ .date_display | replaceRE ` - \d+, \d{4}$` "" }}
+        <div class="flex gap-3 items-start py-2 border-b border-gray-100 last:border-0">
+          <span class="font-mono text-xs text-gray-400 tabular-nums w-12 shrink-0 pt-0.5">
+            {{ .date_display | replaceRE ` - \d+, \d{4}$` "" | replaceRE `, \d{4}$` "" }}
           </span>
           <div class="flex flex-col gap-0.5 min-w-0">
             {{ if .title }}
@@ -114,36 +115,32 @@
           </div>
         </div>
         {{ end }}
-        </div>
       </div>
       {{ end }}
       <div class="flex gap-4 flex-wrap">
         <a href="https://github.com/SAP/SapMachine/wiki/Presentations" target="_blank" rel="noopener"
-           class="icon-ext text-sm text-blue-600 hover:text-blue-800">All presentations</a>
+           class="icon-ext text-xs text-blue-600 hover:text-blue-800 font-medium">All presentations</a>
         <a href="https://sessionize.com/johannes-bechberger" target="_blank" rel="noopener"
-           class="icon-ext text-sm text-blue-600 hover:text-blue-800">Sessionize profile</a>
+           class="icon-ext text-xs text-blue-600 hover:text-blue-800 font-medium">Sessionize profile</a>
       </div>
     </div>
 
-    {{/* Recent blog posts */}}
+    {{/* ── Recent blog posts ────────────────────────────────────────── */}}
     {{ $posts := hugo.Data.blog.posts }}
     {{ if $posts }}
     <div>
-      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-4">Recent Posts</h2>
-      <div class="flex flex-col divide-y divide-gray-100">
+      <div class="sec-heading mb-3"><span>Recent Posts</span></div>
+      <div class="flex flex-col mb-3">
         {{ range $posts }}
-        <div class="flex gap-3 items-baseline py-2.5 first:pt-0 last:pb-0">
-          <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 leading-tight font-medium">{{ .date_display }}</span>
+        <div class="flex gap-3 items-baseline py-2 border-b border-gray-100 last:border-0">
+          <span class="font-mono text-xs text-gray-400 tabular-nums w-12 shrink-0">{{ .date_display }}</span>
           <a href="{{ .url }}" target="_blank" rel="noopener"
-             class="icon-ext text-sm text-blue-600 hover:text-blue-800 leading-snug">{{ .title }}</a>
+             class="text-sm text-gray-800 hover:text-blue-700 leading-snug transition-colors">{{ .title }}</a>
         </div>
         {{ end }}
-        <div class="flex gap-3 items-baseline py-2.5">
-          <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 leading-tight"></span>
-          <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-             class="icon-ext text-sm text-blue-600 hover:text-blue-800">All posts — Mostly Nerdless</a>
-        </div>
       </div>
+      <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
+         class="icon-ext text-xs text-blue-600 hover:text-blue-800 font-medium">All posts — Mostly Nerdless</a>
     </div>
     {{ end }}
 
