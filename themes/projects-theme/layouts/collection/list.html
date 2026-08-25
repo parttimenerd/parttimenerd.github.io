@@ -57,7 +57,7 @@
         {{ if not $ver }}{{ $ver = .static_version }}{{ end }}
         {{ $date     := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
         {{ $isReleased := and $ver (ne $ver "unreleased") (ne $ver "latest") (ne $ver "snapshot") }}
-        {{ $ghLink   := .github_pages | default (printf "https://github.com/parttimenerd/%s" .id) }}
+        {{ $ghLink   := .github_pages | default (.github_url | default (printf "https://github.com/parttimenerd/%s" .id)) }}
         {{ $verURL   := printf "https://github.com/parttimenerd/%s/releases/tag/v%s" .id $ver }}
         {{ with .maven_coordinates }}
           {{ $parts := split . ":" }}
@@ -134,7 +134,7 @@
       <a href="{{ . }}" target="_blank" rel="noopener"
          class="text-sm text-blue-600 hover:text-blue-800">Web app 🔗</a>
       {{ end }}
-      <a href="https://github.com/parttimenerd/{{ .id }}" target="_blank" rel="noopener"
+      <a href="{{ .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}" target="_blank" rel="noopener"
          class="text-sm text-blue-600 hover:text-blue-800 ml-auto">GitHub 🔗</a>
     </div>
     <p class="text-gray-700 mb-4">{{ .tagline }}</p>

@@ -180,14 +180,21 @@ def fetch_maven(coordinates: str) -> dict | None:
 # GitHub
 # ---------------------------------------------------------------------------
 
-def fetch_from_github(repo_id: str) -> dict | None:
+def fetch_from_github(repo_id: str, github_url: str = "") -> dict | None:
     """Fetch latest stable release from GitHub, skipping rolling tags."""
+    # Derive owner/repo from github_url if provided, else default to parttimenerd/<id>
+    if github_url:
+        parts = github_url.rstrip("/").split("/")
+        repo_path = f"{parts[-2]}/{parts[-1]}"
+    else:
+        repo_path = f"parttimenerd/{repo_id}"
+
     headers = {"Accept": "application/vnd.github.v3+json"}
     if GITHUB_TOKEN:
         headers["Authorization"] = f"token {GITHUB_TOKEN}"
 
     # First try /releases/latest — fastest path for repos with proper releases
-    url_latest = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases/latest"
+    url_latest = f"https://api.github.com/repos/{repo_path}/releases/latest"
     resp = requests.get(url_latest, headers=headers, timeout=10)
     if resp.status_code == 200:
         data = resp.json()
@@ -200,7 +207,7 @@ def fetch_from_github(repo_id: str) -> dict | None:
 
     # /releases/latest returned a rolling tag or 404 — scan the list for the
     # most recent non-rolling, non-prerelease release
-    url_list = f"https://api.github.com/repos/parttimenerd/{repo_id}/releases?per_page=20"
+    url_list = f"https://api.github.com/repos/{repo_path}/releases?per_page=20"
     resp2 = requests.get(url_list, headers=headers, timeout=10)
     if resp2.status_code != 200:
         return None
@@ -242,7 +249,7 @@ def fetch_latest_release(entry: dict) -> dict | None:
             return result
         print(f"  {repo_id}: mvn/Maven Central miss, falling back to GitHub")
 
-    return fetch_from_github(repo_id)
+    return fetch_from_github(repo_id, entry.get("github_url", ""))
 
 
 def main():

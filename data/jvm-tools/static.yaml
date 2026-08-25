@@ -38,6 +38,7 @@
 - id: cf-cli-java-plugin
   tag: ready
   group: "Live JVM Inspection"
+  github_url: "https://github.com/SAP/cf-cli-java-plugin"
   tagline: "Cloud Foundry CLI plugin to troubleshoot Java apps running on CF without SSH. Trigger heap dumps, thread dumps, and JFR recordings from the cf command line, with the results streamed back to your machine. Use it when you need jstall-style JVM inspection but container SSH access is not available."
   tagline_short: "Trigger heap dumps, thread dumps, and JFR recordings from the CF CLI — no SSH needed."
   screenshot: ""
@@ -193,6 +194,7 @@
 - id: jfrevents
   tag: ready
   group: "JFR / Profiling"
+  github_url: "https://github.com/SAP/jfrevents"
   tagline: "Reference site listing every JFR event across JDK versions, with field names, types, descriptions, and benchmark-derived examples showing which events fire at what rate. Use it when you are writing JFR tooling and need to know exactly which fields an event has or which events are worth subscribing to."
   tagline_short: "Reference site for every JFR event type across JDK versions."
   screenshot: ""
