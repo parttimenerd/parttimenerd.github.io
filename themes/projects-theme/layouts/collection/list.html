@@ -7,7 +7,17 @@
 
   {{/* Intro */}}
   <h1 class="font-['Vollkorn'] text-4xl font-bold mb-4">{{ .Title }}</h1>
-  <p class="text-gray-600 text-lg mb-10 max-w-2xl">{{ .Content }}</p>
+  <p class="text-gray-600 text-lg mb-6 max-w-2xl">{{ .Content }}</p>
+
+  {{/* Sticky anchor nav */}}
+  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-100 -mx-4 px-4 mb-10 overflow-x-auto whitespace-nowrap">
+    <div class="flex gap-1 text-sm py-1">
+    {{ range $static }}
+    <a href="#{{ .id }}" data-id="{{ .id }}"
+       class="px-3 py-2 text-gray-500 hover:text-blue-700 transition-colors">{{ .id }}</a>
+    {{ end }}
+    </div>
+  </div>
 
   {{/* Card grid with group headings */}}
   {{ $lastGroup2 := "" }}

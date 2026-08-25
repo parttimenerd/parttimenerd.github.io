@@ -178,7 +178,7 @@
   note: "Numbers are always parsed as Double."
 
 - id: femtoschema
-  tag: ready
+  tag: poc
   group: ""
   tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies."
   screenshot: ""
@@ -237,7 +237,7 @@
   note: ""
 
 - id: femtojar
-  tag: poc
+  tag: ready
   group: ""
   tagline: "Maven plugin that shrinks executable JARs via cross-class compression."
   screenshot: ""
