@@ -155,6 +155,7 @@
 - id: condensed-data
   tag: experimental
   group: "JFR / Profiling"
+  maven_coordinates: "me.bechberger.condensed:condensed-data"
   tagline: "Library and tool for storing JFR events in the self-describing .cjfr format. Designed for long-term, low-overhead recording: compresses events significantly compared to raw JFR, supports live-attach, and ships a reader library for querying stored data. Use it when you need to keep weeks of JFR data on disk without filling the drive."
   tagline_short: "Compact long-term JFR event storage — significantly smaller than raw .jfr."
   screenshot: ""
@@ -215,6 +216,7 @@
 - id: jfr-redact
   tag: poc
   group: "JFR / Profiling"
+  maven_coordinates: "me.bechberger:jfr-redact"
   tagline: "Strips sensitive strings, file paths, environment variables, and other PII from JFR recordings before you share them, while preserving the recording structure and all non-sensitive event data. Use it when you need to hand off a JFR recording but it may contain passwords, tokens, or internal paths."
   tagline_short: "Strip PII and secrets from JFR recordings before sharing."
   screenshot: ""
@@ -318,6 +320,7 @@
 - id: hprof-redact
   tag: poc
   group: "Heap Dump Analysis"
+  maven_coordinates: "me.bechberger:hprof-redact"
   tagline: "Stream-based tool that redacts primitive values and strings from HPROF heap dumps without loading the full file into memory, preserving the binary structure so the result remains a valid HPROF file. Use it when you need to share a heap dump that contains sensitive string data."
   tagline_short: "Stream-redact strings from HPROF heap dumps without loading them fully into memory."
   screenshot: ""
@@ -351,6 +354,7 @@
 - id: jhserr
   tag: poc
   group: "Crash / Log Diagnostics"
+  maven_coordinates: "me.bechberger:jhserr"
   tagline: "Parser and transformer for HotSpot hs_err_pid crash files. Turns the raw crash report into a typed Java model you can query, redact, or re-render. Also available as a web UI for one-off redaction without installing anything. Use it when you need to parse or sanitise a JVM crash dump before sharing it."
   tagline_short: "Parse and redact HotSpot hs_err_pid crash files — programmatic or via web UI."
   screenshot: ""
@@ -415,6 +419,7 @@
 - id: test-order
   tag: experimental
   group: "Testing"
+  maven_coordinates: "me.bechberger:test-order-maven-plugin"
   tagline: "Maven and Gradle plugin that reorders your test suite so tests covering recently changed code run first. Uses bytecode instrumentation to track class-to-test coverage, then on the next run promotes affected tests to the front. Use it when your suite is large enough that waiting for the full run hurts productivity and you want zero-config test prioritisation."
   tagline_short: "Run the tests most likely to fail first — zero-config test prioritisation for Maven/Gradle."
   screenshot: ""
@@ -459,6 +464,7 @@
 - id: execjar
   tag: experimental
   group: "JAR Packaging"
+  maven_coordinates: "me.bechberger:execjar-maven-plugin"
   tagline: "CLI tool and Maven plugin that wraps a fat JAR in a small shell stub, producing a single self-contained file that is directly executable on Linux and macOS without a launcher script or explicit java -jar invocation. Use it when you want users to run your tool as a plain command without thinking about Java."
   tagline_short: "Wrap a fat JAR into a directly executable file on Linux/macOS — no launcher script needed."
   screenshot: ""
@@ -498,6 +504,7 @@
 - id: meta-agent
   tag: experimental
   group: "Agent Development"
+  maven_coordinates: "me.bechberger:meta-agent"
   tagline: "Java agent that wraps another agent and intercepts its ClassFileTransformer calls. Lets you see exactly which classes get transformed, what the bytecode looks like before and after, and how long each transformation takes. Use it when you are building or debugging a Java agent and need to see what it actually does to class files."
   tagline_short: "Wrap any Java agent and inspect every class transformation it performs."
   screenshot: ""
@@ -532,6 +539,7 @@
 - id: jthreaddump
   tag: ready
   group: "Libraries"
+  maven_coordinates: "me.bechberger:jthreaddump"
   tagline: "Java library for parsing thread dump output from jstack and jcmd into a typed model. Handles all major thread dump formats across JDK versions, including virtual threads, giving you structured access to thread states, stack frames, and lock information. Use it when you are building tooling that processes or compares thread dumps programmatically."
   tagline_short: "Parse jstack/jcmd thread dumps into a structured Java model — all JDK formats supported."
   screenshot: ""
