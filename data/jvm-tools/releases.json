@@ -25,11 +25,6 @@
       "date": "2025-09-26",
       "changelog": ""
     },
-    "jfr-redact": {
-      "version": "0.3.0",
-      "date": "2026-03-31",
-      "changelog": "hserr redaction as there is now a far better tool for it (jhserr) \u00b7 `jfr-redact.jar` - Executable JAR file (requires Java 21+) \u00b7 `jfr-redact` - Standalone binary"
-    },
     "hprof-analyzer": {
       "version": "0.1.0",
       "date": "2026-07-20",
