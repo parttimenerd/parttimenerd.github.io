@@ -6,7 +6,104 @@
   --nav-h: 3rem; /* matches h-12 on the sticky top bar */
 }
 
-/* Tag badge colours */
+/* ─── FA pseudo-element helpers ────────────────────────────────────────────
+   Use these classes instead of <i> tags.
+   FA Free solid  font-family: "Font Awesome 6 Free"; font-weight: 900
+   FA Free brands font-family: "Font Awesome 6 Brands"; font-weight: 400
+   ───────────────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Shared pseudo-element reset */
+  [class*="icon-"]::before,
+  [class*="icon-"]::after {
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    line-height: 1;
+    font-size: .75em;
+    vertical-align: middle;
+  }
+
+  /* External link — appended after the text */
+  .icon-ext::after  {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f35d";   /* fa-arrow-up-right-from-square */
+    margin-left: .3em;
+  }
+
+  /* Internal collection arrow — prepended before the text */
+  .icon-arrow::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f061";   /* fa-arrow-right */
+    margin-right: .35em;
+    color: currentColor;
+    opacity: .6;
+  }
+
+  /* Details chevron — appended after the text */
+  .icon-details::after {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f078";   /* fa-chevron-down */
+    margin-left: .3em;
+  }
+
+  /* GitHub link — prepended */
+  .icon-github::before {
+    font-family: "Font Awesome 6 Brands"; font-weight: 400;
+    content: "\f09b";   /* fa-github */
+    margin-right: .3em;
+  }
+
+  /* When-to-use ✓ */
+  .icon-check::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f00c";   /* fa-check */
+    color: #16a34a;
+  }
+
+  /* When-not-to-use ✗ */
+  .icon-cross::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f00d";   /* fa-xmark */
+    color: #ef4444;
+  }
+
+  /* Feature bullet → */
+  .icon-bullet::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f061";   /* fa-arrow-right */
+    color: #3b82f6;
+    margin-right: .35em;
+    font-size: .65em;
+  }
+
+  /* Social links */
+  .icon-social-github::before   { font-family: "Font Awesome 6 Brands"; font-weight: 400; content: "\f09b"; margin-right: .3em; }
+  .icon-social-twitter::before  { font-family: "Font Awesome 6 Brands"; font-weight: 400; content: "\e61b"; margin-right: .3em; } /* fa-x-twitter */
+  .icon-social-mastodon::before { font-family: "Font Awesome 6 Brands"; font-weight: 400; content: "\f4f6"; margin-right: .3em; }
+  .icon-social-linkedin::before { font-family: "Font Awesome 6 Brands"; font-weight: 400; content: "\f08c"; margin-right: .3em; }
+  .icon-social-blog::before     { font-family: "Font Awesome 6 Free";   font-weight: 900; content: "\f09e"; margin-right: .3em; } /* fa-rss */
+
+  /* Award badge icons */
+  .award-badge::before {
+    font-style: normal; font-variant: normal; text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block; line-height: 1;
+    margin-right: .35em;
+  }
+  .award-badge-gold::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f005";   /* fa-star */
+  }
+  .award-badge-java::before {
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    content: "\f7b6";   /* fa-mug-hot */
+  }
+}
+
+/* ─── Tag badge colours ───────────────────────────────────────────────────── */
 @layer components {
   .badge {
     @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border cursor-default select-none;
@@ -18,7 +115,7 @@
 
   /* Award/recognition badges on the homepage */
   .award-badge {
-    @apply inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full select-none;
+    @apply inline-flex items-center text-sm font-semibold px-3 py-1 rounded-full select-none;
   }
   .award-badge-gold {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);

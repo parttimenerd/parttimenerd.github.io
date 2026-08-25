@@ -53,7 +53,7 @@
         <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
         {{ end }}
         <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-           class="text-gray-600 hover:text-gray-900 font-medium">blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
+           class="icon-ext text-gray-600 hover:text-gray-900 font-medium">blog</a>
       </nav>
       <!-- Mobile hamburger -->
       <button @click="open = !open" aria-label="Toggle navigation menu"
@@ -71,7 +71,7 @@
       <a href="{{ .url }}" class="text-gray-600 hover:text-gray-900 font-medium">{{ .label }}</a>
       {{ end }}
       <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-         class="text-gray-600 hover:text-gray-900 font-medium">blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
+         class="icon-ext text-gray-600 hover:text-gray-900 font-medium">blog</a>
     </nav>
   </header>
 
@@ -81,8 +81,8 @@
 
   <footer class="border-t border-gray-200 mt-16 py-6 text-center text-sm text-gray-500">
     Johannes Bechberger · SAP ·
-    <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="hover:text-gray-900"><i class="fa-brands fa-github"></i> GitHub</a> ·
-    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="hover:text-gray-900">Blog <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>
+    <a href="https://github.com/parttimenerd" target="_blank" rel="noopener" class="icon-github hover:text-gray-900">GitHub</a> ·
+    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener" class="icon-ext hover:text-gray-900">Blog</a>
   </footer>
 </body>
 </html>
