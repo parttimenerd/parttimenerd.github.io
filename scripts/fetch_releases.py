@@ -91,10 +91,16 @@ def fetch_from_crates_io(crate_name: str) -> dict | None:
         data = resp.json()
         crate = data.get("crate", {})
         version = crate.get("newest_version", "")
-        updated = (crate.get("updated_at") or "")[:10]
         if not version:
             return None
-        return {"version": version, "date": updated, "changelog": ""}
+        # Get date from the specific version entry (not crate-level updated_at)
+        versions = data.get("versions", [])
+        date = ""
+        for v in versions:
+            if v.get("num") == version:
+                date = (v.get("created_at") or "")[:10]
+                break
+        return {"version": version, "date": date, "changelog": ""}
     except Exception as exc:
         print(f"  crates.io lookup failed for {crate_name}: {exc}", file=sys.stderr)
         return None
@@ -112,39 +118,47 @@ def fetch_cargo(crate_name: str) -> dict | None:
 # Maven / Maven Central
 # ---------------------------------------------------------------------------
 
-def fetch_from_mvn_cli(coordinates: str) -> dict | None:
+def fetch_from_maven_central_metadata(coordinates: str) -> dict | None:
     """
-    Use `mvn dependency:get` to resolve the latest version via the local
-    Maven resolver. We pass LATEST as version and let Maven resolve it.
+    Fetch latest release version via repo1.maven.org maven-metadata.xml.
+    This is the most reliable method — the search API lags and the mvn CLI
+    echoes 'RELEASE' instead of the resolved version.
     """
     group_id, artifact_id = coordinates.split(":", 1)
-    out = _run([
-        "mvn", "--batch-mode", "--no-transfer-progress",
-        "dependency:get",
-        f"-Dartifact={group_id}:{artifact_id}:RELEASE",
-    ], timeout=60)
-    if out is None:
+    group_path = group_id.replace(".", "/")
+    url = f"https://repo1.maven.org/maven2/{group_path}/{artifact_id}/maven-metadata.xml"
+    try:
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 404:
+            return None
+        resp.raise_for_status()
+        xml = resp.text
+        # Prefer <release> over <latest> (release = non-snapshot stable)
+        m = re.search(r"<release>([^<]+)</release>", xml)
+        if not m:
+            m = re.search(r"<latest>([^<]+)</latest>", xml)
+        if not m:
+            return None
+        version = m.group(1).strip()
+        # Use Last-Modified header from the versioned POM for the date
+        pom_url = f"https://repo1.maven.org/maven2/{group_path}/{artifact_id}/{version}/{artifact_id}-{version}.pom"
+        date = ""
+        try:
+            head = requests.head(pom_url, timeout=10)
+            lm = head.headers.get("last-modified", "")
+            if lm:
+                from email.utils import parsedate_to_datetime
+                date = parsedate_to_datetime(lm).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+        return {"version": version, "date": date, "changelog": ""}
+    except Exception as exc:
+        print(f"  Maven Central metadata lookup failed for {coordinates}: {exc}", file=sys.stderr)
         return None
-    # Look for a line like "Downloading from central: …/artifact/X.Y.Z/…"
-    # or "Resolved: …:X.Y.Z"
-    m = re.search(
-        rf"{re.escape(artifact_id)}-(\d[^/\s\"']+?)(?:\.jar|-sources|-javadoc)",
-        out
-    )
-    if m:
-        return {"version": m.group(1), "date": "", "changelog": ""}
-    # Alternative: parse "[INFO] Resolved: group:artifact:jar:X.Y.Z"
-    m2 = re.search(
-        rf"{re.escape(group_id)}:{re.escape(artifact_id)}:jar:([^\s]+)",
-        out
-    )
-    if m2:
-        return {"version": m2.group(1), "date": "", "changelog": ""}
-    return None
 
 
-def fetch_from_maven_central(coordinates: str) -> dict | None:
-    """Fetch latest version from Maven Central search API."""
+def fetch_from_maven_central_search(coordinates: str) -> dict | None:
+    """Fallback: fetch latest version from Maven Central search API (lags ~hours)."""
     group_id, artifact_id = coordinates.split(":", 1)
     url = (
         "https://search.maven.org/solrsearch/select"
@@ -157,6 +171,8 @@ def fetch_from_maven_central(coordinates: str) -> dict | None:
         if not docs:
             return None
         version = docs[0].get("latestVersion", "")
+        if not version:
+            return None
         timestamp_ms = docs[0].get("timestamp", 0)
         date = ""
         if timestamp_ms:
@@ -164,16 +180,16 @@ def fetch_from_maven_central(coordinates: str) -> dict | None:
             date = datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
         return {"version": version, "date": date, "changelog": ""}
     except Exception as exc:
-        print(f"  Maven Central lookup failed for {coordinates}: {exc}", file=sys.stderr)
+        print(f"  Maven Central search failed for {coordinates}: {exc}", file=sys.stderr)
         return None
 
 
 def fetch_maven(coordinates: str) -> dict | None:
-    """Try mvn CLI first, fall back to Maven Central REST."""
-    result = fetch_from_mvn_cli(coordinates)
+    """Fetch from Maven Central metadata XML, fall back to search API."""
+    result = fetch_from_maven_central_metadata(coordinates)
     if result:
         return result
-    return fetch_from_maven_central(coordinates)
+    return fetch_from_maven_central_search(coordinates)
 
 
 # ---------------------------------------------------------------------------

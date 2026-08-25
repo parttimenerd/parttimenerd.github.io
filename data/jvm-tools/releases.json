@@ -11,9 +11,9 @@
       "changelog": ""
     },
     "meta-agent": {
-      "version": "0.0.4",
-      "date": "2025-11-18",
-      "changelog": "Add support for byte-buddy by @PerfectSlayer in https://github.com/parttimenerd/meta-agent/pull/8 \u00b7 Move batch decompile out of the loop by @ReneThu in https://github.com/parttimenerd/meta-agent/pull/10 \u00b7 Add support for native agent wrapping @parttimenerd"
+      "version": "0.0.3",
+      "date": "2025-03-04",
+      "changelog": ""
     },
     "jfr-query": {
       "version": "snapshot",
@@ -26,14 +26,14 @@
       "changelog": ""
     },
     "hprof-analyzer": {
-      "version": "0.1.0",
-      "date": "2026-07-20",
+      "version": "0.2.0",
+      "date": "",
       "changelog": ""
     },
     "hprof-redact": {
       "version": "0.3.0",
       "date": "2026-06-24",
-      "changelog": "New `diagnose` subcommand: single-pass HPROF analysis reporting file metadata, \u00b7 `diagnose --json` flag for machine-readable output \u00b7 `diagnose --histogram` flag: full per-class histogram sorted by on-disk bytes, \u00b7 `diagnose --compact-headers` flag for JDK 25+ compact object headers (JEP 519, \u00b7 D\u2026"
+      "changelog": ""
     },
     "jhserr": {
       "version": "0.1.0",
@@ -47,13 +47,13 @@
     },
     "test-order": {
       "version": "0.1.0",
-      "date": "2025-10-11",
+      "date": "2026-07-27",
       "changelog": ""
     },
     "jthreaddump": {
       "version": "0.5.8",
       "date": "2026-01-28",
-      "changelog": "Support running with Java 17 (still requires Java 21 for building and testing)"
+      "changelog": ""
     }
   }
 }

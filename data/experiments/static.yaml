@@ -18,7 +18,7 @@
   related: []
   links:
     - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/ebpf/" }
-  no_release: false
+  no_release: true
   install:
     - label: Maven
       lang: xml
@@ -78,7 +78,7 @@
     - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
     - { label: "concurrency-fuzz-scheduler", url: "https://github.com/parttimenerd/concurrency-fuzz-scheduler" }
   links: []
-  no_release: false
+  no_release: true
   install:
     - label: Maven
       lang: xml
@@ -131,7 +131,7 @@
   vs: ~
   related: []
   links: []
-  no_release: false
+  no_release: true
   install:
     - label: Download
       lang: bash
