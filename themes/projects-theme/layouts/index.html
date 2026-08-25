@@ -34,7 +34,7 @@
   </div>
 
   {{/* Bio */}}
-  <p class="text-gray-700 leading-relaxed mb-6">{{ .Content }}</p>
+  <div class="text-gray-700 leading-relaxed mb-6">{{ .Content }}</div>
 
   {{/* Topics */}}
   <div class="flex flex-wrap gap-2 mb-8">
@@ -88,7 +88,7 @@
           {{ range $talks }}
           <div class="flex gap-3 items-start">
             <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 pt-0.5 leading-tight">
-              {{ .date_display | replaceRE ` - \d+,` "–" | replaceRE `, \d{4}$` "" }}
+              {{ .date_display | replaceRE ` - \d+, \d{4}$` "" }}
             </span>
             <div class="flex flex-col gap-0.5 min-w-0">
               {{ if .title }}
@@ -139,11 +139,11 @@
              class="icon-ext text-sm text-blue-600 hover:text-blue-800 leading-snug">{{ .title }}</a>
         </div>
         {{ end }}
-        <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-ext font-medium">Blog — Mostly Nerdless</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Deep dives into profiling, debugging, and the JVM</span>
-        </a>
+        <div class="flex gap-3 items-baseline">
+          <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 leading-tight"></span>
+          <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
+             class="icon-ext text-sm text-blue-600 hover:text-blue-800 leading-snug">All posts — Mostly Nerdless</a>
+        </div>
       </div>
     </div>
     {{ end }}

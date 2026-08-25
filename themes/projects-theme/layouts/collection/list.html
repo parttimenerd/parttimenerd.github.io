@@ -34,6 +34,7 @@
     <div class="flex gap-1 text-sm py-1">
     {{ range $static }}
     <a href="#{{ .id }}" data-id="{{ .id }}"
+       title="{{ .tagline_short | default .tagline }}"
        class="px-3 py-2 text-gray-500 hover:text-blue-700 transition-colors">{{ .id }}</a>
     {{ end }}
     </div>
@@ -129,7 +130,7 @@
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
       <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
-      {{ if $isReleased }}<a href="{{ $verURL }}" target="_blank" rel="noopener" class="text-sm text-gray-500 hover:text-blue-600">v{{ $ver }}</a>{{ end }}
+      {{ if $isReleased }}<a href="{{ $verURL }}" target="_blank" rel="noopener" class="text-sm text-gray-500 hover:text-blue-600">v{{ $ver }}</a>{{ with $rel }}{{ if .date }}<span class="text-sm text-gray-400">· {{ .date }}</span>{{ end }}{{ end }}{{ end }}
       {{ with .github_pages }}
       <a href="{{ . }}" target="_blank" rel="noopener"
          class="icon-ext text-sm text-blue-600 hover:text-blue-800">Web app</a>

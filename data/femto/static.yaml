@@ -84,9 +84,6 @@
     comparison:
       - { feature: "JAR size",                    femto: "<65 KB",    other: "~500 KB" }
       - { feature: "Dependencies",                femto: "None",      other: "None" }
-      - { feature: "Annotation-driven",           femto: "✓",         other: "✓" }
-      - { feature: "Subcommands",                 femto: "✓",         other: "✓" }
-      - { feature: '"Did you mean" suggestions',  femto: "✓",         other: "✓" }
       - { feature: "Shell completion generation", femto: "✗",         other: "✓" }
       - { feature: "i18n / l10n",                 femto: "✗",         other: "✓" }
       - { feature: "Interactive prompts",          femto: "✗",         other: "✓" }
@@ -144,13 +141,13 @@
     - You need to bind JSON to Java objects (POJOs)
     - You need high-throughput JSON processing
     - You need streaming or token-level parsing
-    - You need schema validation (use femtoschema alongside)
+    - You need structural schema validation
   vs:
     name: Jackson
     url: https://github.com/FasterXML/jackson
     bottom_line: "Pick femtojson for ad-hoc JSON without dependencies; pick Jackson for POJO binding, high throughput, or production reliability."
     comparison:
-      - { feature: "JAR size",               femto: "Tiny",                   other: "Large (core + modules)" }
+      - { feature: "JAR size",               femto: "~13 KB",                 other: "Large (core + modules)" }
       - { feature: "Dependencies",           femto: "None",                   other: "Several" }
       - { feature: "POJO databinding",       femto: "✗",                      other: "✓" }
       - { feature: "Parse target",           femto: "Map/List/primitives",    other: "POJOs, JsonNode, tokens" }
@@ -245,7 +242,7 @@
   note: ""
 
 - id: femtojar
-  tag: ready
+  tag: poc
   group: ""
   maven_coordinates: "me.bechberger:femtojar"
   tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction. Use it when you need the smallest possible executable JAR and are willing to accept early-stage tooling."
