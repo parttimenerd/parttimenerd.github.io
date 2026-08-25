@@ -1,0 +1,106 @@
+name: Weekly data update
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'  # every Monday at 04:23 UTC
+  workflow_dispatch:
+
+jobs:
+  releases:
+    name: Fetch releases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: pip
+      - run: pip install requests pyyaml
+      - name: Fetch releases (all sections)
+        run: |
+          python scripts/fetch_releases.py --section femto
+          python scripts/fetch_releases.py --section jvm-tools
+          python scripts/fetch_releases.py --section experiments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: releases-data
+          path: |
+            data/femto/releases.json
+            data/jvm-tools/releases.json
+            data/experiments/releases.json
+
+  blog:
+    name: Fetch blog posts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: pip
+      - run: pip install requests
+      - run: python scripts/fetch_blog.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blog-data
+          path: data/blog.json
+
+  talks:
+    name: Fetch talks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: pip
+      - run: pip install requests
+      - run: python scripts/fetch_talks.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: talks-data
+          path: data/talks.json
+
+  commit:
+    name: Commit changes
+    needs: [releases, blog, talks]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: releases-data
+          path: data
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: blog-data
+          path: data
+      - uses: actions/download-artifact@v4
+        with:
+          name: talks-data
+          path: data
+      - name: Commit if changed
+        run: |
+          git diff --quiet -- \
+            data/femto/releases.json \
+            data/jvm-tools/releases.json \
+            data/experiments/releases.json \
+            data/blog.json \
+            data/talks.json \
+          || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add \
+              data/femto/releases.json \
+              data/jvm-tools/releases.json \
+              data/experiments/releases.json \
+              data/blog.json \
+              data/talks.json
+            git commit -m "chore: weekly data update"
+            git push
+          )
