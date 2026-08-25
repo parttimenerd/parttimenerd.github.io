@@ -39,61 +39,65 @@
     </div>
   </div>
 
-  {{/* Card grid — single flat grid; group headings span all columns */}}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 mt-8">
+  {{/* Card grid — multi-entry groups are full-width; single-entry groups share columns */}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6 mb-8 mt-8 items-start">
   {{ range $groups }}
     {{ $grpName    := .name }}
     {{ $grpEntries := .entries }}
-    {{ if $grpName }}
-    <div class="col-span-full mt-4 first:mt-0">
-      <h2 class="text-xl font-semibold text-gray-700 mb-0 border-b border-gray-200 pb-2">{{ $grpName }}</h2>
-    </div>
-    {{ end }}
-    {{ range $grpEntries }}
-      {{ $rel      := index $releases.entries .id }}
-      {{ $ver      := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
-      {{ if not $ver }}{{ $ver = .static_version }}{{ end }}
-      {{ $date     := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
-      {{ $isReleased := and $ver (ne $ver "unreleased") (ne $ver "latest") (ne $ver "snapshot") }}
-      {{ $ghLink   := .github_pages | default (printf "https://github.com/parttimenerd/%s" .id) }}
-      {{ $verURL   := printf "https://github.com/parttimenerd/%s/releases/tag/v%s" .id $ver }}
-      {{ with .maven_coordinates }}
-        {{ $parts := split . ":" }}
-        {{ $verURL = printf "https://central.sonatype.com/artifact/%s/%s/%s" (index $parts 0) (index $parts 1) $ver }}
+    {{ $isSingle   := eq (len $grpEntries) 1 }}
+    {{/* Multi-entry: full row + inner 3-col grid. Single-entry: 1 column. */}}
+    <div class="{{ if $isSingle }}lg:col-span-1{{ else }}col-span-full{{ end }}">
+      {{ if $grpName }}
+      <h2 class="text-base font-semibold text-gray-500 uppercase tracking-wide mb-3 border-b border-gray-200 pb-1">{{ $grpName }}</h2>
       {{ end }}
-      {{ with .cargo_crate }}
-        {{ $verURL = printf "https://crates.io/crates/%s/%s" . $ver }}
-      {{ end }}
-
-      <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-semibold text-gray-900">{{ .id }}</span>
-          <div class="flex items-center gap-2 ml-auto shrink-0">
-            <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
-            <a href="{{ $ghLink }}" target="_blank" rel="noopener"
-               class="text-gray-400 hover:text-blue-600 transition-colors" title="{{ if .github_pages }}Web app{{ else }}GitHub{{ end }}">🔗</a>
-          </div>
-        </div>
-        {{ if $isReleased }}
-        <div class="text-xs text-gray-500">
-          <a href="{{ $verURL }}"
-             target="_blank" rel="noopener" class="hover:text-blue-600">
-            v{{ $ver }}
-          </a>
-          {{ if $date }} · {{ $date }}{{ end }}
-        </div>
-        {{ else if .static_version }}
-        <div class="text-xs text-gray-500">{{ .static_version }}</div>
+      <div class="{{ if $isSingle }}grid grid-cols-1{{ else }}grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3{{ end }} gap-4">
+      {{ range $grpEntries }}
+        {{ $rel      := index $releases.entries .id }}
+        {{ $ver      := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
+        {{ if not $ver }}{{ $ver = .static_version }}{{ end }}
+        {{ $date     := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
+        {{ $isReleased := and $ver (ne $ver "unreleased") (ne $ver "latest") (ne $ver "snapshot") }}
+        {{ $ghLink   := .github_pages | default (printf "https://github.com/parttimenerd/%s" .id) }}
+        {{ $verURL   := printf "https://github.com/parttimenerd/%s/releases/tag/v%s" .id $ver }}
+        {{ with .maven_coordinates }}
+          {{ $parts := split . ":" }}
+          {{ $verURL = printf "https://central.sonatype.com/artifact/%s/%s/%s" (index $parts 0) (index $parts 1) $ver }}
         {{ end }}
-        <p class="text-sm text-gray-700 flex-1">{{ .tagline_short | default .tagline }}</p>
-        {{ with index .when_to_use 0 }}
-        <p class="text-xs text-gray-500">Use when: {{ . }}</p>
-        {{ else }}{{ with index .features 0 }}
-        <p class="text-xs text-gray-500">{{ . }}</p>
-        {{ end }}{{ end }}
-        <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
+        {{ with .cargo_crate }}
+          {{ $verURL = printf "https://crates.io/crates/%s/%s" . $ver }}
+        {{ end }}
+
+        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-semibold text-gray-900">{{ .id }}</span>
+            <div class="flex items-center gap-2 ml-auto shrink-0">
+              <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ else if eq .tag `demo` }}Demo: built to show off an idea or for a talk, not intended for production use{{ end }}">{{ .tag }}</span>
+              <a href="{{ $ghLink }}" target="_blank" rel="noopener"
+                 class="text-gray-400 hover:text-blue-600 transition-colors" title="{{ if .github_pages }}Web app{{ else }}GitHub{{ end }}">🔗</a>
+            </div>
+          </div>
+          {{ if $isReleased }}
+          <div class="text-xs text-gray-500">
+            <a href="{{ $verURL }}"
+               target="_blank" rel="noopener" class="hover:text-blue-600">
+              v{{ $ver }}
+            </a>
+            {{ if $date }} · {{ $date }}{{ end }}
+          </div>
+          {{ else if .static_version }}
+          <div class="text-xs text-gray-500">{{ .static_version }}</div>
+          {{ end }}
+          <p class="text-sm text-gray-700 flex-1">{{ .tagline_short | default .tagline }}</p>
+          {{ with index .when_to_use 0 }}
+          <p class="text-xs text-gray-500">Use when: {{ . }}</p>
+          {{ else }}{{ with index .features 0 }}
+          <p class="text-xs text-gray-500">{{ . }}</p>
+          {{ end }}{{ end }}
+          <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
+        </div>
+      {{ end }}
       </div>
-    {{ end }}
+    </div>
   {{ end }}
   </div>
 
