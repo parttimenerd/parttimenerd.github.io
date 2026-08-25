@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- CSS via Hugo Pipes -->
-  {{ $css := resources.Get "css/main.css" | resources.PostCSS | minify | fingerprint }}
+  {{ $css := resources.Get "css/main.css" | css.PostCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}">
   <!-- Alpine.js via Hugo esbuild -->
   {{ $js := resources.Get "js/main.js" | js.Build (dict "minify" true "target" "es2017") | fingerprint }}

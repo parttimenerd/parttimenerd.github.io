@@ -1,5 +1,5 @@
 baseURL: "https://parttimenerd.github.io/"
-languageCode: "en-us"
+defaultContentLanguage: "en"
 title: "parttimenerd"
 theme: "projects-theme"
 
