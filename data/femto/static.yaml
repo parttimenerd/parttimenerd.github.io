@@ -1,296 +1,430 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTRY SCHEMA  (omit any optional field you don't need)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# REQUIRED
+#   id:               string  — slug, matches GitHub repo name (parttimenerd/<id>)
+#   tag:              ready | experimental | poc | demo
+#   tagline:          string  — 1–2 sentence description shown in detail view
+#   tagline_short:    string  — ≤ 10 words shown on cards and in the nav tooltip
+#
+# OPTIONAL — source control
+#   github_url:       string  — full URL; defaults to https://github.com/parttimenerd/<id>
+#   github_pages:     string  — docs/web-app URL; shows "Docs" or "Web app" link in header
+#
+# OPTIONAL — release resolution (script tries these in order, falls back to GitHub)
+#   maven_coordinates: "groupId:artifactId"  — used by fetch_releases.py
+#   cargo_crate:       "crate-name"          — used by fetch_releases.py
+#   static_version:    string  — hard-coded version when no release source exists
+#   no_release:        true    — skip this entry in fetch_releases.py entirely
+#
+# OPTIONAL — card/detail content
+#   group:            string  — section heading on the collection page
+#   screenshot:       string  — URL; shown with lightbox in detail view
+#   when_to_use:      list    — bullet points (shown green ✓)
+#   when_not_to_use:  list    — bullet points (shown red ✗)
+#   features:         list    — bullet points for demo/poc entries without when_to_use
+#   vs:               object  — comparison table:
+#                       name: "Other Lib"
+#                       url:  "https://..."
+#                       bottom_line: "One-liner picking guidance"
+#                       comparison:
+#                         - { feature: "JAR size", femto: "~50 KB", other: "~870 KB" }
+#   related:          list    — { label: "name", url: "https://..." }
+#   links:            list    — { label: "Blog post ↗", url: "https://..." }
+#   install:          list    — code tabs:
+#                         - label: Maven
+#                           lang: xml
+#                           code: |
+#                             <dependency>...</dependency>
+#                       VERSION is substituted with the resolved release version
+#   usage:            list    — same structure as install; VERSION not substituted
+#   note:             string  — shown as amber callout at the bottom of the detail section
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# COPY-PASTE TEMPLATE FOR A NEW ENTRY:
+#
+# - id: my-tool
+#   tag: experimental
+#   tagline: "One or two sentences. Use it when..."
+#   tagline_short: "≤10 words"
+#   when_to_use:
+#     - You need X
+#   when_not_to_use:
+#     - You need Y
+#   install:
+#     - label: Maven
+#       lang: xml
+#       code: |
+#         <dependency>
+#           <groupId>me.bechberger</groupId>
+#           <artifactId>my-tool</artifactId>
+#           <version>VERSION</version>
+#         </dependency>
+#   usage:
+#     - label: Example
+#       lang: java
+#       code: |
+#         // example code here
+# ─────────────────────────────────────────────────────────────────────────────
+
 - id: femtolz4
   tag: ready
-  group: ""
-  maven_coordinates: "me.bechberger:femtolz4"
-  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, full streaming and block API, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64. Use it when JAR size or transitive dependency count matters — Java agents, embedded tools, and minimal distributions where lz4-java's 870 KB is too heavy."
-  tagline_short: "LZ4 compression for Java — ~50 KB, zero dependencies, streaming + block API, drop-in for size-sensitive projects."
-  screenshot: ""
-  static_version: ""
+  maven_coordinates: me.bechberger:femtolz4
+  tagline: LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, full streaming
+    and block API, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64. Use
+    it when JAR size or transitive dependency count matters — Java agents, embedded tools, and minimal
+    distributions where lz4-java's 870 KB is too heavy.
+  tagline_short: LZ4 compression for Java — ~50 KB, zero dependencies, streaming + block API, drop-in
+    for size-sensitive projects.
   when_to_use:
-    - JAR size matters — Java agents, embedded tools, minimal distributions
-    - You want a drop-in lz4-java replacement with zero transitive deps
-    - You need readSingleFrame support (e.g. reading CJFR files)
-    - You only need linux/amd64 or darwin/aarch64 native acceleration
+  - JAR size matters — Java agents, embedded tools, minimal distributions
+  - You want a drop-in lz4-java replacement with zero transitive deps
+  - You need readSingleFrame support (e.g. reading CJFR files)
+  - You only need linux/amd64 or darwin/aarch64 native acceleration
   when_not_to_use:
-    - You need native acceleration on Windows or non-amd64 Linux
-    - You need lz4opt compression (levels 10–12)
-    - You need dependent-block frame encoding
+  - You need native acceleration on Windows or non-amd64 Linux
+  - You need lz4opt compression (levels 10–12)
+  - You need dependent-block frame encoding
   vs:
     name: lz4-java
     url: https://github.com/lz4/lz4-java
-    bottom_line: "Pick femtolz4 when JAR size matters and you only need linux/mac; pick lz4-java for broad platform coverage or lz4opt levels."
+    bottom_line: Pick femtolz4 when JAR size matters and you only need linux/mac; pick lz4-java for broad
+      platform coverage or lz4opt levels.
     comparison:
-      - { feature: "JAR size",           femto: "~50 KB",                      other: "~870 KB" }
-      - { feature: "Dependencies",       femto: "None",                        other: "None" }
-      - { feature: "Compression levels", femto: "1–9",                         other: "1–17 (incl. lz4opt)" }
-      - { feature: "Native platforms",   femto: "linux/amd64, darwin/aarch64", other: "All major OS/arch" }
-      - { feature: "LZ4 frame format",   femto: "✓",                           other: "✓" }
-      - { feature: "Block API",          femto: "✓",                           other: "✓" }
-      - { feature: "xxHash-32",          femto: "✓",                           other: "✓" }
-      - { feature: "API compatibility",  femto: "Partial (factory calls)",     other: "—" }
-  related: []
-  links: []
-  no_release: false
+    - feature: JAR size
+      femto: ~50 KB
+      other: ~870 KB
+    - feature: Dependencies
+      femto: None
+      other: None
+    - feature: Compression levels
+      femto: 1–9
+      other: 1–17 (incl. lz4opt)
+    - feature: Native platforms
+      femto: linux/amd64, darwin/aarch64
+      other: All major OS/arch
+    - feature: LZ4 frame format
+      femto: ✓
+      other: ✓
+    - feature: Block API
+      femto: ✓
+      other: ✓
+    - feature: xxHash-32
+      femto: ✓
+      other: ✓
+    - feature: API compatibility
+      femto: Partial (factory calls)
+      other: —
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger</groupId>
-          <artifactId>femtolz4</artifactId>
-          <version>VERSION</version>
-        </dependency>
-    - label: Gradle
-      lang: groovy
-      code: "implementation 'me.bechberger:femtolz4:VERSION'"
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger</groupId>
+        <artifactId>femtolz4</artifactId>
+        <version>VERSION</version>
+      </dependency>
+  - label: Gradle
+    lang: groovy
+    code: implementation 'me.bechberger:femtolz4:VERSION'
   usage:
-    - label: Frame stream
-      lang: java
-      code: |
-        try (var out = new LZ4FrameOutputStream(Files.newOutputStream(path))) {
-            out.write(data);
-        }
-        try (var in = new LZ4FrameInputStream(Files.newInputStream(path))) {
-            byte[] restored = in.readAllBytes();
-        }
-    - label: Block API
-      lang: java
-      code: |
-        byte[] compressed = LZ4.compress(data);
-        byte[] original   = LZ4.decompress(compressed, originalSize);
-  note: ""
-
+  - label: Frame stream
+    lang: java
+    code: |
+      try (var out = new LZ4FrameOutputStream(Files.newOutputStream(path))) {
+          out.write(data);
+      }
+      try (var in = new LZ4FrameInputStream(Files.newInputStream(path))) {
+          byte[] restored = in.readAllBytes();
+      }
+  - label: Block API
+    lang: java
+    code: |
+      byte[] compressed = LZ4.compress(data);
+      byte[] original   = LZ4.decompress(compressed, originalSize);
 - id: femtocli
   tag: ready
-  group: ""
-  maven_coordinates: "me.bechberger.util:femtocli"
-  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands, option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime. Use it when you need picocli-style annotations in a Java agent, an embedded tool, or any context where pulling in picocli's ~500 KB is not acceptable."
-  tagline_short: "Picocli-style CLI framework for Java — under 65 KB, zero dependencies."
-  screenshot: ""
-  static_version: ""
+  maven_coordinates: me.bechberger.util:femtocli
+  tagline: Annotation-driven CLI framework for Java. Under 65 KB, zero dependencies. Supports subcommands,
+    option parsing, 'did you mean' suggestions, agent-args mode, and dynamic command removal at runtime.
+    Use it when you need picocli-style annotations in a Java agent, an embedded tool, or any context where
+    pulling in picocli's ~500 KB is not acceptable.
+  tagline_short: Picocli-style CLI framework for Java — under 65 KB, zero dependencies.
   when_to_use:
-    - JAR size matters — Java agents, jstall-style installers, embedded tools
-    - You want picocli-style annotations without the weight
-    - You need agent-args mode or dynamic command removal at runtime
+  - JAR size matters — Java agents, jstall-style installers, embedded tools
+  - You want picocli-style annotations without the weight
+  - You need agent-args mode or dynamic command removal at runtime
   when_not_to_use:
-    - You need shell completion generation
-    - You need i18n / l10n
-    - You need interactive prompts or complex validation
-    - You want battle-hardened production stability
+  - You need shell completion generation
+  - You need i18n / l10n
+  - You need interactive prompts or complex validation
+  - You want battle-hardened production stability
   vs:
     name: picocli
     url: https://picocli.info
-    bottom_line: "Pick femtocli for minimal-footprint or agent-embedded CLI tooling on JDK 17+; pick picocli for shell completion, i18n, or battle-hardened stability."
+    bottom_line: Pick femtocli for minimal-footprint or agent-embedded CLI tooling on JDK 17+; pick picocli
+      for shell completion, i18n, or battle-hardened stability.
     comparison:
-      - { feature: "JAR size",                    femto: "<65 KB",    other: "~500 KB" }
-      - { feature: "Dependencies",                femto: "None",      other: "None" }
-      - { feature: "Shell completion generation", femto: "✗",         other: "✓" }
-      - { feature: "i18n / l10n",                 femto: "✗",         other: "✓" }
-      - { feature: "Interactive prompts",          femto: "✗",         other: "✓" }
-      - { feature: "Agent-args / parse-only",     femto: "✓",         other: "✗" }
-      - { feature: "Dynamic command removal",     femto: "✓",         other: "✗" }
-      - { feature: "Maturity",                    femto: "Early",     other: "Very mature" }
-  related: []
-  links: []
-  no_release: false
+    - feature: JAR size
+      femto: <65 KB
+      other: ~500 KB
+    - feature: Dependencies
+      femto: None
+      other: None
+    - feature: Shell completion generation
+      femto: ✗
+      other: ✓
+    - feature: i18n / l10n
+      femto: ✗
+      other: ✓
+    - feature: Interactive prompts
+      femto: ✗
+      other: ✓
+    - feature: Agent-args / parse-only
+      femto: ✓
+      other: ✗
+    - feature: Dynamic command removal
+      femto: ✓
+      other: ✗
+    - feature: Maturity
+      femto: Early
+      other: Very mature
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger.util</groupId>
-          <artifactId>femtocli</artifactId>
-          <version>VERSION</version>
-        </dependency>
-    - label: Gradle
-      lang: groovy
-      code: "implementation 'me.bechberger.util:femtocli:VERSION'"
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger.util</groupId>
+        <artifactId>femtocli</artifactId>
+        <version>VERSION</version>
+      </dependency>
+  - label: Gradle
+    lang: groovy
+    code: implementation 'me.bechberger.util:femtocli:VERSION'
   usage:
-    - label: Basic command
-      lang: java
-      code: |
-        @Command(name = "greet", description = "Greet a person")
-        class GreetCommand implements Callable<Integer> {
-            @Option(names = {"-n", "--name"}, required = true)
-            String name;
-            public Integer call() {
-                System.out.println("Hello, " + name + "!");
-                return 0;
-            }
-        }
-        @Command(name = "myapp", subcommands = {GreetCommand.class})
-        public class MyApp implements Runnable {
-            public void run() { System.out.println("Use 'myapp greet --help'"); }
-            public static void main(String[] args) { FemtoCli.run(new MyApp(), args); }
-        }
-  note: ""
-
+  - label: Basic command
+    lang: java
+    code: |
+      @Command(name = "greet", description = "Greet a person")
+      class GreetCommand implements Callable<Integer> {
+          @Option(names = {"-n", "--name"}, required = true)
+          String name;
+          public Integer call() {
+              System.out.println("Hello, " + name + "!");
+              return 0;
+          }
+      }
+      @Command(name = "myapp", subcommands = {GreetCommand.class})
+      public class MyApp implements Runnable {
+          public void run() { System.out.println("Use 'myapp greet --help'"); }
+          public static void main(String[] args) { FemtoCli.run(new MyApp(), args); }
+      }
 - id: femtojson
   tag: ready
-  group: ""
-  maven_coordinates: "me.bechberger.util:femtojson"
-  tagline: "Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API — no POJO binding, no annotations, just parse and go. Use it when you need to handle ad-hoc JSON structures in a size-sensitive context and don't want to pull in Jackson or Gson."
-  tagline_short: "Tiny zero-dependency JSON parser and pretty-printer — parse ad-hoc JSON without Jackson."
-  screenshot: ""
-  static_version: ""
+  maven_coordinates: me.bechberger.util:femtojson
+  tagline: Tiny JSON parser and pretty-printer for Java. Zero dependencies, straightforward Map/List API
+    — no POJO binding, no annotations, just parse and go. Use it when you need to handle ad-hoc JSON structures
+    in a size-sensitive context and don't want to pull in Jackson or Gson.
+  tagline_short: Tiny zero-dependency JSON parser and pretty-printer — parse ad-hoc JSON without Jackson.
   when_to_use:
-    - You need to parse or print JSON without pulling in a large dependency
-    - You work with ad-hoc JSON structures (Map/List trees), not POJOs
-    - JAR size or transitive dependency count matters
+  - You need to parse or print JSON without pulling in a large dependency
+  - You work with ad-hoc JSON structures (Map/List trees), not POJOs
+  - JAR size or transitive dependency count matters
   when_not_to_use:
-    - You need to bind JSON to Java objects (POJOs)
-    - You need high-throughput JSON processing
-    - You need streaming or token-level parsing
-    - You need structural schema validation
+  - You need to bind JSON to Java objects (POJOs)
+  - You need high-throughput JSON processing
+  - You need streaming or token-level parsing
+  - You need structural schema validation
   vs:
     name: Jackson
     url: https://github.com/FasterXML/jackson
-    bottom_line: "Pick femtojson for ad-hoc JSON without dependencies; pick Jackson for POJO binding, high throughput, or production reliability."
+    bottom_line: Pick femtojson for ad-hoc JSON without dependencies; pick Jackson for POJO binding, high
+      throughput, or production reliability.
     comparison:
-      - { feature: "JAR size",               femto: "~13 KB",                 other: "Large (core + modules)" }
-      - { feature: "Dependencies",           femto: "None",                   other: "Several" }
-      - { feature: "POJO databinding",       femto: "✗",                      other: "✓" }
-      - { feature: "Parse target",           femto: "Map/List/primitives",    other: "POJOs, JsonNode, tokens" }
-      - { feature: "Streaming / token API",  femto: "✗",                      other: "✓" }
-      - { feature: "Pretty / compact print", femto: "✓",                      other: "✓" }
-      - { feature: "Performance",            femto: "Adequate",               other: "Very high" }
-      - { feature: "Maturity",               femto: "Early",                  other: "Extremely mature" }
-  related: []
-  links: []
-  no_release: false
+    - feature: JAR size
+      femto: ~13 KB
+      other: Large (core + modules)
+    - feature: Dependencies
+      femto: None
+      other: Several
+    - feature: POJO databinding
+      femto: ✗
+      other: ✓
+    - feature: Parse target
+      femto: Map/List/primitives
+      other: POJOs, JsonNode, tokens
+    - feature: Streaming / token API
+      femto: ✗
+      other: ✓
+    - feature: Pretty / compact print
+      femto: ✓
+      other: ✓
+    - feature: Performance
+      femto: Adequate
+      other: Very high
+    - feature: Maturity
+      femto: Early
+      other: Extremely mature
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger.util</groupId>
-          <artifactId>femtojson</artifactId>
-          <version>VERSION</version>
-        </dependency>
-    - label: Gradle
-      lang: groovy
-      code: "implementation 'me.bechberger.util:femtojson:VERSION'"
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger.util</groupId>
+        <artifactId>femtojson</artifactId>
+        <version>VERSION</version>
+      </dependency>
+  - label: Gradle
+    lang: groovy
+    code: implementation 'me.bechberger.util:femtojson:VERSION'
   usage:
-    - label: Parse + print
-      lang: java
-      code: |
-        Map<String, Object> obj = (Map<String, Object>)
-            JSONParser.parse("{\"name\":\"Alice\",\"age\":30}");
-        System.out.println(obj.get("name")); // Alice
-        String pretty = PrettyPrinter.prettyPrint(obj);
-  note: "Numbers are always parsed as Double."
-
+  - label: Parse + print
+    lang: java
+    code: |
+      Map<String, Object> obj = (Map<String, Object>)
+          JSONParser.parse("{\"name\":\"Alice\",\"age\":30}");
+      System.out.println(obj.get("name")); // Alice
+      String pretty = PrettyPrinter.prettyPrint(obj);
+  note: Numbers are always parsed as Double.
 - id: femtoschema
   tag: poc
-  group: ""
-  maven_coordinates: "me.bechberger.util:femtoschema"
-  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically, export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages. Use it when you are already using femtojson and want lightweight structural validation without bringing in a full schema validator."
-  tagline_short: "Lightweight zero-dependency JSON Schema validator — fluent API, path-aware errors."
-  screenshot: ""
-  static_version: ""
+  maven_coordinates: me.bechberger.util:femtoschema
+  tagline: Fluent JSON schema DSL and validator for Java. Zero dependencies. Define schemas programmatically,
+    export/import JSON Schema Draft 2020-12 (subset), and get path-aware error messages. Use it when you
+    are already using femtojson and want lightweight structural validation without bringing in a full
+    schema validator.
+  tagline_short: Lightweight zero-dependency JSON Schema validator — fluent API, path-aware errors.
   when_to_use:
-    - You want to define and validate JSON-like structures via a fluent API
-    - You need JSON Schema Draft 2020-12 interop (export/import, subset)
-    - You are already using femtojson and want validation alongside it
+  - You want to define and validate JSON-like structures via a fluent API
+  - You need JSON Schema Draft 2020-12 interop (export/import, subset)
+  - You are already using femtojson and want validation alongside it
   when_not_to_use:
-    - You need full JSON Schema spec compliance ($ref, allOf, anyOf, if/then)
-    - You need to validate Jackson JsonNode trees
-    - You need production-ready, battle-tested schema validation
+  - You need full JSON Schema spec compliance ($ref, allOf, anyOf, if/then)
+  - You need to validate Jackson JsonNode trees
+  - You need production-ready, battle-tested schema validation
   vs:
     name: json-schema-validator
     url: https://github.com/networknt/json-schema-validator
-    bottom_line: "Pick femtoschema for programmatic schema definition with no dependencies; pick json-schema-validator for full spec compliance or external JSON Schema documents."
+    bottom_line: Pick femtoschema for programmatic schema definition with no dependencies; pick json-schema-validator
+      for full spec compliance or external JSON Schema documents.
     comparison:
-      - { feature: "JAR size",                          femto: "~46 KB",            other: "Large" }
-      - { feature: "Dependencies",                      femto: "None",              other: "Jackson + others" }
-      - { feature: "JSON Schema Draft 2020-12",         femto: "Subset (export+import)", other: "Full" }
-      - { feature: "$ref / allOf / anyOf / if-then",    femto: "✗",                 other: "✓" }
-      - { feature: "Fluent builder API",                femto: "✓",                 other: "✗" }
-      - { feature: "Discriminated unions",              femto: "✓",                 other: "✗" }
-      - { feature: "Path-aware error reporting",        femto: "✓",                 other: "✓" }
-      - { feature: "Validates plain Map/List trees",    femto: "✓",                 other: "Partial" }
-      - { feature: "Maturity",                          femto: "Early",             other: "Production-ready" }
-  related: []
-  links: []
-  no_release: false
+    - feature: JAR size
+      femto: ~46 KB
+      other: Large
+    - feature: Dependencies
+      femto: None
+      other: Jackson + others
+    - feature: JSON Schema Draft 2020-12
+      femto: Subset (export+import)
+      other: Full
+    - feature: $ref / allOf / anyOf / if-then
+      femto: ✗
+      other: ✓
+    - feature: Fluent builder API
+      femto: ✓
+      other: ✗
+    - feature: Discriminated unions
+      femto: ✓
+      other: ✗
+    - feature: Path-aware error reporting
+      femto: ✓
+      other: ✓
+    - feature: Validates plain Map/List trees
+      femto: ✓
+      other: Partial
+    - feature: Maturity
+      femto: Early
+      other: Production-ready
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger.util</groupId>
-          <artifactId>femtoschema</artifactId>
-          <version>VERSION</version>
-        </dependency>
-    - label: Gradle
-      lang: groovy
-      code: "implementation 'me.bechberger.util:femtoschema:VERSION'"
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger.util</groupId>
+        <artifactId>femtoschema</artifactId>
+        <version>VERSION</version>
+      </dependency>
+  - label: Gradle
+    lang: groovy
+    code: implementation 'me.bechberger.util:femtoschema:VERSION'
   usage:
-    - label: Define + validate
-      lang: java
-      code: |
-        var schema = Schemas.object()
-            .required("name", Schemas.string().withMinLength(1))
-            .required("age",  Schemas.number().withMinimum(0));
-        ValidationResult r = schema.validate(Map.of("name","Alice","age",30.0));
-        r.getErrors().forEach(e -> System.out.println(e.path() + ": " + e.message()));
-    - label: Export / import
-      lang: java
-      code: |
-        String jsonSchema = Schemas.toJsonSchemaString(schema);
-        TypeSchema imported = Schemas.fromJsonSchemaString(jsonSchema);
-  note: ""
-
+  - label: Define + validate
+    lang: java
+    code: |
+      var schema = Schemas.object()
+          .required("name", Schemas.string().withMinLength(1))
+          .required("age",  Schemas.number().withMinimum(0));
+      ValidationResult r = schema.validate(Map.of("name","Alice","age",30.0));
+      r.getErrors().forEach(e -> System.out.println(e.path() + ": " + e.message()));
+  - label: Export / import
+    lang: java
+    code: |
+      String jsonSchema = Schemas.toJsonSchemaString(schema);
+      TypeSchema imported = Schemas.fromJsonSchemaString(jsonSchema);
 - id: femtojar
   tag: poc
-  group: ""
-  maven_coordinates: "me.bechberger:femtojar"
-  tagline: "Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard integration for up to 70% total size reduction. Use it when you need the smallest possible executable JAR and are willing to accept early-stage tooling."
-  tagline_short: "Maven plugin that shrinks fat JARs via cross-class compression — up to 70% smaller with ProGuard."
-  screenshot: ""
-  static_version: ""
+  maven_coordinates: me.bechberger:femtojar
+  tagline: Maven plugin that shrinks executable JARs via cross-class compression. Compresses all class
+    files as a single blob instead of per-entry ZIP, enabling cross-class deduplication. Optional ProGuard
+    integration for up to 70% total size reduction. Use it when you need the smallest possible executable
+    JAR and are willing to accept early-stage tooling.
+  tagline_short: Maven plugin that shrinks fat JARs via cross-class compression — up to 70% smaller with
+    ProGuard.
   when_to_use:
-    - You need the smallest possible executable JAR
-    - You are willing to add a build step and can tolerate early-stage tooling
-    - You want optional ProGuard integration for up to 70% size reduction
+  - You need the smallest possible executable JAR
+  - You are willing to add a build step and can tolerate early-stage tooling
+  - You want optional ProGuard integration for up to 70% size reduction
   when_not_to_use:
-    - You are packaging a library JAR (not an executable)
-    - You need a stable, production-ready tool
-    - Build time is a constraint (Zopfli mode is slow)
+  - You are packaging a library JAR (not an executable)
+  - You need a stable, production-ready tool
+  - Build time is a constraint (Zopfli mode is slow)
   vs:
     name: Maven Shade Plugin
     url: https://maven.apache.org/plugins/maven-shade-plugin/
-    bottom_line: "Use femtojar (with ProGuard) for the smallest possible executable JAR if you can tolerate early-stage tooling; use Maven Shade for reliable packaging."
+    bottom_line: Use femtojar (with ProGuard) for the smallest possible executable JAR if you can tolerate
+      early-stage tooling; use Maven Shade for reliable packaging.
     comparison:
-      - { feature: "What is compressed",      femto: "All classes (cross-class blob)", other: "Per-entry ZIP" }
-      - { feature: "Cross-class dedup",        femto: "✓",                             other: "✗" }
-      - { feature: "Typical size reduction",   femto: "15–30% (up to 70% w/ ProGuard)",other: "Minimal" }
-      - { feature: "ProGuard integration",     femto: "Optional",                      other: "✗" }
-      - { feature: "Works on library JARs",    femto: "✗",                             other: "✓" }
-      - { feature: "Startup overhead",         femto: "None",                          other: "None" }
-      - { feature: "Maturity",                 femto: "Proof-of-concept",              other: "Very mature" }
-  related: []
-  links: []
-  no_release: false
+    - feature: What is compressed
+      femto: All classes (cross-class blob)
+      other: Per-entry ZIP
+    - feature: Cross-class dedup
+      femto: ✓
+      other: ✗
+    - feature: Typical size reduction
+      femto: 15–30% (up to 70% w/ ProGuard)
+      other: Minimal
+    - feature: ProGuard integration
+      femto: Optional
+      other: ✗
+    - feature: Works on library JARs
+      femto: ✗
+      other: ✓
+    - feature: Startup overhead
+      femto: None
+      other: None
+    - feature: Maturity
+      femto: Proof-of-concept
+      other: Very mature
   install:
-    - label: Maven plugin
-      lang: xml
-      code: |
-        <plugin>
-          <groupId>me.bechberger</groupId>
-          <artifactId>femtojar</artifactId>
-          <version>VERSION</version>
-          <executions>
-            <execution>
-              <goals><goal>reencode-jars</goal></goals>
-            </execution>
-          </executions>
-        </plugin>
+  - label: Maven plugin
+    lang: xml
+    code: |
+      <plugin>
+        <groupId>me.bechberger</groupId>
+        <artifactId>femtojar</artifactId>
+        <version>VERSION</version>
+        <executions>
+          <execution>
+            <goals><goal>reencode-jars</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
   usage:
-    - label: Usage
-      lang: bash
-      code: |
-        # Add the plugin to pom.xml, then:
-        mvn package
-        # Output: target/yourapp-shaded-femto.jar
-  note: "Early proof-of-concept. Always black-box test after enabling ProGuard."
+  - label: Usage
+    lang: bash
+    code: |
+      # Add the plugin to pom.xml, then:
+      mvn package
+      # Output: target/yourapp-shaded-femto.jar
+  note: Early proof-of-concept. Always black-box test after enabling ProGuard.

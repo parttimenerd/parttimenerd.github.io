@@ -1,163 +1,211 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTRY SCHEMA  (omit any optional field you don't need)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# REQUIRED
+#   id:               string  — slug, matches GitHub repo name (parttimenerd/<id>)
+#   tag:              ready | experimental | poc | demo
+#   tagline:          string  — 1–2 sentence description shown in detail view
+#   tagline_short:    string  — ≤ 10 words shown on cards and in the nav tooltip
+#
+# OPTIONAL — source control
+#   github_url:       string  — full URL; defaults to https://github.com/parttimenerd/<id>
+#   github_pages:     string  — docs/web-app URL; shows "Docs" or "Web app" link in header
+#
+# OPTIONAL — release resolution (script tries these in order, falls back to GitHub)
+#   maven_coordinates: "groupId:artifactId"  — used by fetch_releases.py
+#   cargo_crate:       "crate-name"          — used by fetch_releases.py
+#   static_version:    string  — hard-coded version when no release source exists
+#   no_release:        true    — skip this entry in fetch_releases.py entirely
+#
+# OPTIONAL — card/detail content
+#   group:            string  — section heading on the collection page
+#   screenshot:       string  — URL; shown with lightbox in detail view
+#   when_to_use:      list    — bullet points (shown green ✓)
+#   when_not_to_use:  list    — bullet points (shown red ✗)
+#   features:         list    — bullet points for demo/poc entries without when_to_use
+#   vs:               object  — comparison table:
+#                       name: "Other Lib"
+#                       url:  "https://..."
+#                       bottom_line: "One-liner picking guidance"
+#                       comparison:
+#                         - { feature: "JAR size", femto: "~50 KB", other: "~870 KB" }
+#   related:          list    — { label: "name", url: "https://..." }
+#   links:            list    — { label: "Blog post ↗", url: "https://..." }
+#   install:          list    — code tabs:
+#                         - label: Maven
+#                           lang: xml
+#                           code: |
+#                             <dependency>...</dependency>
+#                       VERSION is substituted with the resolved release version
+#   usage:            list    — same structure as install; VERSION not substituted
+#   note:             string  — shown as amber callout at the bottom of the detail section
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# COPY-PASTE TEMPLATE FOR A NEW ENTRY:
+#
+# - id: my-tool
+#   tag: experimental
+#   tagline: "One or two sentences. Use it when..."
+#   tagline_short: "≤10 words"
+#   when_to_use:
+#     - You need X
+#   when_not_to_use:
+#     - You need Y
+#   install:
+#     - label: Maven
+#       lang: xml
+#       code: |
+#         <dependency>
+#           <groupId>me.bechberger</groupId>
+#           <artifactId>my-tool</artifactId>
+#           <version>VERSION</version>
+#         </dependency>
+#   usage:
+#     - label: Example
+#       lang: java
+#       code: |
+#         // example code here
+# ─────────────────────────────────────────────────────────────────────────────
+
 - id: hello-ebpf
   tag: experimental
-  group: "eBPF"
-  tagline: "The first eBPF library for Java. Write eBPF programs and the accompanying user-land code in pure Java 21+, without leaving the JVM. Covers tracepoints, kprobes, uprobes, network filters, and custom Linux schedulers via sched-ext. Use it when you want to write eBPF observability or scheduling tools in Java without a C toolchain."
-  tagline_short: "Write eBPF programs in pure Java 21+ — tracepoints, kprobes, schedulers."
-  screenshot: ""
-  static_version: ""
-  github_pages: "https://parttimenerd.github.io/hello-ebpf/"
+  group: eBPF
+  tagline: The first eBPF library for Java. Write eBPF programs and the accompanying user-land code in
+    pure Java 21+, without leaving the JVM. Covers tracepoints, kprobes, uprobes, network filters, and
+    custom Linux schedulers via sched-ext. Use it when you want to write eBPF observability or scheduling
+    tools in Java without a C toolchain.
+  tagline_short: Write eBPF programs in pure Java 21+ — tracepoints, kprobes, schedulers.
+  github_pages: https://parttimenerd.github.io/hello-ebpf/
   when_to_use:
-    - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
-    - You are exploring Linux kernel internals from Java
-    - You want to follow the accompanying blog series and build understanding step by step
+  - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
+  - You are exploring Linux kernel internals from Java
+  - You want to follow the accompanying blog series and build understanding step by step
   when_not_to_use:
-    - You need a production-ready, stable eBPF framework
-    - You need broad kernel version support (requires a recent kernel with BTF)
-    - You are on macOS or Windows
-  vs: ~
-  related: []
+  - You need a production-ready, stable eBPF framework
+  - You need broad kernel version support (requires a recent kernel with BTF)
+  - You are on macOS or Windows
   links:
-    - { label: "Blog series ↗", url: "https://mostlynerdless.de/blog/category/ebpf/" }
+  - label: Blog series ↗
+    url: https://mostlynerdless.de/blog/category/ebpf/
   no_release: true
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger</groupId>
-          <artifactId>bpf</artifactId>
-          <version>VERSION</version>
-        </dependency>
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger</groupId>
+        <artifactId>bpf</artifactId>
+        <version>VERSION</version>
+      </dependency>
   usage:
-    - label: Simple tracepoint
-      lang: java
-      code: |
-        // See the blog series for full examples
-        BPFProgram prog = BPFProgram.load(MyProgram.class);
-        prog.autoAttachPrograms();
-        prog.tracePrintLoop(System.out::println);
-  note: ""
-
+  - label: Simple tracepoint
+    lang: java
+    code: |
+      // See the blog series for full examples
+      BPFProgram prog = BPFProgram.load(MyProgram.class);
+      prog.autoAttachPrograms();
+      prog.tracePrintLoop(System.out::println);
 - id: concurrency-fuzz-scheduler
   tag: experimental
-  group: "eBPF"
-  tagline: "Custom Linux sched-ext scheduler written in Java with hello-ebpf that deliberately perturbs thread scheduling to expose race conditions and lock ordering bugs in concurrent Java code. Use it when you want to stress-test concurrent code by forcing unusual thread interleavings on Linux."
-  tagline_short: "eBPF scheduler that perturbs thread scheduling to surface race conditions."
-  screenshot: ""
-  static_version: ""
+  group: eBPF
+  tagline: Custom Linux sched-ext scheduler written in Java with hello-ebpf that deliberately perturbs
+    thread scheduling to expose race conditions and lock ordering bugs in concurrent Java code. Use it
+    when you want to stress-test concurrent code by forcing unusual thread interleavings on Linux.
+  tagline_short: eBPF scheduler that perturbs thread scheduling to surface race conditions.
   when_to_use:
-    - You want to stress-test concurrent Java code by controlling thread interleaving
-    - You are fuzzing for race conditions or lock ordering bugs that only surface under unusual scheduling
+  - You want to stress-test concurrent Java code by controlling thread interleaving
+  - You are fuzzing for race conditions or lock ordering bugs that only surface under unusual scheduling
   when_not_to_use:
-    - You need a stable, production-ready fuzzing framework
-    - You are not on Linux with a recent kernel supporting sched-ext
-  vs: ~
+  - You need a stable, production-ready fuzzing framework
+  - You are not on Linux with a recent kernel supporting sched-ext
   related:
-    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
-    - { label: "taskcontrol", url: "https://github.com/parttimenerd/taskcontrol" }
-  links: []
+  - label: hello-ebpf
+    url: https://github.com/parttimenerd/hello-ebpf
+  - label: taskcontrol
+    url: https://github.com/parttimenerd/taskcontrol
   no_release: true
-  install: ~
-  usage: ~
-  note: ""
-
 - id: taskcontrol
   tag: experimental
-  group: "eBPF"
-  tagline: "Java API that sits on top of hello-ebpf and exposes fine-grained control over Linux thread scheduling, letting tests pause, resume, and reorder threads to reproduce hard-to-trigger concurrency bugs. Use it when you want deterministic control over thread interleaving in tests without writing C."
-  tagline_short: "Fine-grained Java API to pause, resume, and reorder threads in tests."
-  screenshot: ""
-  static_version: ""
+  group: eBPF
+  tagline: Java API that sits on top of hello-ebpf and exposes fine-grained control over Linux thread
+    scheduling, letting tests pause, resume, and reorder threads to reproduce hard-to-trigger concurrency
+    bugs. Use it when you want deterministic control over thread interleaving in tests without writing
+    C.
+  tagline_short: Fine-grained Java API to pause, resume, and reorder threads in tests.
   when_to_use:
-    - You want deterministic control over thread interleaving in tests
-    - You are building concurrency testing or fuzzing tooling on Linux
+  - You want deterministic control over thread interleaving in tests
+  - You are building concurrency testing or fuzzing tooling on Linux
   when_not_to_use:
-    - You need portable cross-platform scheduling control
-  vs: ~
+  - You need portable cross-platform scheduling control
   related:
-    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
-    - { label: "concurrency-fuzz-scheduler", url: "https://github.com/parttimenerd/concurrency-fuzz-scheduler" }
-  links: []
+  - label: hello-ebpf
+    url: https://github.com/parttimenerd/hello-ebpf
+  - label: concurrency-fuzz-scheduler
+    url: https://github.com/parttimenerd/concurrency-fuzz-scheduler
   no_release: true
   install:
-    - label: Maven
-      lang: xml
-      code: |
-        <dependency>
-          <groupId>me.bechberger</groupId>
-          <artifactId>taskcontrol</artifactId>
-          <version>VERSION</version>
-        </dependency>
-  usage: ~
-  note: ""
-
+  - label: Maven
+    lang: xml
+    code: |
+      <dependency>
+        <groupId>me.bechberger</groupId>
+        <artifactId>taskcontrol</artifactId>
+        <version>VERSION</version>
+      </dependency>
 - id: sound-of-scheduling
   tag: demo
-  group: "eBPF"
-  tagline: "A Linux scheduler written in Java using hello-ebpf that translates scheduling decisions into MIDI notes in real time — each CPU core gets a voice, and context switches become music. A live demo of what eBPF and sched-ext make possible from pure Java."
-  tagline_short: "Linux scheduler written in Java that turns context switches into MIDI music."
-  screenshot: ""
-  static_version: ""
+  group: eBPF
+  tagline: A Linux scheduler written in Java using hello-ebpf that translates scheduling decisions into
+    MIDI notes in real time — each CPU core gets a voice, and context switches become music. A live demo
+    of what eBPF and sched-ext make possible from pure Java.
+  tagline_short: Linux scheduler written in Java that turns context switches into MIDI music.
   features:
-    - Each CPU core maps to a distinct MIDI instrument voice
-    - Context switches and wakeups trigger notes in real time
-    - Built on hello-ebpf's sched-ext Java API
-    - Great for live demos of eBPF and Java scheduling
-  when_to_use: ~
-  when_not_to_use: ~
-  vs: ~
+  - Each CPU core maps to a distinct MIDI instrument voice
+  - Context switches and wakeups trigger notes in real time
+  - Built on hello-ebpf's sched-ext Java API
+  - Great for live demos of eBPF and Java scheduling
   related:
-    - { label: "hello-ebpf", url: "https://github.com/parttimenerd/hello-ebpf" }
+  - label: hello-ebpf
+    url: https://github.com/parttimenerd/hello-ebpf
   links:
-    - { label: "Blog post ↗", url: "https://mostlynerdless.de/blog/2026/01/26/reproducing-a-tricky-bug-in-minutes-with-a-custom-linux-scheduler-written-in-java/" }
+  - label: Blog post ↗
+    url: https://mostlynerdless.de/blog/2026/01/26/reproducing-a-tricky-bug-in-minutes-with-a-custom-linux-scheduler-written-in-java/
   no_release: true
-  install: ~
-  usage: ~
-  note: "Pure fun. Don't use in production."
-
+  note: Pure fun. Don't use in production.
 - id: check-language-version
   tag: experimental
-  group: "Misc"
-  tagline: "Static analyser that scans your Java source tree and reports the minimum language level each file actually requires, so you know exactly what is preventing you from lowering --release. Use it when you are planning a Java version migration and need a per-file breakdown before making changes."
-  tagline_short: "Reports the minimum Java language level each source file actually requires."
-  screenshot: ""
-  static_version: ""
+  group: Misc
+  tagline: Static analyser that scans your Java source tree and reports the minimum language level each
+    file actually requires, so you know exactly what is preventing you from lowering --release. Use it
+    when you are planning a Java version migration and need a per-file breakdown before making changes.
+  tagline_short: Reports the minimum Java language level each source file actually requires.
   when_to_use:
-    - You want to lower your project's --release target and need to know what's blocking it
-    - You are auditing a multi-module project for language-level inconsistencies
-    - You want a quick per-file breakdown before a Java version migration
+  - You want to lower your project's --release target and need to know what's blocking it
+  - You are auditing a multi-module project for language-level inconsistencies
+  - You want a quick per-file breakdown before a Java version migration
   when_not_to_use:
-    - You need a full static analysis tool with broader scope
-  vs: ~
-  related: []
-  links: []
+  - You need a full static analysis tool with broader scope
   no_release: true
   install:
-    - label: Download
-      lang: bash
-      code: |
-        gh release download --repo parttimenerd/check-language-version \
-          --pattern '*.jar' -D .
-  note: ""
-
+  - label: Download
+    lang: bash
+    code: |
+      gh release download --repo parttimenerd/check-language-version \
+        --pattern '*.jar' -D .
 - id: local-android-ai
   tag: experimental
-  group: "Misc"
-  tagline: "Sample project that runs AI models locally on Android devices and exposes them as a server — useful for privacy-preserving on-device inference without cloud APIs. Demonstrates how to integrate LLM inference into an Android app and serve it over a local network."
-  tagline_short: "Run AI models locally on Android and expose them as a server."
-  screenshot: ""
-  static_version: ""
+  group: Misc
+  tagline: Sample project that runs AI models locally on Android devices and exposes them as a server
+    — useful for privacy-preserving on-device inference without cloud APIs. Demonstrates how to integrate
+    LLM inference into an Android app and serve it over a local network.
+  tagline_short: Run AI models locally on Android and expose them as a server.
   when_to_use:
-    - You want to run LLM inference on-device without sending data to the cloud
-    - You are building an Android app that needs local AI capabilities
-    - You want a starting point for on-device model serving on Android
+  - You want to run LLM inference on-device without sending data to the cloud
+  - You are building an Android app that needs local AI capabilities
+  - You want a starting point for on-device model serving on Android
   when_not_to_use:
-    - You need production-grade model serving or high-throughput inference
-    - You are targeting iOS or desktop platforms
-  vs: ~
-  related: []
-  links: []
+  - You need production-grade model serving or high-throughput inference
+  - You are targeting iOS or desktop platforms
   no_release: true
-  install: ~
-  usage: ~
-  note: "Sample / reference project — not a library."
+  note: Sample / reference project — not a library.
