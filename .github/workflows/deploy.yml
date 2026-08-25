@@ -19,6 +19,9 @@ jobs:
       - name: Install npm deps
         run: npm ci
 
+      - name: Add node_modules/.bin to PATH
+        run: echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
