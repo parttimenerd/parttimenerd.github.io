@@ -10,9 +10,15 @@ I'm a JVM engineer on the SapMachine team at SAP. I work on profiling tooling �
 
 ### 🎤 Upcoming talks
 
-- **Let's create a tiny AI library together** — [JavaZone](https://javazone.no), [Berlin Expert Days](https://www.bed-con.org)
+- **Sep 8** · Let's create a tiny AI library together · [JavaZone](https://javazone.no) · Oslo, Norway
 
-- **You Are Running the Wrong Tests First** — [BaselOne](https://baselone.org/), [Hello Stavanger](https://www.hellostavanger.no/), [Frankfurter IT-Tage](https://www.ittage.informatik-aktuell.de)
+- **Sep 23** · Let's create a tiny AI library together · [Berlin Expert Days](https://www.bed-con.org) · Berlin, Germany
+
+- **Oct 14** · You Are Running the Wrong Tests First · [BaselOne](https://baselone.org/) · Basel, Switzerland · [Program](https://baselone.org/#programm)
+
+- **Oct 21** · You Are Running the Wrong Tests First · [Hello Stavanger](https://www.hellostavanger.no/) · Stavanger, Norway · w/ Jake Hillion
+
+- **Dec 7** · You Are Running the Wrong Tests First · [Frankfurter IT-Tage](https://www.ittage.informatik-aktuell.de) · Frankfurt, Germany
 
 ---
 

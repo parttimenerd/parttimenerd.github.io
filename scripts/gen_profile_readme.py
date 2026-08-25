@@ -67,17 +67,27 @@ def render(bio: str, talks: list[dict], posts: list[dict]) -> str:
     if talks:
         lines.append("---\n")
         lines.append("### 🎤 Upcoming talks\n")
-        # Deduplicate: group by title, list conferences
-        seen_conf: dict[str, list[str]] = {}
         for t in talks:
+            date  = t.get("date_display") or t.get("date") or ""
+            # Trim year from display date: "Sep 8 - 9, 2026" → "Sep 8"
+            date_short = date.split(" - ")[0].split(",")[0].strip()
             title = t.get("title") or ""
             conf  = t.get("conference") or ""
-            url   = t.get("conf_url") or ""
-            entry = f"[{conf}]({url})" if url else conf
-            seen_conf.setdefault(title, []).append(entry)
-        for title, confs in seen_conf.items():
-            confs_str = ", ".join(confs)
-            lines.append(f"- **{title}** — {confs_str}\n")
+            conf_url   = t.get("conf_url") or ""
+            location   = t.get("location") or ""
+            co_speaker = t.get("co_speaker") or ""
+            link_text  = t.get("link_text") or ""
+            link_url   = t.get("link_url") or ""
+
+            conf_md = f"[{conf}]({conf_url})" if conf_url else conf
+            parts = [f"**{date_short}**", title, conf_md]
+            if location:
+                parts.append(location)
+            if co_speaker:
+                parts.append(f"w/ {co_speaker}")
+            if link_text and link_url:
+                parts.append(f"[{link_text}]({link_url})")
+            lines.append("- " + " · ".join(parts) + "\n")
 
     # ── Recent posts ──────────────────────────────────────────────────────────
     if posts:
