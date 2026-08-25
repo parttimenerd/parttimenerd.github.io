@@ -48,24 +48,6 @@
   {{/* Sections */}}
   <div class="grid gap-6">
 
-    <div>
-      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Collections</h2>
-      <div class="flex flex-col gap-2">
-        <a href="/femto/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">femto libs</span>
-          <span class="icon-arrow text-gray-400 text-sm group-hover:text-gray-600">Tiny Java libraries: LZ4, CLI, JSON, schema, JAR analysis</span>
-        </a>
-        <a href="/jvm-tools/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">jvm tools</span>
-          <span class="icon-arrow text-gray-400 text-sm group-hover:text-gray-600">Diagnose, profile, and understand running JVMs</span>
-        </a>
-        <a href="/experiments/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="font-medium">experiments</span>
-          <span class="icon-arrow text-gray-400 text-sm group-hover:text-gray-600">eBPF, schedulers, benchmarking, and weekend hacks</span>
-        </a>
-      </div>
-    </div>
-
     {{/* Notable Projects — driven by data/notable_projects.yaml */}}
     {{ $notable := hugo.Data.notable_projects }}
     {{ if $notable }}
@@ -135,16 +117,12 @@
           </div>
         </div>
         {{ end }}
-        <a href="https://github.com/SAP/SapMachine/wiki/Presentations" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-ext font-medium">All presentations</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Slides and recordings from conferences and meetups</span>
-        </a>
-        <a href="https://sessionize.com/johannes-bechberger" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-ext font-medium">Sessionize profile</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Speaker bio and sessions</span>
-        </a>
+        <div class="flex gap-4 flex-wrap">
+          <a href="https://github.com/SAP/SapMachine/wiki/Presentations" target="_blank" rel="noopener"
+             class="icon-ext text-sm text-blue-600 hover:text-blue-800">All presentations</a>
+          <a href="https://sessionize.com/johannes-bechberger" target="_blank" rel="noopener"
+             class="icon-ext text-sm text-blue-600 hover:text-blue-800">Sessionize profile</a>
+        </div>
       </div>
     </div>
 

@@ -2,8 +2,8 @@
   tag: ready
   group: ""
   maven_coordinates: "me.bechberger:femtolz4"
-  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64. Use it when JAR size or transitive dependency count matters — Java agents, embedded tools, and minimal distributions where lz4-java's 870 KB is too heavy."
-  tagline_short: "LZ4 compression for Java — ~50 KB, zero dependencies, drop-in for size-sensitive projects."
+  tagline: "LZ4 frame compression for Java. Around 50 KB, zero transitive dependencies, full streaming and block API, pure Java with optional native acceleration on linux/amd64 and darwin/aarch64. Use it when JAR size or transitive dependency count matters — Java agents, embedded tools, and minimal distributions where lz4-java's 870 KB is too heavy."
+  tagline_short: "LZ4 compression for Java — ~50 KB, zero dependencies, streaming + block API, drop-in for size-sensitive projects."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -18,7 +18,7 @@
   vs:
     name: lz4-java
     url: https://github.com/lz4/lz4-java
-    bottom_line: "Pick femtolz4 when JAR size matters and you only need linux/mac; pick lz4-java for broad platform coverage or lz4opt."
+    bottom_line: "Pick femtolz4 when JAR size matters and you only need linux/mac; pick lz4-java for broad platform coverage or lz4opt levels."
     comparison:
       - { feature: "JAR size",           femto: "~50 KB",                      other: "~870 KB" }
       - { feature: "Dependencies",       femto: "None",                        other: "None" }
@@ -26,7 +26,6 @@
       - { feature: "Native platforms",   femto: "linux/amd64, darwin/aarch64", other: "All major OS/arch" }
       - { feature: "LZ4 frame format",   femto: "✓",                           other: "✓" }
       - { feature: "Block API",          femto: "✓",                           other: "✓" }
-      - { feature: "Streaming API",      femto: "✗",                           other: "✓" }
       - { feature: "xxHash-32",          femto: "✓",                           other: "✓" }
       - { feature: "API compatibility",  femto: "Partial (factory calls)",     other: "—" }
   related: []
