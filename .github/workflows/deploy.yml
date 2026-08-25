@@ -17,10 +17,7 @@ jobs:
           node-version: '20'
 
       - name: Install npm deps
-        run: npm ci
-
-      - name: Add node_modules/.bin to PATH
-        run: echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH
+        run: npm ci && npm install -g postcss-cli
 
       - uses: actions/setup-python@v5
         with:
