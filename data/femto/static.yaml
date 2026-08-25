@@ -201,7 +201,7 @@
     url: https://github.com/networknt/json-schema-validator
     bottom_line: "Pick femtoschema for programmatic schema definition with no dependencies; pick json-schema-validator for full spec compliance or external JSON Schema documents."
     comparison:
-      - { feature: "JAR size",                          femto: "Tiny",              other: "Large" }
+      - { feature: "JAR size",                          femto: "~46 KB",            other: "Large" }
       - { feature: "Dependencies",                      femto: "None",              other: "Jackson + others" }
       - { feature: "JSON Schema Draft 2020-12",         femto: "Subset (export+import)", other: "Full" }
       - { feature: "$ref / allOf / anyOf / if-then",    femto: "✗",                 other: "✓" }

@@ -290,7 +290,7 @@
     - You need to redact HPROF files while preserving their structure for further analysis
   when_not_to_use:
     - You need guaranteed complete privacy (proof-of-concept, not audited)
-    - You need to redact JFR recordings (use jfr-redact instead)
+    - You need to redact JFR recordings (not supported)
   vs: ~
   related: []
   links: []
@@ -425,7 +425,6 @@
 - id: execjar
   tag: experimental
   group: "JAR Packaging"
-  maven_coordinates: "me.bechberger:execjar-maven-plugin"
   tagline: "CLI tool and Maven plugin that wraps a fat JAR in a small shell stub, producing a single self-contained file that is directly executable on Linux and macOS without a launcher script or explicit java -jar invocation. Use it when you want users to run your tool as a plain command without thinking about Java."
   tagline_short: "Wrap a fat JAR into a directly executable file on Linux/macOS — no launcher script needed."
   screenshot: ""

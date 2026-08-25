@@ -45,6 +45,11 @@
       "date": "2026-08-12",
       "changelog": "Correct ZIP/ZIP64 internal offsets after prepending the launcher script, fixing ZIP64 archives and strict readers (e.g. OpenJDK `java`/`jar`) that follow absolute offsets rather than scanning for signatures ([#1](https://github.com/parttimenerd/execjar/issues/1)) \u00b7 `execjar.jar` - Executable JAR \u2026"
     },
+    "test-order": {
+      "version": "0.1.0",
+      "date": "2025-10-11",
+      "changelog": ""
+    },
     "jthreaddump": {
       "version": "0.5.8",
       "date": "2026-01-28",

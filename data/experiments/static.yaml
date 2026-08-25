@@ -4,7 +4,7 @@
   tagline: "The first eBPF library for Java. Write eBPF programs and the accompanying user-land code in pure Java 21+, without leaving the JVM. Covers tracepoints, kprobes, uprobes, network filters, and custom Linux schedulers via sched-ext. Use it when you want to write eBPF observability or scheduling tools in Java without a C toolchain."
   tagline_short: "Write eBPF programs in pure Java 21+ — tracepoints, kprobes, schedulers."
   screenshot: ""
-  static_version: "0.1.4"
+  static_version: ""
   github_pages: "https://parttimenerd.github.io/hello-ebpf/"
   when_to_use:
     - You want to write eBPF observability tools, schedulers, or network filters without leaving the JVM
@@ -25,7 +25,7 @@
       code: |
         <dependency>
           <groupId>me.bechberger</groupId>
-          <artifactId>hello-ebpf</artifactId>
+          <artifactId>bpf</artifactId>
           <version>VERSION</version>
         </dependency>
   usage:
