@@ -1,0 +1,12 @@
+baseURL: "https://parttimenerd.github.io/"
+languageCode: "en-us"
+title: "parttimenerd"
+theme: "projects-theme"
+
+params:
+  nav:
+    - label: "femto libs"
+      url: /femto/
+    - label: "supportability"
+      url: /supportability/
+  blog_url: "https://mostlynerdless.de"
