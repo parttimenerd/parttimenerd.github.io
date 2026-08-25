@@ -1,4 +1,12 @@
 {{ define "main" }}
+{{/* ── Build a flat id→entry lookup across all collection statics ── */}}
+{{ $allProjects := dict }}
+{{ range (slice "femto" "jvm-tools" "experiments") }}
+  {{ range (index hugo.Data . "static") }}
+    {{ $allProjects = merge $allProjects (dict .id .) }}
+  {{ end }}
+{{ end }}
+
 <div class="max-w-3xl mx-auto px-4 py-12">
 
   {{/* Profile header */}}
@@ -58,42 +66,39 @@
       </div>
     </div>
 
+    {{/* Notable Projects — driven by data/notable_projects.yaml */}}
+    {{ $notable := hugo.Data.notable_projects }}
+    {{ if $notable }}
     <div>
       <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Notable Projects</h2>
       <div class="flex flex-col gap-2">
-        <a href="https://github.com/parttimenerd/hello-ebpf" target="_blank" rel="noopener"
+        {{ range $notable }}
+          {{ $proj  := index $allProjects .id }}
+          {{ $tag   := .tagline }}
+          {{ if and (not $tag) $proj }}{{ $tag = $proj.tagline_short | default $proj.tagline }}{{ end }}
+          {{ $ghURL := .url }}
+          {{ if not $ghURL }}
+            {{ if $proj }}
+              {{ $ghURL = $proj.github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}
+            {{ else }}
+              {{ $ghURL = printf "https://github.com/parttimenerd/%s" .id }}
+            {{ end }}
+          {{ end }}
+        <a href="{{ $ghURL }}" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-github font-medium">hello-ebpf</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">The first eBPF library for Java</span>
+          <span class="icon-github font-medium">{{ .id }}</span>
+          {{ if $tag }}<span class="text-gray-400 text-sm group-hover:text-gray-600">{{ $tag }}</span>{{ end }}
         </a>
-        <a href="https://github.com/parttimenerd/tiny-profiler" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-github font-medium">tiny-profiler</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Async-profiler based sampling profiler — annotate methods, get flamegraphs</span>
-        </a>
-        <a href="https://github.com/parttimenerd/jstall" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-github font-medium">jstall</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">One-shot CLI inspector for running JVMs — deadlocks, hot threads, flamegraphs</span>
-        </a>
-        <a href="https://github.com/SAP/cf-cli-java-plugin" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-github font-medium">cf-cli-java-plugin</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Heap dumps, thread dumps, and JFR recordings from the CF CLI</span>
-        </a>
-        <a href="https://github.com/parttimenerd/local-android-ai" target="_blank" rel="noopener"
-           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
-          <span class="icon-github font-medium">local-android-ai</span>
-          <span class="text-gray-400 text-sm group-hover:text-gray-600">Run AI models locally on Android and expose them as a server</span>
-        </a>
+        {{ end }}
       </div>
     </div>
+    {{ end }}
 
     <div>
       <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Talks &amp; Presentations</h2>
       <div class="flex flex-col gap-2">
         {{/* Upcoming talks from data/talks.json */}}
-        {{ $talks := site.Data.talks.talks }}
+        {{ $talks := hugo.Data.talks.talks }}
         {{ if $talks }}
         <div class="mb-3">
           <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Upcoming</p>
@@ -140,6 +145,22 @@
           <span class="icon-ext font-medium">Sessionize profile</span>
           <span class="text-gray-400 text-sm group-hover:text-gray-600">Speaker bio and sessions</span>
         </a>
+      </div>
+    </div>
+
+    {{/* Recent blog posts from data/blog.json */}}
+    {{ $posts := hugo.Data.blog.posts }}
+    {{ if $posts }}
+    <div>
+      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Recent Posts</h2>
+      <div class="flex flex-col gap-3">
+        {{ range $posts }}
+        <div class="flex gap-3 items-baseline">
+          <span class="text-xs text-gray-400 tabular-nums w-14 shrink-0 leading-tight">{{ .date_display }}</span>
+          <a href="{{ .url }}" target="_blank" rel="noopener"
+             class="icon-ext text-sm text-blue-600 hover:text-blue-800 leading-snug">{{ .title }}</a>
+        </div>
+        {{ end }}
         <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
            class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
           <span class="icon-ext font-medium">Blog — Mostly Nerdless</span>
@@ -147,6 +168,7 @@
         </a>
       </div>
     </div>
+    {{ end }}
 
   </div>
 </div>

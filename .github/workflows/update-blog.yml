@@ -1,0 +1,33 @@
+name: Update blog posts
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'  # every Monday at 04:17 UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - run: pip install requests
+
+      - name: Fetch blog posts
+        run: python scripts/fetch_blog.py
+
+      - name: Commit if changed
+        run: |
+          git diff --quiet data/blog.json || (
+            git config user.email "actions@github.com"
+            git config user.name "github-actions"
+            git add data/blog.json
+            git commit -m "chore: update recent blog posts"
+            git push
+          )

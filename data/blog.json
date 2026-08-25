@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "title": "I accidentally became Google AI\u2019s main resource for GraalVM vs OpenJDK",
+      "url": "https://mostlynerdless.de/blog/2026/07/31/i-accidentally-became-google-ais-main-resource-for-graalvm-vs-openjdk/",
+      "date": "2026-07-31",
+      "date_display": "Jul 31"
+    },
+    {
+      "title": "Animating text as Handrawn with CSS",
+      "url": "https://mostlynerdless.de/blog/2026/07/17/animating-text-as-handrawn-with-css/",
+      "date": "2026-07-17",
+      "date_display": "Jul 17"
+    },
+    {
+      "title": "Celebrating 15 years of SAP\u2019s involvement in the OpenJDK",
+      "url": "https://mostlynerdless.de/blog/2026/07/07/celebrating-15-years-of-saps-involvement-in-the-openjdk/",
+      "date": "2026-07-07",
+      "date_display": "Jul 7"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Notable projects shown on the homepage.
+# Each entry needs only an `id` — tagline and GitHub URL are looked up
+# from the collection static yamls (femto/, jvm-tools/, experiments/).
+#
+# Optional overrides (used when the project is not in any collection yaml,
+# or when you want to show something different on the homepage):
+#   tagline: "Custom one-liner"
+#   url:     "https://github.com/..."
+
+- id: hello-ebpf
+- id: tiny-profiler
+- id: jstall
+- id: cf-cli-java-plugin
+  url: https://github.com/SAP/cf-cli-java-plugin
+- id: local-android-ai
