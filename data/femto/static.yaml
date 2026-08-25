@@ -1,7 +1,7 @@
 - id: femtolz4
   tag: ready
   group: ""
-  tagline: "LZ4 frame compression for Java — 50 KB, no dependencies."
+  tagline: "LZ4 frame compression for Java. 50 KB, no dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -61,7 +61,7 @@
 - id: femtocli
   tag: ready
   group: ""
-  tagline: "Annotation-driven CLI framework for Java — under 65 KB, no dependencies."
+  tagline: "Annotation-driven CLI framework for Java. Under 65 KB, no dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -127,7 +127,7 @@
 - id: femtojson
   tag: ready
   group: ""
-  tagline: "Tiny JSON parser for Java — zero dependencies, straightforward API."
+  tagline: "Tiny JSON parser for Java. Zero dependencies, straightforward API."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -180,7 +180,7 @@
 - id: femtoschema
   tag: ready
   group: ""
-  tagline: "Fluent JSON schema DSL and validator for Java — zero dependencies."
+  tagline: "Fluent JSON schema DSL and validator for Java. Zero dependencies."
   screenshot: ""
   static_version: ""
   when_to_use:

@@ -24,7 +24,6 @@
     {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
     {{ if not $ver }}{{ $ver = .static_version | default "unreleased" }}{{ end }}
     {{ $date := "" }}{{ with $rel }}{{ $date = .date }}{{ end }}
-    {{ $changelog := "" }}{{ with $rel }}{{ $changelog = .changelog }}{{ end }}
 
     {{/* Group break: close and reopen grid */}}
     {{ if and .group (ne .group $lastGroup2) }}
@@ -49,8 +48,8 @@
       </div>
       {{ end }}
       <p class="text-sm text-gray-700 flex-1">{{ .tagline }}</p>
-      {{ if $changelog }}
-      <p class="text-xs text-gray-500 line-clamp-2">{{ $changelog }}</p>
+      {{ with index .when_to_use 0 }}
+      <p class="text-xs text-gray-500">Use when: {{ . }}</p>
       {{ end }}
       <a href="#{{ .id }}" class="text-sm text-blue-600 hover:text-blue-800 mt-auto">details ↓</a>
     </div>
@@ -58,13 +57,21 @@
   </div>
 
   {{/* Detail sections */}}
+  {{ $lastGroup3 := "" }}
   {{ range $static }}
     {{ $rel := index $releases.entries .id }}
     {{ $ver := "" }}{{ with $rel }}{{ $ver = .version }}{{ end }}
     {{ if not $ver }}{{ $ver = .static_version | default "unreleased" }}{{ end }}
+    {{ $changelog := "" }}{{ with $rel }}{{ $changelog = .changelog }}{{ end }}
     {{ $thisID := .id }}
 
-  <section id="{{ .id }}" class="mb-16 scroll-mt-24">
+    {{/* Group heading in detail view */}}
+    {{ if and .group (ne .group $lastGroup3) }}
+    <h2 class="text-2xl font-bold text-gray-800 mt-16 mb-2 border-b-2 border-gray-300 pb-2">{{ .group }}</h2>
+    {{ end }}
+    {{ $lastGroup3 = .group }}
+
+  <section id="{{ .id }}" class="mb-4 scroll-mt-24 border-t-2 border-gray-200 pt-10 mt-10 first:border-t-0 first:mt-0 first:pt-0">
     <div class="flex flex-wrap items-center gap-3 mb-2">
       <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
       <span class="tag-{{ .tag }}">{{ .tag }}</span>
@@ -94,7 +101,7 @@
     {{ if .when_to_use }}
     <div class="grid md:grid-cols-2 gap-4 mb-6">
       <div>
-        <h3 class="font-semibold text-green-700 mb-2">Use this when</h3>
+        <h3 class="font-semibold text-green-700 mb-2">When to use</h3>
         <ul class="space-y-1">
           {{ range .when_to_use }}
           <li class="text-sm text-gray-700 flex gap-2"><span class="text-green-600 mt-0.5">✓</span><span>{{ . }}</span></li>
@@ -103,7 +110,7 @@
       </div>
       {{ if .when_not_to_use }}
       <div>
-        <h3 class="font-semibold text-red-700 mb-2">Don't use this when</h3>
+        <h3 class="font-semibold text-red-700 mb-2">When not to use</h3>
         <ul class="space-y-1">
           {{ range .when_not_to_use }}
           <li class="text-sm text-gray-700 flex gap-2"><span class="text-red-500 mt-0.5">✗</span><span>{{ . }}</span></li>
@@ -185,7 +192,7 @@
       {{ range $i, $t := .install }}
       {{ $code := replace $t.code "VERSION" $ver }}
       <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
-        <pre class="language-{{ $t.lang }}">{{ $code }}</pre>
+        <pre><code class="language-{{ $t.lang }}">{{ $code }}</code></pre>
       </div>
       {{ end }}
     </div>
@@ -204,10 +211,18 @@
       </div>
       {{ range $i, $t := .usage }}
       <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
-        <pre class="language-{{ $t.lang }}">{{ $t.code }}</pre>
+        <pre><code class="language-{{ $t.lang }}">{{ $t.code }}</code></pre>
       </div>
       {{ end }}
     </div>
+    {{ end }}
+
+    {{/* Changelog */}}
+    {{ if $changelog }}
+    <details class="mt-4">
+      <summary class="cursor-pointer text-sm text-gray-500 hover:text-gray-700">Latest release notes</summary>
+      <p class="mt-2 text-sm text-gray-600 leading-relaxed pl-2">{{ $changelog }}</p>
+    </details>
     {{ end }}
 
     {{/* Note */}}

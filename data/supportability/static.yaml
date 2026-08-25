@@ -1,7 +1,7 @@
 - id: jstall
   tag: ready
   group: "Live JVM Inspection"
-  tagline: "One-shot CLI inspector for running JVMs — deadlock detection, hot threads, flamegraphs, live TUI."
+  tagline: "One-shot CLI inspector for running JVMs: deadlock detection, hot threads, flamegraphs, live TUI."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -37,7 +37,7 @@
 - id: meta-agent
   tag: experimental
   group: "Live JVM Inspection"
-  tagline: "Java agent that instruments other agents — observe how they transform bytecode."
+  tagline: "Java agent that instruments other agents. Observe how they transform bytecode."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -70,7 +70,7 @@
 - id: jfr-profiling
   tag: ready
   group: "JFR / Profiling"
-  tagline: "JFR-based profiling ecosystem — convert, view, and analyze JFR recordings in Firefox Profiler and IntelliJ."
+  tagline: "JFR-based profiling ecosystem: convert, view, and analyze JFR recordings in Firefox Profiler and IntelliJ."
   screenshot: "https://mostlynerdless.de/wp-content/uploads/2023/01/Screenshot-2023-01-27-at-12.31.55-2048x1230.png"
   static_version: "2026-07"
   when_to_use:
@@ -102,7 +102,7 @@
 - id: jfr-query
   tag: experimental
   group: "JFR / Profiling"
-  tagline: "Query JFR recordings with SQL via DuckDB — notebook UI with charts and built-in views."
+  tagline: "Query JFR recordings with SQL via DuckDB. Notebook UI with charts and built-in views."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -164,7 +164,7 @@
 - id: jfrevents
   tag: ready
   group: "JFR / Profiling"
-  tagline: "Metadata for all JFR events across JDK versions — descriptions, fields, and benchmark examples."
+  tagline: "Metadata for all JFR events across JDK versions: descriptions, fields, and benchmark examples."
   screenshot: ""
   static_version: ""
   when_to_use:
@@ -216,7 +216,7 @@
 - id: hprof-analyzer
   tag: experimental
   group: "Heap Dump Analysis"
-  tagline: "Fast CLI heap dump analyzer — System Overview, Leak Suspects, Top Consumers, Threads."
+  tagline: "Fast CLI heap dump analyzer: System Overview, Leak Suspects, Top Consumers, Threads."
   screenshot: ""
   static_version: ""
   when_to_use:

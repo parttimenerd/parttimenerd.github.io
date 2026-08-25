@@ -1,10 +1,9 @@
 ---
 title: "parttimenerd"
-description: "Johannes Bechberger — JVM engineer at SAP, SapMachine team."
+description: "Johannes Bechberger — JVM specialist, SapMachine team at SAP."
 og_title: "parttimenerd"
-og_subtitle: "Minimal by design. Powerful by choice."
+og_subtitle: "JVM · Profiling · eBPF · Open Source"
 og_out: "home-og.png"
 ---
 
-Johannes Bechberger — JVM engineer at SAP, SapMachine team.
-Building tiny libraries and JVM supportability tools.
+A JVM specialist focused on profiling technology, working within the SapMachine team at SAP. His contributions include enhancements to async-profiler, development of a JFR event type viewer, and improvements to the FirefoxProfiler for Java applications. He maintains an active blog covering advanced profiling and debugging subjects, contributes to open-source initiatives, and created hello-ebpf, "the first eBPF library for Java."

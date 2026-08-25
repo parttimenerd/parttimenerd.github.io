@@ -1,18 +1,95 @@
 {{ define "main" }}
-<div class="max-w-3xl mx-auto px-4 py-16">
-  <h1 class="font-['Vollkorn'] text-4xl font-bold mb-4">parttimenerd</h1>
-  <p class="text-gray-600 text-lg mb-10">{{ .Content }}</p>
-  <div class="flex flex-col gap-3">
-    {{ range site.Params.nav }}
-    <a href="{{ .url }}"
-       class="text-blue-600 hover:text-blue-800 font-medium text-lg">
-      {{ .label }} →
-    </a>
+<div class="max-w-3xl mx-auto px-4 py-12">
+
+  {{/* Profile header */}}
+  <div class="flex flex-col sm:flex-row gap-6 items-start mb-8">
+    <img src="https://cdn.sessionize.com/image/6e22-400o400o2-P7HsDi55B4EQDRADmnt3vC.jpg"
+         alt="Johannes Bechberger"
+         class="w-28 h-28 rounded-full object-cover flex-shrink-0 border border-gray-200">
+    <div>
+      <h1 class="font-['Vollkorn'] text-3xl font-bold mb-1">Johannes Bechberger</h1>
+      <p class="text-gray-500 mb-3">JVM Engineer · SapMachine team at SAP</p>
+      {{/* Social links */}}
+      <div class="flex flex-wrap gap-3 text-sm">
+        <a href="https://github.com/parttimenerd" target="_blank" rel="noopener"
+           class="text-gray-600 hover:text-gray-900">GitHub</a>
+        <a href="https://twitter.com/parttimen3rd" target="_blank" rel="noopener"
+           class="text-gray-600 hover:text-gray-900">Twitter/X</a>
+        <a href="https://fosstodon.org/@parttimenerd" target="_blank" rel="noopener"
+           class="text-gray-600 hover:text-gray-900">Mastodon</a>
+        <a href="https://www.linkedin.com/in/johannes-bechberger" target="_blank" rel="noopener"
+           class="text-gray-600 hover:text-gray-900">LinkedIn</a>
+        <a href="https://mostlynerdless.de" target="_blank" rel="noopener"
+           class="text-gray-600 hover:text-gray-900">Blog</a>
+      </div>
+    </div>
+  </div>
+
+  {{/* Bio */}}
+  <p class="text-gray-700 leading-relaxed mb-6">{{ .Content }}</p>
+
+  {{/* Topics */}}
+  <div class="flex flex-wrap gap-2 mb-8">
+    {{ range (slice "Profiling" "OpenJDK" "Java" "Java Performance" "Debugging" "eBPF") }}
+    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{{ . }}</span>
     {{ end }}
-    <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
-       class="text-blue-600 hover:text-blue-800 font-medium text-lg">
-      blog ↗
-    </a>
+    <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">⭐ Most Active Speaker 2024</span>
+  </div>
+
+  {{/* Sections */}}
+  <div class="grid gap-6">
+
+    <div>
+      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Collections</h2>
+      <div class="flex flex-col gap-2">
+        <a href="/femto/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">femto libs</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">→ Tiny Java libraries: LZ4, CLI, JSON, schema, JAR analysis</span>
+        </a>
+        <a href="/supportability/" class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">jvm tools</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">→ Diagnose, profile, and understand running JVMs</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Notable Projects</h2>
+      <div class="flex flex-col gap-2">
+        <a href="https://github.com/parttimenerd/hello-ebpf" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">hello-ebpf</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ The first eBPF library for Java</span>
+        </a>
+        <a href="https://parttimenerd.github.io/test-order/" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">test-order</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Prioritize Java test cases to catch errors earlier</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="font-['Vollkorn'] text-xl font-semibold mb-3">Talks &amp; Presentations</h2>
+      <div class="flex flex-col gap-2">
+        <a href="https://github.com/SAP/SapMachine/wiki/Presentations" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">Presentations list</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Slides and recordings from conferences and meetups</span>
+        </a>
+        <a href="https://sessionize.com/johannes-bechberger" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">Sessionize profile</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Speaker bio and sessions</span>
+        </a>
+        <a href="{{ site.Params.blog_url }}" target="_blank" rel="noopener"
+           class="group flex items-baseline gap-2 text-blue-600 hover:text-blue-800">
+          <span class="font-medium">Blog — Mostly Nerdless</span>
+          <span class="text-gray-400 text-sm group-hover:text-gray-600">↗ Deep dives into profiling, debugging, and the JVM</span>
+        </a>
+      </div>
+    </div>
+
   </div>
 </div>
 {{ end }}
