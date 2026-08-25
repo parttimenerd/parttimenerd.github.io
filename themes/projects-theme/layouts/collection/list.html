@@ -192,7 +192,7 @@
       {{ range $i, $t := .install }}
       {{ $code := replace $t.code "VERSION" $ver }}
       <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
-        <pre><code class="language-{{ $t.lang }}">{{ $code | safeHTML }}</code></pre>
+        <pre><code class="language-{{ $t.lang }}">{{ $code | htmlEscape | safeHTML }}</code></pre>
       </div>
       {{ end }}
     </div>
@@ -211,7 +211,7 @@
       </div>
       {{ range $i, $t := .usage }}
       <div x-show="tab === {{ $i }}" style="{{ if ne $i 0 }}display:none{{ end }}">
-        <pre><code class="language-{{ $t.lang }}">{{ $t.code | safeHTML }}</code></pre>
+        <pre><code class="language-{{ $t.lang }}">{{ $t.code | htmlEscape | safeHTML }}</code></pre>
       </div>
       {{ end }}
     </div>
