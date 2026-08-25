@@ -4,9 +4,12 @@
 
 /* Tag badge colours */
 @layer components {
-  .tag-ready        { @apply bg-green-100  text-green-800  text-xs font-medium px-2 py-0.5 rounded; }
-  .tag-experimental { @apply bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded; }
-  .tag-poc          { @apply bg-red-100    text-red-800    text-xs font-medium px-2 py-0.5 rounded; }
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border cursor-default select-none;
+  }
+  .badge-ready        { @apply bg-emerald-50 text-emerald-700 border-emerald-300; }
+  .badge-experimental { @apply bg-amber-50   text-amber-700   border-amber-300; }
+  .badge-poc          { @apply bg-rose-50    text-rose-700    border-rose-300; }
 }
 
 /* Code block styling */

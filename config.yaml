@@ -7,6 +7,6 @@ params:
   nav:
     - label: "femto libs"
       url: /femto/
-    - label: "supportability"
-      url: /supportability/
+    - label: "jvm tools"
+      url: /jvm-tools/
   blog_url: "https://mostlynerdless.de"

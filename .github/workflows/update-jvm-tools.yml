@@ -1,4 +1,4 @@
-name: Update supportability releases
+name: Update jvm-tools releases
 
 on:
   repository_dispatch:
@@ -20,16 +20,16 @@ jobs:
       - run: pip install requests pyyaml
 
       - name: Fetch releases
-        run: python scripts/fetch_releases.py --section supportability
+        run: python scripts/fetch_releases.py --section jvm-tools
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit if changed
         run: |
-          git diff --quiet data/supportability/releases.json || (
+          git diff --quiet data/jvm-tools/releases.json || (
             git config user.email "actions@github.com"
             git config user.name "github-actions"
-            git add data/supportability/releases.json
-            git commit -m "chore: update supportability releases"
+            git add data/jvm-tools/releases.json
+            git commit -m "chore: update jvm-tools releases"
             git push
           )

@@ -9,13 +9,6 @@
   <h1 class="font-['Vollkorn'] text-4xl font-bold mb-4">{{ .Title }}</h1>
   <p class="text-gray-600 text-lg mb-10 max-w-2xl">{{ .Content }}</p>
 
-  {{/* Sticky anchor sub-nav */}}
-  <div class="sticky top-12 z-30 bg-white border-b border-gray-100 -mx-4 px-4 py-2 mb-10 overflow-x-auto whitespace-nowrap text-sm">
-    {{ range $static }}
-    <a href="#{{ .id }}" class="mr-4 text-blue-600 hover:text-blue-800">{{ .id }}</a>
-    {{ end }}
-  </div>
-
   {{/* Card grid with group headings */}}
   {{ $lastGroup2 := "" }}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
@@ -36,7 +29,7 @@
     <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <span class="font-semibold text-gray-900">{{ .id }}</span>
-        <span class="tag-{{ .tag }}">{{ .tag }}</span>
+        <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready: actively maintained, used in real projects{{ else if eq .tag `experimental` }}Experimental: works but API or behaviour may change{{ else if eq .tag `poc` }}Proof of concept: demonstrates the idea, not production-ready{{ end }}">{{ .tag }}</span>
       </div>
       {{ if $ver }}
       <div class="text-xs text-gray-500">

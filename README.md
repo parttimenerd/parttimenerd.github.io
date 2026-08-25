@@ -3,7 +3,7 @@
 Personal GitHub Pages site at https://parttimenerd.github.io/ — a Hugo static site with two collection pages:
 
 - **[/femto/](https://parttimenerd.github.io/femto/)** — femto* Java libraries
-- **[/supportability/](https://parttimenerd.github.io/supportability/)** — JVM supportability tools
+- **[/jvm-tools/](https://parttimenerd.github.io/jvm-tools/)** — JVM tools
 
 ## How it builds
 
@@ -19,7 +19,7 @@ On every push to `main`:
 
 ## Triggering a rebuild from another repo's release workflow
 
-When a tool or library in the `femto` or `supportability` collection cuts a new release, add this step at the end of its release workflow to update the version shown on the site:
+When a tool or library in the `femto` or `jvm-tools` collection cuts a new release, add this step at the end of its release workflow to update the version shown on the site:
 
 ### For femto libs (femtolz4, femtocli, femtojson, femtoschema, femtojar)
 
@@ -34,7 +34,7 @@ When a tool or library in the `femto` or `supportability` collection cuts a new 
       -d '{"event_type":"femto-release"}'
 ```
 
-### For supportability tools
+### For jvm tools
 
 ```yaml
 - name: Notify parttimenerd.github.io
@@ -65,7 +65,7 @@ gh secret set PAGES_DISPATCH_TOKEN --repo parttimenerd/<repo-name>
 
 ```bash
 gh workflow run update-femto.yml --repo parttimenerd/parttimenerd.github.io
-gh workflow run update-supportability.yml --repo parttimenerd/parttimenerd.github.io
+gh workflow run update-jvm-tools.yml --repo parttimenerd/parttimenerd.github.io
 ```
 
 ---
