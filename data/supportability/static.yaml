@@ -1,0 +1,375 @@
+- id: jstall
+  tag: ready
+  group: "Live JVM Inspection"
+  tagline: "One-shot CLI inspector for running JVMs — deadlock detection, hot threads, flamegraphs, live TUI."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want instant insight into a running JVM without attaching a full profiler
+    - You need deadlock detection, hot thread analysis, or a quick flamegraph
+    - You are working in a Cloud Foundry Java environment
+  when_not_to_use:
+    - You need continuous long-term profiling (use condensed-data + JFR instead)
+    - You need allocation or lock profiling in depth
+  vs: ~
+  related:
+    - { label: "IntelliJ plugin", url: "https://github.com/parttimenerd/jstall-intellij-plugin" }
+    - { label: "VS Code extension", url: "https://github.com/parttimenerd/jstall-vscode-extension" }
+  links:
+    - { label: "JetBrains marketplace ↗", url: "https://plugins.jetbrains.com/plugin/30667-jstall" }
+    - { label: "VS Code marketplace ↗", url: "https://marketplace.visualstudio.com/items?itemName=bechberger.jstall" }
+  no_release: false
+  install:
+    - label: Download JAR
+      lang: bash
+      code: |
+        curl -L https://github.com/parttimenerd/jstall/releases/latest/download/jstall.jar \
+          -o jstall.jar
+        java -jar jstall.jar --help
+  usage:
+    - label: Inspect JVM
+      lang: bash
+      code: |
+        java -jar jstall.jar status <pid>
+        java -jar jstall.jar flamegraph <pid>
+  note: ""
+
+- id: meta-agent
+  tag: experimental
+  group: "Live JVM Inspection"
+  tagline: "Java agent that instruments other agents — observe how they transform bytecode."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to understand or debug what a Java agent is doing to class files
+    - You are developing or testing a ClassFileTransformer and need visibility
+  when_not_to_use:
+    - You need a production-safe monitoring tool
+    - You want end-user JVM observability (use jstall instead)
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>meta-agent</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: Attach as agent
+      lang: bash
+      code: |
+        java -javaagent:meta-agent.jar=<target-agent.jar> \
+          -jar yourapp.jar
+  note: ""
+
+- id: jfr-profiling
+  tag: ready
+  group: "JFR / Profiling"
+  tagline: "JFR-based profiling ecosystem — convert, view, and analyze JFR recordings in Firefox Profiler and IntelliJ."
+  screenshot: "https://mostlynerdless.de/wp-content/uploads/2023/01/Screenshot-2023-01-27-at-12.31.55-2048x1230.png"
+  static_version: "2026-07"
+  when_to_use:
+    - You want to view JFR recordings as flame graphs in the Firefox Profiler UI
+    - You want JFR profiling integrated directly into IntelliJ IDEA
+    - You need to share or embed profiling results as a web link
+  when_not_to_use:
+    - You need long-term continuous recording storage (use condensed-data)
+    - You need a standalone CLI tool without IDE integration
+  vs: ~
+  related:
+    - { label: "jfrtofp", url: "https://github.com/parttimenerd/jfrtofp" }
+    - { label: "jfrtofp-server", url: "https://github.com/parttimenerd/jfrtofp-server" }
+    - { label: "intellij-profiler-plugin", url: "https://github.com/parttimenerd/intellij-profiler-plugin" }
+  links:
+    - { label: "IntelliJ plugin ↗", url: "https://plugins.jetbrains.com/plugin/20937" }
+    - { label: "Blog post ↗", url: "https://mostlynerdless.de/blog/2023/01/31/firefox-profiler-beyond-the-web/" }
+  no_release: true
+  install: ~
+  usage:
+    - label: Convert JFR
+      lang: bash
+      code: |
+        # Using jfrtofp CLI
+        java -jar jfrtofp.jar recording.jfr -o profile.json
+        # Then open in Firefox Profiler
+  note: ""
+
+- id: jfr-query
+  tag: experimental
+  group: "JFR / Profiling"
+  tagline: "Query JFR recordings with SQL via DuckDB — notebook UI with charts and built-in views."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You want to run ad-hoc SQL queries over JFR event data
+    - You need charts and notebook-style exploration of recordings
+  when_not_to_use:
+    - You need a stable, production-ready tool (schema may change)
+    - You need IDE integration (use the profiler plugin instead)
+  vs: ~
+  related: []
+  links:
+    - { label: "Web app ↗", url: "https://parttimenerd.github.io/jfr-query/" }
+  no_release: false
+  install: ~
+  usage:
+    - label: Open web app
+      lang: bash
+      code: |
+        # Open https://parttimenerd.github.io/jfr-query/
+        # Drag and drop your .jfr file
+  note: ""
+
+- id: condensed-data
+  tag: experimental
+  group: "JFR / Profiling"
+  tagline: "Compress and store JFR events long-term in the self-describing .cjfr format."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need long-term storage of JFR recordings with minimal disk usage
+    - You want live-attach to a running JVM for continuous event capture
+    - You are storing GC or other continuous JFR data over days/weeks
+  when_not_to_use:
+    - You need immediate full JFR replay compatibility without a reader library
+    - You need a stable format (early development, format may change)
+  vs: ~
+  related: []
+  links:
+    - { label: "Docs ↗", url: "https://parttimenerd.github.io/condensed-data/" }
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger.condensed</groupId>
+          <artifactId>condensed-data</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: Write .cjfr
+      lang: java
+      code: |
+        // See https://parttimenerd.github.io/condensed-data/ for full API
+        CJFRWriter writer = new CJFRWriter(outputStream);
+        writer.write(jfrEvent);
+  note: ""
+
+- id: jfrevents
+  tag: ready
+  group: "JFR / Profiling"
+  tagline: "Metadata for all JFR events across JDK versions — descriptions, fields, and benchmark examples."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to know what fields a JFR event has across JDK versions
+    - You are writing JFR tooling and need event documentation
+  when_not_to_use:
+    - You need a programmatic API (this is a reference site)
+  vs: ~
+  related: []
+  links:
+    - { label: "Website ↗", url: "https://sap.github.io/jfrevents/" }
+  no_release: true
+  install: ~
+  usage: ~
+  note: "Canonical site is at sap.github.io/jfrevents/"
+
+- id: jfr-redact
+  tag: poc
+  group: "JFR / Profiling"
+  tagline: "Redact sensitive strings, paths, and env vars from JFR recordings."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to share a JFR recording but it contains passwords, tokens, or paths
+    - You need to comply with data privacy requirements before sharing recordings
+  when_not_to_use:
+    - You need guaranteed complete redaction for highly sensitive data (proof-of-concept)
+    - You need to redact hs_err crash files (use jhserr instead)
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>jfr-redact</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: CLI
+      lang: bash
+      code: |
+        java -jar jfr-redact.jar input.jfr output-redacted.jfr
+  note: "Early proof-of-concept."
+
+- id: hprof-analyzer
+  tag: experimental
+  group: "Heap Dump Analysis"
+  tagline: "Fast CLI heap dump analyzer — System Overview, Leak Suspects, Top Consumers, Threads."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to analyze a heap dump without Eclipse MAT's memory overhead
+    - You have a very large heap dump (>10 GiB) that MAT cannot handle
+    - You want a quick in-browser analyzer for smaller dumps (up to 3 GiB)
+  when_not_to_use:
+    - You need full MAT feature coverage (OQL queries, custom reports)
+    - You need Windows support (native binary currently linux/mac only)
+  vs: ~
+  related: []
+  links:
+    - { label: "Web analyzer ↗", url: "https://parttimenerd.github.io/hprof-analyzer/" }
+  no_release: false
+  install:
+    - label: Download
+      lang: bash
+      code: |
+        curl -L https://github.com/parttimenerd/hprof-analyzer/releases/latest/download/hprof-analyzer \
+          -o hprof-analyzer && chmod +x hprof-analyzer
+        ./hprof-analyzer heap.hprof
+  usage:
+    - label: Analyze dump
+      lang: bash
+      code: |
+        ./hprof-analyzer heap.hprof
+        ./hprof-analyzer heap.hprof --leak-suspects
+  note: ""
+
+- id: hprof-redact
+  tag: poc
+  group: "Heap Dump Analysis"
+  tagline: "Stream-based redaction of primitive values and strings from Java heap dumps."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to share a heap dump but it contains sensitive string data
+    - You need to redact HPROF files while preserving their structure
+  when_not_to_use:
+    - You need guaranteed complete privacy (proof-of-concept, not audited)
+    - You need to redact JFR recordings (use jfr-redact instead)
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>hprof-redact</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: CLI
+      lang: bash
+      code: |
+        java -jar hprof-redact.jar input.hprof output-redacted.hprof
+  note: "Early proof-of-concept."
+
+- id: jhserr
+  tag: poc
+  group: "Crash / Log Diagnostics"
+  tagline: "Parse, transform, and redact HotSpot hs_err_pid crash reports."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to parse hs_err crash files into a typed Java model
+    - You need to redact sensitive paths or env vars before sharing crash reports
+    - You want a web UI to redact hs_err files without installing anything
+  when_not_to_use:
+    - You need production-stable parsing (early prototype, round-trip may lose formatting)
+  vs: ~
+  related: []
+  links:
+    - { label: "Web redactor ↗", url: "https://parttimenerd.github.io/jhserr/" }
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>jhserr</artifactId>
+          <version>VERSION</version>
+        </dependency>
+  usage:
+    - label: Parse
+      lang: java
+      code: |
+        HsErrFile report = HsErrParser.parse(path);
+        System.out.println(report.getVersion());
+  note: "Early prototype."
+
+- id: jdklogs
+  tag: ready
+  group: "Crash / Log Diagnostics"
+  tagline: "Interactive browser tool showing which OpenJDK -Xlog statements fire for a given config."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to understand JDK logging output and what -Xlog config produces it
+    - You want to explore -Xlog tags across JDK versions with source context
+  when_not_to_use:
+    - You need offline access (web-only tool)
+  vs: ~
+  related: []
+  links:
+    - { label: "Web app ↗", url: "https://parttimenerd.github.io/jdklogs/" }
+  no_release: true
+  install: ~
+  usage:
+    - label: Use online
+      lang: bash
+      code: |
+        # Open https://parttimenerd.github.io/jdklogs/
+        # Enter your -Xlog config to see matching log statements
+  note: ""
+
+- id: jthreaddump
+  tag: ready
+  group: "Libraries"
+  tagline: "Parser for jstack/jcmd thread dump output into a typed Java model."
+  screenshot: ""
+  static_version: ""
+  when_to_use:
+    - You need to programmatically parse and analyze Java thread dumps
+    - You are building tooling that processes jstack or jcmd output
+  when_not_to_use:
+    - You need live thread inspection (use jstall instead)
+    - You need profiling data (use the JFR profiling tools instead)
+  vs: ~
+  related: []
+  links: []
+  no_release: false
+  install:
+    - label: Maven
+      lang: xml
+      code: |
+        <dependency>
+          <groupId>me.bechberger</groupId>
+          <artifactId>jthreaddump</artifactId>
+          <version>VERSION</version>
+        </dependency>
+    - label: Gradle
+      lang: groovy
+      code: "implementation 'me.bechberger:jthreaddump:VERSION'"
+  usage:
+    - label: Parse dump
+      lang: java
+      code: |
+        ThreadDump dump = ThreadDumpParser.parse(Files.readString(path));
+        dump.getThreads().forEach(t ->
+            System.out.println(t.getName() + ": " + t.getState()));
+  note: ""
