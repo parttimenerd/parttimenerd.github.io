@@ -20,6 +20,52 @@
 
 {{ $tree := index site.Data "jvm-tools" "problem-finder" }}
 
+{{/* ── Build-time validation ─────────────────────────────────────────────── */}}
+{{ if not $tree }}
+  {{ errorf "problem-finder.yaml: file not found or empty — check data/jvm-tools/problem-finder.yaml" }}
+{{ else }}
+  {{ if not (index $tree "start") }}
+    {{ errorf "problem-finder.yaml: missing required 'start' node" }}
+  {{ end }}
+  {{ $nodeIds := slice }}
+  {{ range $id, $node := $tree }}{{ $nodeIds = $nodeIds | append $id }}{{ end }}
+  {{ range $id, $node := $tree }}
+    {{ if not $node.type }}
+      {{ errorf "problem-finder.yaml: node '%s' has no 'type' field (must be 'question' or 'result')" $id }}
+    {{ else if eq $node.type "question" }}
+      {{ if not $node.text }}
+        {{ errorf "problem-finder.yaml: question node '%s' has no 'text' field" $id }}
+      {{ end }}
+      {{ if not $node.options }}
+        {{ errorf "problem-finder.yaml: question node '%s' has no 'options' list" $id }}
+      {{ end }}
+      {{ range $i, $opt := $node.options }}
+        {{ if not $opt.label }}
+          {{ errorf "problem-finder.yaml: option #%d in node '%s' has no 'label'" (add $i 1) $id }}
+        {{ end }}
+        {{ if not $opt.next }}
+          {{ errorf "problem-finder.yaml: option '%s' in node '%s' has no 'next' target" $opt.label $id }}
+        {{ else if not (in $nodeIds $opt.next) }}
+          {{ errorf "problem-finder.yaml: option '%s' in node '%s' points to '%s' which does not exist" $opt.label $id $opt.next }}
+        {{ end }}
+      {{ end }}
+    {{ else if eq $node.type "result" }}
+      {{ if not $node.headline }}
+        {{ errorf "problem-finder.yaml: result node '%s' has no 'headline' field" $id }}
+      {{ end }}
+      {{ if not $node.tools }}
+        {{ errorf "problem-finder.yaml: result node '%s' has no 'tools' list" $id }}
+      {{ end }}
+      {{ range $i, $t := $node.tools }}
+        {{ if not $t.id }}
+          {{ errorf "problem-finder.yaml: tool #%d in result node '%s' has no 'id'" (add $i 1) $id }}
+        {{ end }}
+      {{ end }}
+    {{ else }}
+      {{ errorf "problem-finder.yaml: node '%s' has unknown type '%s' (must be 'question' or 'result')" $id $node.type }}
+    {{ end }}
+  {{ end }}
+{{ end }}
 <div
   x-data="{
     hidden: false,
