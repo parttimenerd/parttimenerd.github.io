@@ -39,9 +39,11 @@ q-slow-env:
   type: question
   text: "Where is the JVM running?"
   options:
-    - label: "On Cloud Foundry — I can't SSH into the container"
+    - label: "On Cloud Foundry (use cf ssh or the CF CLI plugin)"
       next: r-cf
-    - label: "Anywhere else (local, staging, production server)"
+    - label: "Locally on my machine"
+      next: r-jstall-local
+    - label: "Remote server or container (staging, production)"
       next: r-jstall
 
 q-crash:
@@ -103,7 +105,32 @@ r-jstall:
   headline: "You need instant insight into a running JVM."
   tools:
     - id: jstall
-      note: "Also available as an IntelliJ plugin (JetBrains marketplace) and VS Code extension."
+      note: "Attach remotely via SSH — detects deadlocks, captures flame graphs, shows hot threads without a persistent agent."
+  followon:
+    heading: "Want to keep monitoring this JVM over time?"
+    tools:
+      - id: condensed-data
+        note: "Attach to the JVM and store JFR events compactly for days or weeks."
+      - id: jfr-query
+        note: "Query the recordings with SQL — GC pauses, allocations, CPU."
+  related:
+    - label: "Race condition that only appears sometimes?"
+      tools:
+        - id: concurrency-fuzz-scheduler
+          section: experiments
+          note: "eBPF scheduler that forces unusual thread interleavings to surface races."
+        - id: taskcontrol
+          section: experiments
+          note: "Deterministic thread interleaving control in tests."
+
+r-jstall-local:
+  type: result
+  headline: "You need instant insight into a locally running JVM."
+  tools:
+    - id: jstall
+      note: "CLI TUI — detects deadlocks, captures flame graphs, shows hot threads. No persistent agent."
+    - id: jfr-profiling
+      note: "IntelliJ plugin — profile and view flame graphs directly in the IDE without leaving your editor."
   followon:
     heading: "Want to keep monitoring this JVM over time?"
     tools:
