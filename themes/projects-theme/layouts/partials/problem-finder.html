@@ -68,7 +68,7 @@
 {{ end }}
 <div
   x-data="{
-    hidden: false,
+    hidden: localStorage.getItem('pf-hidden') === '1',
     cur: 'start',
     hist: [],
     go(id, label) {
@@ -86,6 +86,8 @@
         this.cur = prev.id;
       }
     },
+    hide() { this.hidden = true; localStorage.setItem('pf-hidden', '1'); },
+    show() { this.hidden = false; localStorage.removeItem('pf-hidden'); },
     reset() { this.cur = 'start'; this.hist = []; }
   }"
   x-cloak
@@ -121,7 +123,7 @@
     {{/* ── Question node ───────────────────────────────────────────────── */}}
     <div class="flex items-baseline justify-between gap-2 mb-3">
       <p class="font-['Vollkorn'] text-xl font-bold text-gray-900">{{ $node.text }}</p>
-      {{ if eq $nodeId "start" }}<button @click="hidden = true" aria-label="Hide widget" class="text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0">Hide ✕</button>{{ end }}
+      {{ if eq $nodeId "start" }}<button @click="hide()" aria-label="Hide widget" class="text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0">Hide ✕</button>{{ end }}
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {{ range $node.options }}
@@ -253,7 +255,7 @@
   {{/* Collapsed state: shown when hidden=true */}}
   <div x-show="hidden" x-cloak>
     <button
-      @click="hidden = false"
+      @click="show()"
       class="text-sm text-blue-600 hover:underline"
     >Not sure which tool you need? Show guide ▸</button>
   </div>
