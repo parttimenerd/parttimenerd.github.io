@@ -40,6 +40,9 @@
 #                       VERSION is substituted with the resolved release version
 #   usage:            list    — same structure as install; VERSION not substituted
 #   note:             string  — shown as amber callout at the bottom of the detail section
+#
+# OPTIONAL — external site filtering
+#   no_sap:           true    — exclude from SapMachineIOPage JVM Tools listing (default: false)
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # COPY-PASTE TEMPLATE FOR A NEW ENTRY:
