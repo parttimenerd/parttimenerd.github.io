@@ -1,0 +1,287 @@
+# Decision tree for the "Have a problem?" widget on /jvm-tools/
+# Each key is a node ID. Two types: question (shows options) and result (shows tools).
+# To add a tool: add a result node and wire an option in the relevant question to it.
+# Start node is always "start".
+
+start:
+  type: question
+  text: "What problem are you trying to solve?"
+  options:
+    - label: "My app is slow or unresponsive — I need to find out why"
+      next: q-slow
+    - label: "My JVM crashed, froze, or is behaving strangely"
+      next: q-crash
+    - label: "I want to dig into a JFR recording or set up continuous profiling"
+      next: q-jfr
+    - label: "I have a heap dump to analyse or share"
+      next: q-heap
+    - label: "I want to speed up my build, tests, or JAR packaging"
+      next: q-build
+    - label: "I want to learn how JVM profiling works from the inside"
+      next: r-learn
+
+q-slow:
+  type: question
+  text: "How do you want to investigate?"
+  options:
+    - label: "It's happening right now — I need answers in seconds"
+      next: q-slow-env
+    - label: "I have a JFR recording and want to see a flame graph"
+      next: r-jfr-visual
+    - label: "I want to query JFR data with SQL and see GC/allocation charts"
+      next: r-jfr-query
+    - label: "I want to record continuously for days without filling the disk"
+      next: r-condensed
+
+q-slow-env:
+  type: question
+  text: "Where is the JVM running?"
+  options:
+    - label: "On Cloud Foundry — I can't SSH into the container"
+      next: r-cf
+    - label: "Anywhere else (local, staging, production server)"
+      next: r-jstall
+
+q-crash:
+  type: question
+  text: "What do you have in hand?"
+  options:
+    - label: "A crash file (hs_err_pid…)"
+      next: r-jhserr
+    - label: "A thread dump from jstack or jcmd"
+      next: r-jthreaddump
+    - label: "A heap dump (OutOfMemoryError or manual capture)"
+      next: r-hprof-analyze
+    - label: "A deadlock or race condition that's hard to reproduce"
+      next: r-deadlock
+    - label: "Something unexplained — I suspect a Java agent is involved"
+      next: r-meta-agent
+    - label: "Confusing -Xlog output — I don't know what flags to use"
+      next: r-jdklogs
+
+q-jfr:
+  type: question
+  text: "What do you want to do with it?"
+  options:
+    - label: "View it as a flame graph or share it with my team"
+      next: r-jfr-visual
+    - label: "Query it with SQL — GC pauses, allocations, CPU correlation"
+      next: r-jfr-query
+    - label: "Record continuously for days or weeks with minimal disk use"
+      next: r-condensed
+    - label: "Look up what JFR events exist and what fields they have"
+      next: r-jfrevents
+
+q-heap:
+  type: question
+  text: "What do you need to do?"
+  options:
+    - label: "Analyse it — find leak suspects and top memory consumers"
+      next: r-hprof-analyze
+    - label: "Redact sensitive strings before sharing with my team or support"
+      next: r-hprof-redact
+    - label: "Both — redact it, then analyse the sanitised file"
+      next: r-hprof-both
+
+q-build:
+  type: question
+  text: "What's the bottleneck?"
+  options:
+    - label: "Tests take ages and failures only appear at the end of the run"
+      next: r-test-order
+    - label: "I want to ship a single executable file without java -jar"
+      next: r-execjar
+    - label: "A Java agent is causing problems, or I'm building one"
+      next: r-meta-agent
+
+# ── Result nodes ──────────────────────────────────────────────────────────────
+
+r-jstall:
+  type: result
+  headline: "You need instant insight into a running JVM."
+  tools:
+    - id: jstall
+      note: "Also available as an IntelliJ plugin (JetBrains marketplace) and VS Code extension."
+  followon:
+    heading: "Want to keep monitoring this JVM over time?"
+    tools:
+      - id: condensed-data
+        note: "Attach to the JVM and store JFR events compactly for days or weeks."
+      - id: jfr-query
+        note: "Query the recordings with SQL — GC pauses, allocations, CPU."
+  related:
+    - label: "Race condition that only appears sometimes?"
+      tools:
+        - id: concurrency-fuzz-scheduler
+          section: experiments
+          note: "eBPF scheduler that forces unusual thread interleavings to surface races."
+        - id: taskcontrol
+          section: experiments
+          note: "Deterministic thread interleaving control in tests."
+
+r-cf:
+  type: result
+  headline: "You need JVM inspection inside a Cloud Foundry container without SSH."
+  tools:
+    - id: cf-cli-java-plugin
+      note: "Bundles jstall internally — you get jstall-style inspection from the CF CLI."
+  followon:
+    heading: "Want to keep monitoring this JVM over time?"
+    tools:
+      - id: condensed-data
+        note: "Attach and store JFR events compactly for days or weeks."
+      - id: jfr-query
+        note: "Query the recordings with SQL."
+
+r-jfr-visual:
+  type: result
+  headline: "You want to explore your JFR recording as a flame graph."
+  tools:
+    - id: jfr-profiling
+      note: "Converts JFR to Firefox Profiler format; includes an IntelliJ plugin for in-IDE profiling."
+    - id: firefox-profiler
+      note: "Standalone hosted web app — open .jfr or .cjfr files natively in the browser, no install."
+
+r-jfr-query:
+  type: result
+  headline: "You want to query JFR data with SQL and visualise GC, allocations, and CPU."
+  tools:
+    - id: jfr-query
+      note: "DuckDB-powered notebook with built-in GC pause, allocation, and CPU views. Works on .jfr and .cjfr files."
+  followon:
+    heading: "Need multi-day recordings to feed into it?"
+    tools:
+      - id: condensed-data
+        note: "Attach to a running JVM and store events compactly — jfr-query reads the .cjfr files directly."
+
+r-condensed:
+  type: result
+  headline: "You need continuous JFR recording that won't fill your disk."
+  tools:
+    - id: condensed-data
+      note: "Live-attach to a running JVM; stores events in the compact .cjfr format, significantly smaller than raw JFR."
+  followon:
+    heading: "Once you have recordings, analyse them with:"
+    tools:
+      - id: jfr-query
+        note: "SQL notebook — GC pauses, allocations, CPU correlation, built-in views."
+      - id: firefox-profiler
+        note: "Visual flame graph viewer — also opens .cjfr files natively in the browser."
+
+r-jfrevents:
+  type: result
+  headline: "You need a reference for JFR event types and their fields."
+  tools:
+    - id: jfrevents
+      note: "Lists every JFR event across JDK versions with field names, types, and benchmark-derived examples."
+
+r-jhserr:
+  type: result
+  headline: "You need to parse or redact a JVM crash file."
+  tools:
+    - id: jhserr
+      note: "Parses hs_err_pid files into a typed Java model. Also available as a web UI for one-off redaction."
+
+r-jthreaddump:
+  type: result
+  headline: "You need to parse or diff a thread dump programmatically."
+  tools:
+    - id: jthreaddump
+      note: "Handles all JDK thread dump formats including virtual threads."
+  related:
+    - label: "Need to inspect threads live instead?"
+      tools:
+        - id: jstall
+          note: "Live TUI, deadlock detection, and hot thread analysis without a persistent agent."
+
+r-hprof-analyze:
+  type: result
+  headline: "You need to find what's consuming memory or leaking."
+  tools:
+    - id: hprof-analyzer
+      note: "Handles >10 GiB dumps that Eclipse MAT can't open. Also a web WASM tool for dumps up to ~3 GiB."
+  related:
+    - label: "Dump contains sensitive data you need to redact first?"
+      tools:
+        - id: hprof-redact
+          note: "Stream-redacts strings without loading the full file into memory."
+
+r-hprof-redact:
+  type: result
+  headline: "You need to redact sensitive strings from a heap dump before sharing."
+  tools:
+    - id: hprof-redact
+      note: "Stream-based — handles large dumps without loading them fully into memory. Preserves HPROF structure."
+  related:
+    - label: "Want to analyse the redacted dump afterwards?"
+      tools:
+        - id: hprof-analyzer
+          note: "Fast Rust-based analyser — handles very large dumps that Eclipse MAT can't open."
+
+r-hprof-both:
+  type: result
+  headline: "Redact first, then analyse."
+  tools:
+    - id: hprof-redact
+      note: "Step 1 — stream-redact sensitive strings while preserving the HPROF structure."
+    - id: hprof-analyzer
+      note: "Step 2 — analyse the sanitised dump for leak suspects and top consumers."
+
+r-deadlock:
+  type: result
+  headline: "You have a deadlock or race condition that's hard to reproduce."
+  tools:
+    - id: jstall
+      note: "Start here — live deadlock detection and hot thread analysis in seconds."
+  followon:
+    heading: "If the race only appears under specific thread interleavings:"
+    tools:
+      - id: concurrency-fuzz-scheduler
+        section: experiments
+        note: "eBPF scheduler that deliberately perturbs thread scheduling to force races to the surface."
+      - id: taskcontrol
+        section: experiments
+        note: "Java API for deterministic thread interleaving control in tests."
+
+r-meta-agent:
+  type: result
+  headline: "You need to see exactly what a Java agent is doing to your classes."
+  tools:
+    - id: meta-agent
+      note: "Wraps any agent and intercepts its ClassFileTransformer — shows which classes are transformed, bytecode before/after, and timing."
+
+r-jdklogs:
+  type: result
+  headline: "You want to understand what a -Xlog config will actually produce."
+  tools:
+    - id: jdklogs
+      note: "Interactive browser tool — enter your -Xlog config and see exactly which log statements match, with source context."
+
+r-test-order:
+  type: result
+  headline: "You want failing tests to surface earlier in your CI run."
+  tools:
+    - id: test-order
+      note: "Zero-config Maven/Gradle plugin — reorders the suite so tests covering recently changed code run first."
+
+r-execjar:
+  type: result
+  headline: "You want users to run your JAR as a plain command."
+  tools:
+    - id: execjar
+      note: "Wraps the fat JAR in a shell stub — a single directly executable file, no launcher script."
+  related:
+    - label: "Want to shrink the JAR first?"
+      tools:
+        - id: femtojar
+          section: femto
+          note: "Cross-class compression + optional ProGuard integration. Combine: shrink with femtojar, then wrap with execjar."
+
+r-learn:
+  type: result
+  headline: "You want to understand how JVM profilers work from the inside out."
+  tools:
+    - id: writing-a-profiler
+      note: "Step-by-step blog series with code — from a basic safepoint-biased sampler to AsyncGetCallTrace."
+    - id: tiny-profiler
+      note: "A minimal working profiler readable in an afternoon. Companion to the blog series."
