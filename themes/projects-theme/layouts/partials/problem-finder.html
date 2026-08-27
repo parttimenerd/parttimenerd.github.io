@@ -29,6 +29,11 @@
       this.hist.push({ id: this.cur, label: label });
       this.cur = id;
     },
+    goTo(idx) {
+      const target = this.hist[idx];
+      this.hist = this.hist.slice(0, idx);
+      this.cur = target.id;
+    },
     back() {
       if (this.hist.length) {
         const prev = this.hist.pop();
@@ -55,16 +60,19 @@
   </div>
 
   {{/* Breadcrumb: shows selected path, back + reset buttons */}}
-  <div x-show="hist.length > 0" class="flex flex-wrap gap-x-3 gap-y-1 items-center mb-4 text-xs text-gray-400">
+  <div x-show="hist.length > 0" class="flex flex-wrap gap-x-1 gap-y-1 items-center mb-4 text-xs text-gray-400">
     <button @click="reset()" class="hover:text-blue-600 transition-colors">Start over</button>
-    <span>·</span>
+    <span class="text-gray-300">›</span>
     <template x-for="(crumb, i) in hist" :key="i">
       <span class="flex items-center gap-1">
-        <span x-text="crumb.label" class="max-w-[16rem] truncate"></span>
-        <span x-show="i < hist.length - 1" class="text-gray-300">›</span>
+        <button
+          @click="goTo(i)"
+          class="max-w-[16rem] truncate hover:text-blue-600 transition-colors text-left"
+          x-text="crumb.label"
+        ></button>
+        <span class="text-gray-300">›</span>
       </span>
     </template>
-    <span>·</span>
     <button @click="back()" class="hover:text-blue-600 transition-colors">← Back</button>
   </div>
 
@@ -76,7 +84,7 @@
     {{ if eq $node.type "question" }}
     {{/* ── Question node ───────────────────────────────────────────────── */}}
     <p class="text-base font-semibold text-gray-900 mb-3">{{ $node.text }}</p>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-wrap gap-2">
       {{ range $node.options }}
       {{ $label := .label }}
       {{ $next  := .next }}
@@ -84,7 +92,7 @@
         data-next="{{ $next }}"
         data-label="{{ $label }}"
         @click="go($el.dataset.next, $el.dataset.label)"
-        class="w-full text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-all cursor-pointer"
+        class="text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-all cursor-pointer"
       >{{ $label }}</button>
       {{ end }}
     </div>
