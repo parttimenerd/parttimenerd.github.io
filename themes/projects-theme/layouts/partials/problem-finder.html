@@ -95,13 +95,12 @@
   {{/* Widget panel — visible when not hidden */}}
   <div x-show="!hidden" class="rounded-xl p-5 bg-gray-50/60">
 
-  {{/* Header row: title + hide button */}}
-  <div class="flex items-center justify-between mb-4">
-    <p class="text-sm font-semibold text-gray-700">Not sure which tool you need? Answer a few questions.</p>
+  {{/* Hide button — top right, only shown on start node */}}
+  <div class="flex justify-end mb-2">
     <button
       @click="hidden = true"
       aria-label="Hide widget"
-      class="text-xs text-gray-400 hover:text-gray-600 transition-colors ml-4 shrink-0"
+      class="text-xs text-gray-400 hover:text-gray-600 transition-colors"
     >Hide ✕</button>
   </div>
 
