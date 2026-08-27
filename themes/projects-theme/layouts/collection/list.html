@@ -34,6 +34,9 @@
   {{/* Problem finder decision tree — jvm-tools only */}}
   {{ if eq .Section "jvm-tools" }}{{ partial "problem-finder.html" . }}{{ end }}
 
+  {{/* Problem finder editor — jvm-tools only */}}
+  {{ if eq .Section "jvm-tools" }}{{ partial "problem-finder-editor.html" . }}{{ end }}
+
   {{/* Sticky anchor nav */}}
   <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-200 -mx-4 px-4 mb-8 overflow-x-auto">
     <div class="flex gap-0.5 text-sm py-1.5 min-w-max">
