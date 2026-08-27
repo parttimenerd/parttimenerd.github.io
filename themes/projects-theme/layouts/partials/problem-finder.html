@@ -95,15 +95,6 @@
   {{/* Widget panel — visible when not hidden */}}
   <div x-show="!hidden" class="rounded-xl p-5 bg-gray-50/60">
 
-  {{/* Hide button — top right, only shown on start node */}}
-  <div class="flex justify-end mb-2">
-    <button
-      @click="hidden = true"
-      aria-label="Hide widget"
-      class="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-    >Hide ✕</button>
-  </div>
-
   {{/* Breadcrumb: shows selected path, back + reset buttons */}}
   <div x-show="hist.length > 0" class="flex flex-wrap gap-x-1 gap-y-1 items-center mb-4 text-xs text-gray-400">
     <button @click="reset()" class="hover:text-blue-600 transition-colors">Start over</button>
@@ -128,7 +119,10 @@
 
     {{ if eq $node.type "question" }}
     {{/* ── Question node ───────────────────────────────────────────────── */}}
-    <p class="font-['Vollkorn'] text-xl font-bold text-gray-900 mb-3">{{ $node.text }}</p>
+    <div class="flex items-baseline justify-between gap-2 mb-3">
+      <p class="font-['Vollkorn'] text-xl font-bold text-gray-900">{{ $node.text }}</p>
+      {{ if eq $nodeId "start" }}<button @click="hidden = true" aria-label="Hide widget" class="text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0">Hide ✕</button>{{ end }}
+    </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {{ range $node.options }}
       {{ $label := .label }}
