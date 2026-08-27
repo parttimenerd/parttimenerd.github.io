@@ -1,0 +1,173 @@
+{{/* ─────────────────────────────────────────────────────────────────────────
+     problem-finder.html
+     Decision tree widget for /jvm-tools/. Data lives entirely in
+     data/jvm-tools/problem-finder.yaml — edit that file to add/change paths.
+     ───────────────────────────────────────────────────────────────────────── */}}
+
+{{/* Build a flat tool-metadata lookup map across all three sections.
+     Keys are tool IDs; values are the static.yaml entry objects.
+     This lets result nodes reference tools from femto/ and experiments/ too. */}}
+{{ $toolMeta := dict }}
+{{ range site.Data.jvm_tools.static }}
+  {{ $toolMeta = merge $toolMeta (dict .id .) }}
+{{ end }}
+{{ range site.Data.femto.static }}
+  {{ $toolMeta = merge $toolMeta (dict .id .) }}
+{{ end }}
+{{ range site.Data.experiments.static }}
+  {{ $toolMeta = merge $toolMeta (dict .id .) }}
+{{ end }}
+
+{{ $tree := site.Data.jvm_tools.problem_finder }}
+
+<div
+  x-data="{
+    hidden: false,
+    cur: 'start',
+    hist: [],
+    go(id, label) {
+      this.hist.push({ id: this.cur, label: label });
+      this.cur = id;
+    },
+    back() {
+      if (this.hist.length) {
+        const prev = this.hist.pop();
+        this.cur = prev.id;
+      }
+    },
+    reset() { this.cur = 'start'; this.hist = []; }
+  }"
+  x-cloak
+  x-show="!hidden"
+  class="border border-gray-200 rounded-xl p-5 mb-6 bg-white"
+>
+
+  {{/* Header row: title + hide button */}}
+  <div class="flex items-center justify-between mb-4">
+    <p class="text-sm font-semibold text-gray-700">Not sure which tool you need? Answer a few questions.</p>
+    <button
+      @click="hidden = true"
+      class="text-xs text-gray-400 hover:text-gray-600 transition-colors ml-4 shrink-0"
+    >Hide ✕</button>
+  </div>
+
+  {{/* Breadcrumb: shows selected path, back + reset buttons */}}
+  <div x-show="hist.length > 0" class="flex flex-wrap gap-x-3 gap-y-1 items-center mb-4 text-xs text-gray-400">
+    <button @click="reset()" class="hover:text-blue-600 transition-colors">Start over</button>
+    <span>·</span>
+    <template x-for="(crumb, i) in hist" :key="i">
+      <span class="flex items-center gap-1">
+        <span x-text="crumb.label" class="max-w-[16rem] truncate"></span>
+        <span x-show="i < hist.length - 1" class="text-gray-300">›</span>
+      </span>
+    </template>
+    <span>·</span>
+    <button @click="back()" class="hover:text-blue-600 transition-colors">← Back</button>
+  </div>
+
+  {{/* Render every tree node; Alpine shows only the current one */}}
+  {{ range $nodeId, $node := $tree }}
+  <div x-show="cur === '{{ $nodeId }}'" x-cloak>
+
+    {{ if eq $node.type "question" }}
+    {{/* ── Question node ───────────────────────────────────────────────── */}}
+    <p class="text-base font-semibold text-gray-900 mb-3">{{ $node.text }}</p>
+    <div class="flex flex-col gap-2">
+      {{ range $node.options }}
+      {{ $label := .label }}
+      {{ $next  := .next }}
+      <button
+        @click="go('{{ $next }}', '{{ $label | htmlEscape }}')"
+        class="w-full text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer"
+      >{{ $label }}</button>
+      {{ end }}
+    </div>
+
+    {{ else if eq $node.type "result" }}
+    {{/* ── Result node ─────────────────────────────────────────────────── */}}
+    <p class="text-sm font-semibold text-gray-900 mb-4">{{ $node.headline }}</p>
+
+    {{/* Primary tool cards */}}
+    <div class="flex flex-col gap-3 mb-4">
+      {{ range $node.tools }}
+      {{ $meta    := index $toolMeta .id }}
+      {{ $section := .section | default "jvm-tools" }}
+      {{ $href    := printf "#%s" .id }}
+      {{ if ne $section "jvm-tools" }}{{ $href = printf "/%s/#%s" $section .id }}{{ end }}
+      {{ $extLink := $meta.github_pages | default $meta.github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}
+      <div class="project-card">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 min-w-0">
+            <span class="font-semibold text-gray-900">{{ .id }}</span>
+            {{ with $meta.tag }}<span class="badge badge-{{ . }}">{{ . }}</span>{{ end }}
+          </div>
+          <a href="{{ $extLink }}" target="_blank" rel="noopener"
+             class="text-gray-300 hover:text-blue-500 transition-colors shrink-0 mt-0.5"
+             title="Open project page">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+          </a>
+        </div>
+        {{ with $meta.tagline_short }}<p class="text-sm text-gray-600 mt-1">{{ . }}</p>{{ end }}
+        {{ with .note }}<p class="text-xs text-gray-500 mt-1">{{ . }}</p>{{ end }}
+        <a href="{{ $href }}" class="text-xs text-blue-600 hover:underline mt-2 inline-block">Go to tool ↓</a>
+      </div>
+      {{ end }}
+    </div>
+
+    {{/* Follow-on callout (blue) */}}
+    {{ with $node.followon }}
+    <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mt-2 mb-3">
+      <p class="text-xs font-semibold text-blue-800 mb-2">{{ .heading }}</p>
+      <div class="flex flex-col gap-2">
+        {{ range .tools }}
+        {{ $fSection := .section | default "jvm-tools" }}
+        {{ $fHref    := printf "#%s" .id }}
+        {{ if ne $fSection "jvm-tools" }}{{ $fHref = printf "/%s/#%s" $fSection .id }}{{ end }}
+        <div>
+          <a href="{{ $fHref }}" class="text-xs font-semibold text-blue-700 hover:underline">{{ .id }}</a>
+          {{ with .note }}<span class="text-xs text-blue-700"> — {{ . }}</span>{{ end }}
+        </div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+
+    {{/* Related callouts (amber) */}}
+    {{ range $node.related }}
+    <div class="bg-amber-50 border border-amber-100 rounded-lg p-3 mt-2">
+      <p class="text-xs font-semibold text-amber-800 mb-2">{{ .label }}</p>
+      <div class="flex flex-col gap-2">
+        {{ range .tools }}
+        {{ $rSection := .section | default "jvm-tools" }}
+        {{ $rHref    := printf "#%s" .id }}
+        {{ if ne $rSection "jvm-tools" }}{{ $rHref = printf "/%s/#%s" $rSection .id }}{{ end }}
+        <div>
+          <a href="{{ $rHref }}" class="text-xs font-semibold text-amber-700 hover:underline">{{ .id }}</a>
+          {{ with .note }}<span class="text-xs text-amber-700"> — {{ . }}</span>{{ end }}
+        </div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+
+    {{/* Start over link at bottom of result */}}
+    <button @click="reset()" class="mt-4 text-xs text-gray-400 hover:text-blue-600 transition-colors">
+      ← Start over
+    </button>
+
+    {{ end }}{{/* end result node */}}
+  </div>
+  {{ end }}{{/* end range $tree */}}
+
+</div>
+
+{{/* Collapsed state: shown when hidden=true */}}
+<div x-show="hidden" x-cloak class="mb-6">
+  <button
+    @click="hidden = false"
+    class="text-sm text-blue-600 hover:underline"
+  >Not sure which tool you need? Show guide ▸</button>
+</div>
