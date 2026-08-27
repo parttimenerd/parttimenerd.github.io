@@ -18,7 +18,7 @@
   {{ $toolMeta = merge $toolMeta (dict .id .) }}
 {{ end }}
 
-{{ $tree := site.Data.jvm_tools.problem_finder }}
+{{ $tree := index site.Data "jvm-tools" "problem-finder" }}
 
 <div
   x-data="{
