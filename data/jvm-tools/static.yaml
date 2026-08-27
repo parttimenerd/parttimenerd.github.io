@@ -83,9 +83,11 @@
   - You need instant insight into a running JVM without attaching a full profiler
   - You need deadlock detection, hot thread analysis, or a quick flamegraph
   - You are working in a Cloud Foundry Java environment
+  - You want a live TUI showing thread states, GC activity, and memory in real time
   when_not_to_use:
   - You need continuous long-term profiling (use condensed-data + JFR instead)
-  - You need allocation or lock profiling in depth
+  - You need allocation or lock profiling in depth (use async-profiler directly)
+  - You are on Windows (the native binary is Linux/macOS only)
   related:
   - label: IntelliJ plugin
     url: https://github.com/parttimenerd/jstall-intellij-plugin
@@ -109,6 +111,13 @@
     code: |
       java -jar jstall.jar status <pid>
       java -jar jstall.jar flamegraph <pid>
+  - label: Live TUI
+    lang: bash
+    code: |
+      java -jar jstall.jar tui <pid>
+  note: Flamegraph capture requires async-profiler on the same host. The JAR bundles a copy for
+    Linux/macOS; on other platforms provide it via --async-profiler-path.
+
 - id: cf-cli-java-plugin
   tag: ready
   group: Live JVM Inspection
@@ -120,8 +129,10 @@
   when_to_use:
   - You run Java apps on Cloud Foundry and need heap dumps, thread dumps, or JFR recordings
   - You want jstall-style JVM inspection without SSH access to the container
+  - You need to diagnose memory leaks or thread issues in a CF-managed container
   when_not_to_use:
-  - You are not using Cloud Foundry
+  - You are not using Cloud Foundry (use jstall directly for non-CF JVMs)
+  - You need real-time profiling rather than one-shot diagnostics
   related:
   - label: jstall
     url: https://github.com/parttimenerd/jstall
@@ -139,6 +150,15 @@
     code: |
       cf java heap-dump my-app
       cf java thread-dump my-app
+  - label: JFR recording
+    lang: bash
+    code: |
+      cf java jfr start my-app
+      # ... wait for recording ...
+      cf java jfr stop my-app --output recording.jfr
+  note: Requires the app to be running on the Java buildpack. The plugin streams results directly
+    to your local machine without needing SSH or direct container access.
+
 - id: jfr-profiling
   tag: ready
   group: JFR / Profiling
@@ -153,9 +173,11 @@
   - You want to view JFR recordings as flame graphs in the Firefox Profiler UI
   - You want JFR profiling integrated directly into IntelliJ IDEA
   - You need to share or embed profiling results as a web link
+  - You want to annotate or navigate flame graphs interactively in the browser
   when_not_to_use:
   - You need long-term continuous recording storage (use condensed-data)
   - You need a standalone CLI tool without IDE integration
+  - You need a JFR viewer that works offline without a server
   related:
   - label: jfrtofp
     url: https://github.com/parttimenerd/jfrtofp
@@ -169,18 +191,37 @@
   - label: Blog post ↗
     url: https://mostlynerdless.de/blog/2023/01/31/firefox-profiler-beyond-the-web/
   no_release: true
+  install:
+  - label: IntelliJ plugin
+    lang: text
+    code: |
+      Settings → Plugins → search "JFR Profiling" → Install
+      Then: Run → Profile with JFR
+  - label: jfrtofp JAR
+    lang: bash
+    code: |
+      curl -L https://github.com/parttimenerd/jfrtofp/releases/latest/download/jfrtofp.jar \
+        -o jfrtofp.jar
   usage:
   - label: Convert JFR
     lang: bash
     code: |
       java -jar jfrtofp.jar recording.jfr -o profile.json
       # Then open in Firefox Profiler or via jfrtofp-server
+  - label: Serve locally
+    lang: bash
+    code: |
+      # jfrtofp-server bundles the patched Firefox Profiler
+      java -jar jfrtofp-server.jar recording.jfr
+      # Opens http://localhost:3000 in your browser
+
 - id: firefox-profiler
   tag: experimental
   group: JFR / Profiling
   tagline: Fork of the Firefox Profiler web app with patches that add native JFR file loading and JFR-specific
     UI improvements. Open a JFR recording directly in the browser — no server, no conversion step. Used
-    as the embedded viewer in jfrtofp-server.
+    as the embedded viewer in jfrtofp-server. Useful when you want a locally-hosted profiler viewer that
+    understands JFR natively without installing a CLI tool.
   tagline_short: Fork of Firefox Profiler that opens JFR recordings natively in the browser.
   when_to_use:
   - You want to open a JFR recording directly in the Firefox Profiler UI without a conversion step
@@ -189,6 +230,7 @@
   when_not_to_use:
   - You want the upstream Firefox Profiler without JFR customisations
   - You are not working with JFR recordings
+  - You need a stable release (this is an experimental fork, updated irregularly)
   related:
   - label: jfrtofp
     url: https://github.com/parttimenerd/jfrtofp
@@ -198,7 +240,9 @@
   - label: Upstream ↗
     url: https://profiler.firefox.com
   no_release: true
-  note: Used by jfrtofp-server as the embedded viewer.
+  note: Used by jfrtofp-server as the embedded viewer. For standalone JFR viewing, use jfrtofp-server
+    which bundles this fork and handles the full workflow.
+
 - id: jfr-query
   tag: experimental
   group: JFR / Profiling
@@ -212,9 +256,11 @@
   - You want to run ad-hoc SQL queries over JFR event data
   - You need charts and notebook-style exploration of recordings
   - You want to correlate events across types (GC, allocations, CPU) in one query
+  - You need to share a JFR analysis without requiring the recipient to install anything
   when_not_to_use:
-  - You need a stable, production-ready tool (schema may change)
+  - You need a stable, production-ready tool (schema may change between versions)
   - You need IDE integration (use the profiler plugin instead)
+  - You have very large recordings — DuckDB runs in-browser via WASM, memory-constrained
   links:
   - label: Web app ↗
     url: https://parttimenerd.github.io/jfr-query/
@@ -224,6 +270,18 @@
     code: |
       Open https://parttimenerd.github.io/jfr-query/
       Drag and drop your .jfr file to get started.
+  - label: Example query
+    lang: sql
+    code: |
+      -- Top methods by CPU sample count
+      SELECT stackTrace, COUNT(*) AS samples
+      FROM jdk.ExecutionSample
+      GROUP BY stackTrace
+      ORDER BY samples DESC
+      LIMIT 20
+  note: Runs entirely in-browser via DuckDB WASM — no data leaves your machine. Very large recordings
+    (>500 MB) may be slow due to browser memory limits.
+
 - id: condensed-data
   tag: experimental
   group: JFR / Profiling
@@ -240,20 +298,29 @@
   - You need long-term storage of JFR recordings with minimal disk usage
   - You want live-attach to a running JVM for continuous event capture
   - You are storing GC or other continuous JFR data over days or weeks
+  - You want a self-describing format that doesn't need the original JDK to read
   when_not_to_use:
   - You need immediate full JFR replay compatibility without a reader library
-  - You need a stable format (early development, format may change)
+  - You need a stable format (early development, .cjfr format may change)
+  - You need Windows support (live-attach agent is Linux/macOS only)
   links:
   - label: Docs ↗
     url: https://parttimenerd.github.io/condensed-data/
   no_release: true
   usage:
-  - label: Record JFR events
+  - label: Attach to JVM
     lang: bash
     code: |
-      # See https://parttimenerd.github.io/condensed-data/ for setup
+      # Attach agent to a running JVM and write .cjfr output
       condensed-data attach <pid> --output recording.cjfr
-  note: No stable release yet — rolling snapshots only. Check the docs for the current version.
+  - label: Read data
+    lang: java
+    code: |
+      try (var reader = CJFRReader.open(Path.of("recording.cjfr"))) {
+          reader.events().forEach(e -> System.out.println(e.eventType().name()));
+      }
+  note: No stable release yet — rolling snapshots only. Check the docs for the current snapshot version.
+
 - id: jfrevents
   tag: ready
   group: JFR / Profiling
@@ -268,13 +335,23 @@
   - You need to know what fields a JFR event has across JDK versions
   - You are writing JFR tooling and need event documentation
   - You want to understand which events are worth subscribing to for a given use case
+  - You need to compare event availability between JDK 17, 21, and 24
   when_not_to_use:
-  - You need a programmatic API (this is a reference site)
+  - You need a programmatic API to enumerate events at runtime (use JFR API directly)
+  - You need off-line access (web-only reference site)
   links:
   - label: Website ↗
     url: https://sap.github.io/jfrevents/
   no_release: true
-  note: Canonical site is at sap.github.io/jfrevents/
+  usage:
+  - label: Browse events
+    lang: text
+    code: |
+      Open https://sap.github.io/jfrevents/
+      Search or browse by category (GC, JIT, IO, Thread, ...)
+      Click an event to see all fields, types, and cross-version availability.
+  note: Canonical site is at sap.github.io/jfrevents/. Maintained by the SAP SapMachine team.
+
 - id: tiny-profiler
   tag: demo
   group: JFR / Profiling
@@ -287,6 +364,13 @@
   - Outputs method tables and interactive HTML flamegraphs (d3-flame-graph)
   - Safepoint-biased sampling via Thread.getAllStackTraces() — intentionally simple
   - Small enough to read the entire source in a single sitting
+  when_to_use:
+  - You want to understand how a sampling profiler works by reading the source
+  - You are following the 'Writing a Profiler from Scratch' blog series
+  - You need a zero-dependency profiler for a quick demo or classroom example
+  when_not_to_use:
+  - You need production-accurate profiling (safepoint bias skews results)
+  - You need allocation or lock profiling (not implemented)
   related:
   - label: writing-a-profiler
     url: https://github.com/parttimenerd/writing-a-profiler
@@ -308,6 +392,7 @@
         -jar yourapp.jar
       # Opens flames.html with an interactive flamegraph
   note: Safepoint-biased — good for learning, not for production profiling decisions.
+
 - id: hprof-analyzer
   tag: experimental
   group: Heap Dump Analysis
@@ -321,10 +406,11 @@
   when_to_use:
   - You need to analyse a heap dump without Eclipse MAT's memory overhead
   - You have a very large heap dump (>10 GiB) that MAT cannot handle
-  - You want a quick in-browser analyser for smaller dumps (up to ~3 GiB)
+  - You want a quick in-browser analyser for smaller dumps (up to ~3 GiB via WASM)
+  - You want Leak Suspects, Top Consumers, and thread views without a GUI IDE
   when_not_to_use:
-  - You need full MAT feature coverage (OQL queries, custom reports)
-  - You need Windows support (native binary currently linux/mac only)
+  - You need full MAT feature coverage (OQL queries, custom reports, deep object graph navigation)
+  - You need Windows support (native binary is currently Linux/macOS only)
   links:
   - label: Web analyser ↗
     url: https://parttimenerd.github.io/hprof-analyzer/
@@ -340,6 +426,10 @@
     code: |
       ./hprof-analyzer heap.hprof
       ./hprof-analyzer heap.hprof --leak-suspects
+      ./hprof-analyzer heap.hprof --top-consumers
+  note: The in-browser WASM version works for dumps up to ~3 GiB. For larger dumps use the native
+    binary. Native binary requires Linux or macOS.
+
 - id: hprof-redact
   tag: poc
   group: Heap Dump Analysis
@@ -349,11 +439,13 @@
     Use it when you need to share a heap dump that contains sensitive string data.
   tagline_short: Stream-redact strings from HPROF heap dumps without loading them fully into memory.
   when_to_use:
-  - You need to share a heap dump but it contains sensitive string data
+  - You need to share a heap dump but it contains sensitive string data (passwords, tokens, PII)
   - You need to redact HPROF files while preserving their structure for further analysis
+  - You are dealing with very large heap dumps where loading into memory is not feasible
   when_not_to_use:
-  - You need guaranteed complete privacy (proof-of-concept, not audited)
-  - You need to redact JFR recordings (not supported)
+  - You need guaranteed complete privacy — proof-of-concept, not security-audited
+  - You need to redact JFR recordings (use a different approach)
+  - You need field-level or class-level selective redaction (currently redacts all strings)
   install:
   - label: Maven
     lang: xml
@@ -368,7 +460,8 @@
     lang: bash
     code: |
       java -jar hprof-redact.jar input.hprof output-redacted.hprof
-  note: Early proof-of-concept.
+  note: Early proof-of-concept. Not security-audited — review before using for compliance purposes.
+
 - id: jhserr
   tag: poc
   group: Crash / Log Diagnostics
@@ -385,6 +478,7 @@
   - You want a web UI to redact hs_err files without installing anything
   when_not_to_use:
   - You need production-stable parsing (early prototype, round-trip may lose formatting)
+  - You need support for non-HotSpot JVM crash formats (HotSpot only)
   links:
   - label: Web redactor ↗
     url: https://parttimenerd.github.io/jhserr/
@@ -403,7 +497,15 @@
     code: |
       HsErrFile report = HsErrParser.parse(path);
       System.out.println(report.getVersion());
-  note: Early prototype.
+      System.out.println(report.getSignalInfo());
+  - label: Redact
+    lang: java
+    code: |
+      HsErrFile report = HsErrParser.parse(path);
+      report.redact(RedactOptions.defaults());
+      report.write(outputPath);
+  note: Early prototype. The web UI at jhserr.github.io handles one-off redaction without any install.
+
 - id: jdklogs
   tag: ready
   group: Crash / Log Diagnostics
@@ -417,8 +519,10 @@
   - You need to understand JDK logging output and what -Xlog config produces it
   - You want to explore -Xlog tags across JDK versions with source context
   - You are tuning GC or JIT logging flags and want to preview the output
+  - You want to discover all available -Xlog tags for a specific JDK version
   when_not_to_use:
-  - You need offline access (web-only tool)
+  - You need offline access (web-only tool, no CLI)
+  - You need to parse existing log output (this tool explores config, not output)
   links:
   - label: Web app ↗
     url: https://parttimenerd.github.io/jdklogs/
@@ -428,7 +532,9 @@
     lang: text
     code: |
       Open https://parttimenerd.github.io/jdklogs/
-      Enter your -Xlog config to see matching log statements.
+      Enter your -Xlog config (e.g. gc*=debug,safepoint=info)
+      See all matching log statements with source locations.
+
 - id: test-order
   tag: experimental
   group: Testing
@@ -472,6 +578,7 @@
       mvn test          # second run: affected tests go first
       mvn test-order:show      # inspect ranking
       mvn test-order:dashboard # HTML report
+
 - id: execjar
   tag: experimental
   group: JAR Packaging
@@ -483,9 +590,11 @@
   when_to_use:
   - You want users to run your tool directly without typing `java -jar`
   - You need a single self-contained executable with no launcher script
+  - You want a native-feeling CLI tool that bundles Java inside a single file
   when_not_to_use:
-  - You need JAR size reduction (use femtojar instead)
+  - You need JAR size reduction (use GraalVM native-image or femtojar instead)
   - You are packaging a library rather than an executable
+  - You need Windows support (shell stub is POSIX only)
   install:
   - label: Maven plugin
     lang: xml
@@ -501,11 +610,14 @@
         </executions>
       </plugin>
   usage:
-  - label: Build
+  - label: Build and run
     lang: bash
     code: |
       mvn package
       ./target/yourapp.run
+  note: The output file is a valid JAR with a prepended shell stub — it runs as both
+    `./yourapp.run` and `java -jar yourapp.run`. Requires a JRE on PATH at runtime.
+
 - id: meta-agent
   tag: experimental
   group: Agent Development
@@ -518,8 +630,9 @@
   when_to_use:
   - You need to understand or debug what a Java agent is doing to class files
   - You are developing or testing a ClassFileTransformer and need visibility into its behaviour
+  - You want to measure the transformation overhead of an agent
   when_not_to_use:
-  - You need a production-safe monitoring tool
+  - You need a production-safe monitoring tool (adds overhead to every transformation)
   - You want end-user JVM observability (use jstall instead)
   install:
   - label: Maven
@@ -536,6 +649,15 @@
     code: |
       java -javaagent:meta-agent.jar=<target-agent.jar> \
         -jar yourapp.jar
+  - label: Filter output
+    lang: bash
+    code: |
+      # Only show transformations for classes matching a pattern
+      java -javaagent:meta-agent.jar=<target-agent.jar>,include=com/example \
+        -jar yourapp.jar
+  note: Designed for development and debugging use only. The interception adds overhead
+    to every class transformation and should not be used in production.
+
 - id: jthreaddump
   tag: ready
   group: Libraries
@@ -549,6 +671,7 @@
   - You need to programmatically parse and analyse Java thread dumps
   - You are building tooling that processes jstack or jcmd output
   - You want to diff thread dumps or detect recurring blocking patterns
+  - You need virtual thread support in thread dump parsing
   when_not_to_use:
   - You need live thread inspection (use jstall instead)
   - You need profiling data (use the JFR profiling tools instead)
@@ -586,6 +709,7 @@
     code: |
       jthreaddump dump.txt      # parse and display summary
       jstack 12345 | jthreaddump -   # read from stdin
+
 - id: writing-a-profiler
   tag: ready
   group: Learning Resources
@@ -597,13 +721,20 @@
   when_to_use:
   - You want to learn how Java profilers work from the inside out
   - You are following the blog series on mostlynerdless.de or foojay.io
+  - You want runnable code for each chapter to experiment with
   when_not_to_use:
   - You need a ready-to-use profiler (use jstall or the JFR profiling tools)
+  - You need a production profiler tutorial (this is intentionally simplified)
   related:
   - label: tiny-profiler
     url: https://github.com/parttimenerd/tiny-profiler
   links:
   - label: Blog series ↗
     url: https://mostlynerdless.de/blog/category/profiling/
+  - label: foojay.io series ↗
+    url: https://foojay.io/today/writing-a-profiler-from-scratch-part-1/
+  - label: GitHub repo ↗
+    url: https://github.com/parttimenerd/writing-a-profiler
   no_release: true
-  note: Each chapter has its own tagged commit.
+  note: Each chapter has its own tagged commit — check out the tag for the chapter you are reading
+    to get the exact code discussed in that post.
