@@ -39,6 +39,8 @@
   <!-- Alpine.js via Hugo esbuild -->
   {{ $js := resources.Get "js/main.js" | js.Build (dict "minify" true "target" "es2017") | fingerprint }}
   <script src="{{ $js.RelPermalink }}" defer></script>
+  <!-- GoatCounter analytics -->
+  <script data-goatcounter="https://goatcounter.mostlynerdless.de/count" async src="//zgo.at/count.js"></script>
 </head>
 <body class="font-['Inter'] text-gray-900 min-h-screen flex flex-col" style="background:var(--page-bg)">
 

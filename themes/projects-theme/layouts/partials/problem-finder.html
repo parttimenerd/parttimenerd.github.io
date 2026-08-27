@@ -74,6 +74,7 @@
     go(id, label) {
       this.hist.push({ id: this.cur, label: label });
       this.cur = id;
+      window.goatcounter?.count({ path: 'pf/' + this.cur, title: label, event: true });
     },
     goTo(idx) {
       const target = this.hist[idx];
