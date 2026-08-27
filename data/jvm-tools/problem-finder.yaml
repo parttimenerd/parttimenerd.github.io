@@ -39,11 +39,11 @@ q-slow-env:
   type: question
   text: "Where is the JVM running?"
   options:
-    - label: "On Cloud Foundry (use cf ssh or the CF CLI plugin)"
+    - label: "On Cloud Foundry"
       next: r-cf
     - label: "Locally on my machine"
       next: r-jstall-local
-    - label: "Remote server or container (staging, production)"
+    - label: "Remote server or container"
       next: r-jstall
 
 q-crash:
