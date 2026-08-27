@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
+import { treeEditor } from './tree-editor.js';
 import hljs from 'highlight.js/lib/core';
 import java from 'highlight.js/lib/languages/java';
 import xml from 'highlight.js/lib/languages/xml';
@@ -13,6 +14,7 @@ hljs.registerLanguage('bash', bash);
 
 Alpine.plugin(focus);
 window.Alpine = Alpine;
+window.treeEditor = treeEditor;
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
