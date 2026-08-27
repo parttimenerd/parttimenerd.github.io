@@ -113,7 +113,7 @@ Labels: first 22 chars of `text` / `headline`, truncated with `…`
 
 Edge labels: first 18 chars of the option `.label`, truncated with `…`, rendered as small grey `<text>` elements midpoint on the edge line.
 
-The diagram re-renders via a reactive `$watch('nodes', () => layoutDiagram())` watcher plus manual calls after any mutation.
+The diagram re-renders via explicit `layoutDiagram()` calls after every mutation that changes tree structure. Alpine's `$watch` does not detect deep object mutations reliably, so every method that changes `nodes` must call `layoutDiagram()` directly before returning.
 
 ### Interactions
 
