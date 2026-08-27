@@ -1,0 +1,362 @@
+{{/* ─────────────────────────────────────────────────────────────────────────
+     problem-finder-editor.html
+     Visual editor for the decision tree. Edit in-browser, export YAML,
+     paste into data/jvm-tools/problem-finder.yaml and rebuild.
+     ───────────────────────────────────────────────────────────────────────── */}}
+
+{{ $tree    := index site.Data "jvm-tools" "problem-finder" }}
+{{ $toolIds := slice }}
+{{ range site.Data.jvm_tools.static    }}{{ $toolIds = $toolIds | append .id }}{{ end }}
+{{ range site.Data.femto.static        }}{{ $toolIds = $toolIds | append .id }}{{ end }}
+{{ range site.Data.experiments.static  }}{{ $toolIds = $toolIds | append .id }}{{ end }}
+
+{{/* Embed data as JSON for the Alpine component to read on init */}}
+<script type="application/json" id="pf-tree-data">{{ $tree | jsonify }}</script>
+<datalist id="pf-tool-ids">
+  {{ range $toolIds }}<option value="{{ . }}">{{ end }}
+</datalist>
+
+<div
+  x-data="treeEditor()"
+  x-init="init()"
+  class="mt-16 border-t-2 border-dashed border-gray-200 pt-8 pb-16"
+>
+
+  {{/* ── Header ─────────────────────────────────────────────────────────── */}}
+  <div class="mb-2">
+    <h2 class="font-['Vollkorn'] text-xl font-bold text-gray-900">Tree Editor</h2>
+    <p class="text-xs text-gray-400 mt-0.5">Edit below, then Copy YAML and paste into <code class="font-mono">data/jvm-tools/problem-finder.yaml</code> and rebuild.</p>
+  </div>
+
+  {{/* ── Toolbar ─────────────────────────────────────────────────────────── */}}
+  <div class="flex flex-wrap items-center gap-2 mb-4">
+    <button @click="addQuestion()"
+      class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+      + New question
+    </button>
+    <button @click="addResult()"
+      class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+      + New result
+    </button>
+    <div class="ml-auto flex items-center gap-2">
+      <template x-if="errors.length > 0">
+        <span class="text-xs text-red-600" x-text="errors.length + ' error(s) — fix before copying'"></span>
+      </template>
+      <button @click="copyYaml()"
+        :class="copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'"
+        class="px-4 py-1.5 text-sm text-white rounded-lg transition-colors">
+        <span x-text="copied ? 'Copied! ✓' : 'Copy YAML ▸'"></span>
+      </button>
+    </div>
+  </div>
+
+  {{/* ── Validation errors ───────────────────────────────────────────────── */}}
+  <template x-if="errors.length > 0">
+    <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm text-red-700">
+      <p class="font-semibold mb-1">Fix these errors before exporting:</p>
+      <ul class="list-disc list-inside space-y-0.5">
+        <template x-for="err in errors" :key="err">
+          <li x-text="err"></li>
+        </template>
+      </ul>
+    </div>
+  </template>
+
+  {{/* ── Split: diagram + edit panel ────────────────────────────────────── */}}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-0 border border-gray-200 rounded-xl overflow-hidden">
+
+    {{/* ── Diagram panel ─────────────────────────────────────────────────── */}}
+    <div class="bg-gray-50 p-4 overflow-auto min-h-[500px] border-b md:border-b-0 md:border-r border-gray-200">
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Diagram — click a node to edit</p>
+      <svg
+        :width="svgWidth"
+        :height="svgHeight"
+        class="block"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#9ca3af"/>
+          </marker>
+        </defs>
+
+        {{/* Edges */}}
+        <template x-for="edge in svgEdges" :key="edge.x1 + ',' + edge.y1 + ',' + edge.x2 + ',' + edge.y2">
+          <g>
+            <line
+              :x1="edge.x1" :y1="edge.y1"
+              :x2="edge.x2" :y2="edge.y2"
+              stroke="#9ca3af" stroke-width="1.5"
+              marker-end="url(#arrow)"
+            />
+            <text
+              :x="(edge.x1 + edge.x2) / 2 + 4"
+              :y="(edge.y1 + edge.y2) / 2"
+              fill="#6b7280" font-size="10"
+              x-text="edge.label"
+            ></text>
+          </g>
+        </template>
+
+        {{/* Nodes */}}
+        <template x-for="n in svgNodes" :key="n.id">
+          <g @click="selectNode(n.id)" class="cursor-pointer">
+            <rect
+              :x="n.x" :y="n.y" :width="n.w" :height="n.h"
+              rx="6" fill="white"
+              :stroke="n.type === 'question' ? '#3b82f6' : '#22c55e'"
+              :stroke-width="selected === n.id ? 3 : 1.5"
+            />
+            <text
+              :x="n.x + n.w / 2"
+              :y="n.y + 16"
+              text-anchor="middle"
+              font-size="11" font-weight="600"
+              :fill="n.type === 'question' ? '#1d4ed8' : '#15803d'"
+              x-text="n.id"
+            ></text>
+            <text
+              :x="n.x + n.w / 2"
+              :y="n.y + 32"
+              text-anchor="middle"
+              font-size="10" fill="#6b7280"
+              x-text="n.label"
+            ></text>
+          </g>
+        </template>
+      </svg>
+    </div>
+
+    {{/* ── Edit panel ────────────────────────────────────────────────────── */}}
+    <div class="bg-white p-5 overflow-y-auto min-h-[500px]">
+      <template x-if="!selected">
+        <p class="text-sm text-gray-400 italic mt-4">Click a node in the diagram to edit it.</p>
+      </template>
+
+      <template x-if="selected && nodes[selected]">
+        <div>
+          {{/* Node header */}}
+          <div class="flex items-center gap-3 mb-4">
+            <span class="font-mono text-sm font-bold text-gray-800" x-text="selected"></span>
+            <span
+              x-text="nodes[selected].type"
+              :class="nodes[selected].type === 'question' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'"
+              class="text-xs font-semibold px-2 py-0.5 rounded-full"
+            ></span>
+            <button
+              @click="requestDelete(selected)"
+              :class="_deleteConfirm === selected ? 'text-red-600 font-semibold' : 'text-red-400 hover:text-red-600'"
+              class="ml-auto text-xs transition-colors"
+              x-text="_deleteConfirm === selected ? 'Sure?' : 'Delete node'"
+            ></button>
+          </div>
+
+          {{/* ── Question fields ──────────────────────────────────────── */}}
+          <template x-if="nodes[selected].type === 'question'">
+            <div>
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Question text</label>
+              <textarea rows="2"
+                x-model="nodes[selected].text"
+                @input="layoutDiagram()"
+                class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400 mb-4 resize-none"
+              ></textarea>
+
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Options</label>
+              <ul class="space-y-2 mb-2">
+                <template x-for="(opt, idx) in nodes[selected].options" :key="idx">
+                  <li
+                    class="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-100"
+                    draggable="true"
+                    @dragstart="dragStart(idx)"
+                    @dragover="dragOver($event)"
+                    @drop="dropOption(selected, idx)"
+                  >
+                    <span class="cursor-grab text-gray-300 select-none text-base">≡</span>
+                    <input type="text"
+                      x-model="opt.label"
+                      placeholder="Option label"
+                      class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                    />
+                    <span class="text-gray-400 text-xs shrink-0">→</span>
+                    <select
+                      x-model="opt.next"
+                      @change="layoutDiagram()"
+                      class="border border-gray-200 rounded px-1 py-1 text-sm focus:outline-none focus:border-blue-400"
+                    >
+                      <option value="">— choose —</option>
+                      <template x-for="nid in nodeOrder" :key="nid">
+                        <option :value="nid" :selected="opt.next === nid" x-text="nid"></option>
+                      </template>
+                    </select>
+                    <button @click="removeOption(selected, idx)"
+                      class="text-xs text-red-400 hover:text-red-600 shrink-0">✕</button>
+                  </li>
+                </template>
+              </ul>
+              <button @click="addOption(selected)"
+                class="text-xs text-blue-600 hover:underline">+ add option</button>
+            </div>
+          </template>
+
+          {{/* ── Result fields ────────────────────────────────────────── */}}
+          <template x-if="nodes[selected].type === 'result'">
+            <div>
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Headline</label>
+              <textarea rows="2"
+                x-model="nodes[selected].headline"
+                @input="layoutDiagram()"
+                class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400 mb-4 resize-none"
+              ></textarea>
+
+              {{/* Primary tools */}}
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Tools</label>
+              <div class="space-y-2 mb-2">
+                <template x-for="(tool, idx) in nodes[selected].tools" :key="idx">
+                  <div class="bg-gray-50 rounded border border-gray-100 p-2 space-y-1">
+                    <div class="flex items-center gap-2">
+                      <label class="text-xs text-gray-500 w-8 shrink-0">ID</label>
+                      <input type="text" list="pf-tool-ids"
+                        x-model="tool.id"
+                        placeholder="tool-id"
+                        class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                      />
+                      <label class="text-xs text-gray-500 shrink-0">Section</label>
+                      <select x-model="tool.section"
+                        class="border border-gray-200 rounded px-1 py-1 text-sm focus:outline-none focus:border-blue-400">
+                        <option value="jvm-tools">jvm-tools</option>
+                        <option value="femto">femto</option>
+                        <option value="experiments">experiments</option>
+                      </select>
+                      <button @click="removeTool(nodes[selected].tools, idx)"
+                        class="text-xs text-red-400 hover:text-red-600 shrink-0">✕</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <label class="text-xs text-gray-500 w-8 shrink-0">Note</label>
+                      <input type="text"
+                        x-model="tool.note"
+                        placeholder="optional one-line note"
+                        class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <button @click="addTool(nodes[selected].tools)"
+                class="text-xs text-blue-600 hover:underline mb-5">+ add tool</button>
+
+              {{/* Follow-on */}}
+              <div class="border-t border-gray-100 pt-4 mt-2 mb-4">
+                <label class="flex items-center gap-2 cursor-pointer mb-3">
+                  <input type="checkbox"
+                    :checked="!!nodes[selected].followon"
+                    @change="toggleFollowon(selected)"
+                    class="rounded"
+                  />
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Follow-on callout</span>
+                </label>
+                <template x-if="nodes[selected].followon">
+                  <div class="pl-4 border-l-2 border-blue-100 space-y-2">
+                    <input type="text"
+                      x-model="nodes[selected].followon.heading"
+                      placeholder="Follow-on heading"
+                      class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                    />
+                    <div class="space-y-2">
+                      <template x-for="(tool, idx) in nodes[selected].followon.tools" :key="idx">
+                        <div class="bg-blue-50 rounded border border-blue-100 p-2 space-y-1">
+                          <div class="flex items-center gap-2">
+                            <label class="text-xs text-gray-500 w-8 shrink-0">ID</label>
+                            <input type="text" list="pf-tool-ids"
+                              x-model="tool.id"
+                              placeholder="tool-id"
+                              class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                            />
+                            <label class="text-xs text-gray-500 shrink-0">Section</label>
+                            <select x-model="tool.section"
+                              class="border border-gray-200 rounded px-1 py-1 text-sm focus:outline-none focus:border-blue-400">
+                              <option value="jvm-tools">jvm-tools</option>
+                              <option value="femto">femto</option>
+                              <option value="experiments">experiments</option>
+                            </select>
+                            <button @click="removeTool(nodes[selected].followon.tools, idx)"
+                              class="text-xs text-red-400 hover:text-red-600 shrink-0">✕</button>
+                          </div>
+                          <div class="flex items-center gap-2">
+                            <label class="text-xs text-gray-500 w-8 shrink-0">Note</label>
+                            <input type="text"
+                              x-model="tool.note"
+                              placeholder="optional note"
+                              class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                            />
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                    <button @click="addTool(nodes[selected].followon.tools)"
+                      class="text-xs text-blue-600 hover:underline">+ add follow-on tool</button>
+                  </div>
+                </template>
+              </div>
+
+              {{/* Related groups */}}
+              <div class="border-t border-gray-100 pt-4">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Related callouts</p>
+                <template x-for="(grp, gIdx) in (nodes[selected].related || [])" :key="gIdx">
+                  <div class="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-3">
+                    <div class="flex items-center gap-2 mb-2">
+                      <input type="text"
+                        x-model="grp.label"
+                        placeholder="Related group label"
+                        class="flex-1 border border-amber-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-amber-400"
+                      />
+                      <button @click="removeRelatedGroup(selected, gIdx)"
+                        class="text-xs text-red-400 hover:text-red-600 shrink-0">✕ remove</button>
+                    </div>
+                    <div class="space-y-2 mb-2">
+                      <template x-for="(tool, tIdx) in grp.tools" :key="tIdx">
+                        <div class="bg-white rounded border border-amber-100 p-2 space-y-1">
+                          <div class="flex items-center gap-2">
+                            <label class="text-xs text-gray-500 w-8 shrink-0">ID</label>
+                            <input type="text" list="pf-tool-ids"
+                              x-model="tool.id"
+                              placeholder="tool-id"
+                              class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                            />
+                            <label class="text-xs text-gray-500 shrink-0">Section</label>
+                            <select x-model="tool.section"
+                              class="border border-gray-200 rounded px-1 py-1 text-sm focus:outline-none focus:border-blue-400">
+                              <option value="jvm-tools">jvm-tools</option>
+                              <option value="femto">femto</option>
+                              <option value="experiments">experiments</option>
+                            </select>
+                            <button @click="removeTool(grp.tools, tIdx)"
+                              class="text-xs text-red-400 hover:text-red-600 shrink-0">✕</button>
+                          </div>
+                          <div class="flex items-center gap-2">
+                            <label class="text-xs text-gray-500 w-8 shrink-0">Note</label>
+                            <input type="text"
+                              x-model="tool.note"
+                              placeholder="optional note"
+                              class="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-400"
+                            />
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                    <button @click="addTool(grp.tools)"
+                      class="text-xs text-blue-600 hover:underline">+ add tool</button>
+                  </div>
+                </template>
+                <button @click="addRelatedGroup(selected)"
+                  class="text-xs text-blue-600 hover:underline">+ add related group</button>
+              </div>
+
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>{{/* end edit panel */}}
+
+  </div>{{/* end split grid */}}
+
+</div>{{/* end x-data */}}
