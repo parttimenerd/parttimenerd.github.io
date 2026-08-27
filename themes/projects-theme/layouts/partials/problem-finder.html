@@ -38,15 +38,18 @@
     reset() { this.cur = 'start'; this.hist = []; }
   }"
   x-cloak
-  x-show="!hidden"
-  class="border border-gray-200 rounded-xl p-5 mb-6 bg-white"
+  class="mb-6"
 >
+
+  {{/* Widget panel — visible when not hidden */}}
+  <div x-show="!hidden" class="border border-gray-200 rounded-xl p-5 bg-white">
 
   {{/* Header row: title + hide button */}}
   <div class="flex items-center justify-between mb-4">
     <p class="text-sm font-semibold text-gray-700">Not sure which tool you need? Answer a few questions.</p>
     <button
       @click="hidden = true"
+      aria-label="Hide widget"
       class="text-xs text-gray-400 hover:text-gray-600 transition-colors ml-4 shrink-0"
     >Hide ✕</button>
   </div>
@@ -66,6 +69,7 @@
   </div>
 
   {{/* Render every tree node; Alpine shows only the current one */}}
+  <div aria-live="polite" aria-atomic="true">
   {{ range $nodeId, $node := $tree }}
   <div x-show="cur === '{{ $nodeId }}'" x-cloak>
 
@@ -77,8 +81,10 @@
       {{ $label := .label }}
       {{ $next  := .next }}
       <button
-        @click="go('{{ $next }}', '{{ $label | htmlEscape }}')"
-        class="w-full text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer"
+        data-next="{{ $next }}"
+        data-label="{{ $label }}"
+        @click="go($el.dataset.next, $el.dataset.label)"
+        class="w-full text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-all cursor-pointer"
       >{{ $label }}</button>
       {{ end }}
     </div>
@@ -103,6 +109,7 @@
           </div>
           <a href="{{ $extLink }}" target="_blank" rel="noopener"
              class="text-gray-300 hover:text-blue-500 transition-colors shrink-0 mt-0.5"
+             aria-label="Open {{ .id }} project page"
              title="Open project page">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -161,13 +168,16 @@
     {{ end }}{{/* end result node */}}
   </div>
   {{ end }}{{/* end range $tree */}}
+  </div>{{/* end aria-live region */}}
 
-</div>
+  </div>{{/* end widget panel */}}
 
-{{/* Collapsed state: shown when hidden=true */}}
-<div x-show="hidden" x-cloak class="mb-6">
-  <button
-    @click="hidden = false"
-    class="text-sm text-blue-600 hover:underline"
-  >Not sure which tool you need? Show guide ▸</button>
-</div>
+  {{/* Collapsed state: shown when hidden=true */}}
+  <div x-show="hidden" x-cloak>
+    <button
+      @click="hidden = false"
+      class="text-sm text-blue-600 hover:underline"
+    >Not sure which tool you need? Show guide ▸</button>
+  </div>
+
+</div>{{/* end x-data wrapper */}}

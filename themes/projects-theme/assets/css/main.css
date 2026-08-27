@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] { display: none !important; }
+
 :root {
   --nav-h: 3rem;
   --page-bg: #f9f9f8;
