@@ -2,6 +2,8 @@
 # Each key is a node ID. Two types: question (shows options) and result (shows tools).
 # To add a tool: add a result node and wire an option in the relevant question to it.
 # Start node is always "start".
+# Optional result fields: followon (next steps), related (alternative paths).
+# Tools may specify section: experiments|femto to link outside jvm-tools.
 
 start:
   type: question
@@ -141,6 +143,11 @@ r-jfr-visual:
       note: "Converts JFR to Firefox Profiler format; includes an IntelliJ plugin for in-IDE profiling."
     - id: firefox-profiler
       note: "Standalone hosted web app — open .jfr or .cjfr files natively in the browser, no install."
+  followon:
+    heading: "Want to dig deeper with SQL queries?"
+    tools:
+      - id: jfr-query
+        note: "Query the same recording for GC pauses, allocations, and CPU correlation."
 
 r-jfr-query:
   type: result
@@ -189,7 +196,7 @@ r-jthreaddump:
     - id: jthreaddump
       note: "Handles all JDK thread dump formats including virtual threads."
   related:
-    - label: "Need to inspect threads live instead?"
+    - label: "Inspect threads live (no recording needed)"
       tools:
         - id: jstall
           note: "Live TUI, deadlock detection, and hot thread analysis without a persistent agent."
@@ -201,7 +208,7 @@ r-hprof-analyze:
     - id: hprof-analyzer
       note: "Handles >10 GiB dumps that Eclipse MAT can't open. Also a web WASM tool for dumps up to ~3 GiB."
   related:
-    - label: "Dump contains sensitive data you need to redact first?"
+    - label: "Redact sensitive data before analysis"
       tools:
         - id: hprof-redact
           note: "Stream-redacts strings without loading the full file into memory."
@@ -220,7 +227,7 @@ r-hprof-redact:
 
 r-hprof-both:
   type: result
-  headline: "Redact first, then analyse."
+  headline: "You need to redact and then analyse your heap dump."
   tools:
     - id: hprof-redact
       note: "Step 1 — stream-redact sensitive strings while preserving the HPROF structure."
@@ -271,7 +278,7 @@ r-execjar:
     - id: execjar
       note: "Wraps the fat JAR in a shell stub — a single directly executable file, no launcher script."
   related:
-    - label: "Want to shrink the JAR first?"
+    - label: "Shrink the JAR before wrapping"
       tools:
         - id: femtojar
           section: femto
