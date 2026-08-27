@@ -128,7 +128,7 @@ r-jstall-local:
   headline: "You need instant insight into a locally running JVM."
   tools:
     - id: jstall
-      note: "CLI TUI — detects deadlocks, captures flame graphs, shows hot threads. No persistent agent."
+      note: "CLI TUI — detects deadlocks, captures flame graphs, shows hot threads. Also available as an IntelliJ plugin and VS Code extension."
     - id: jfr-profiling
       note: "IntelliJ plugin — profile and view flame graphs directly in the IDE without leaving your editor."
   followon:

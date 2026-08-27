@@ -47,7 +47,7 @@
 >
 
   {{/* Widget panel — visible when not hidden */}}
-  <div x-show="!hidden" class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
+  <div x-show="!hidden" class="rounded-xl p-5 bg-gray-50/60">
 
   {{/* Header row: title + hide button */}}
   <div class="flex items-center justify-between mb-4">
@@ -83,7 +83,7 @@
 
     {{ if eq $node.type "question" }}
     {{/* ── Question node ───────────────────────────────────────────────── */}}
-    <p class="text-base font-semibold text-gray-900 mb-3">{{ $node.text }}</p>
+    <p class="font-['Vollkorn'] text-xl font-bold text-gray-900 mb-3">{{ $node.text }}</p>
     <div class="flex flex-wrap gap-2">
       {{ range $node.options }}
       {{ $label := .label }}
@@ -104,7 +104,7 @@
 
     {{ else if eq $node.type "result" }}
     {{/* ── Result node ─────────────────────────────────────────────────── */}}
-    <p class="text-sm font-semibold text-gray-900 mb-4">{{ $node.headline }}</p>
+    <p class="font-['Vollkorn'] text-xl font-bold text-gray-900 mb-4">{{ $node.headline }}</p>
 
     {{/* Primary tool cards */}}
     <div class="flex flex-col gap-3 mb-4">
@@ -117,7 +117,7 @@
       <div class="project-card">
         <div class="flex items-start justify-between gap-2">
           <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 min-w-0">
-            <span class="font-semibold text-gray-900">{{ .id }}</span>
+            <span class="font-['Vollkorn'] text-lg font-bold text-gray-900">{{ .id }}</span>
             {{ with $meta.tag }}<span class="badge badge-{{ . }}">{{ . }}</span>{{ end }}
           </div>
           <a href="{{ $extLink }}" target="_blank" rel="noopener"
@@ -132,7 +132,26 @@
         </div>
         {{ with $meta.tagline_short }}<p class="text-sm text-gray-600 mt-1">{{ . }}</p>{{ end }}
         {{ with .note }}<p class="text-xs text-gray-500 mt-1">{{ . }}</p>{{ end }}
-        <a href="{{ $href }}" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline mt-2">
+        {{ $toolID := .id }}
+        {{ $.Scratch.Delete "tlinks" }}
+        {{ range index hugo.Data "jvm-tools" "static" }}{{ if eq .id $toolID }}{{ if .links }}{{ $.Scratch.Set "tlinks" .links }}{{ end }}{{ end }}{{ end }}
+        {{ range index hugo.Data "femto" "static" }}{{ if eq .id $toolID }}{{ if .links }}{{ $.Scratch.Set "tlinks" .links }}{{ end }}{{ end }}{{ end }}
+        {{ range index hugo.Data "experiments" "static" }}{{ if eq .id $toolID }}{{ if .links }}{{ $.Scratch.Set "tlinks" .links }}{{ end }}{{ end }}{{ end }}
+        {{ with $.Scratch.Get "tlinks" }}
+        <div class="flex flex-wrap gap-2 mt-2">
+          {{ range . }}
+          <a href="{{ .url }}" target="_blank" rel="noopener"
+             class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 hover:bg-blue-100 transition-colors">
+            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+            {{ .label | replaceRE `\s+[↗🔗]$` "" }}
+          </a>
+          {{ end }}
+        </div>
+        {{ end }}
+        <a href="{{ $href }}" class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 underline underline-offset-2 hover:text-blue-800 mt-2">
           <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
           </svg>
@@ -155,7 +174,7 @@
           <svg class="w-3 h-3 shrink-0 text-blue-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
           </svg>
-          <span class="font-semibold hover:underline">{{ .id }}</span>
+          <span class="font-semibold underline underline-offset-2">{{ .id }}</span>
           {{ with .note }}<span class="text-blue-600"> — {{ . }}</span>{{ end }}
         </a>
         {{ end }}
@@ -176,7 +195,7 @@
           <svg class="w-3 h-3 shrink-0 text-amber-400 group-hover:text-amber-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
           </svg>
-          <span class="font-semibold hover:underline">{{ .id }}</span>
+          <span class="font-semibold underline underline-offset-2">{{ .id }}</span>
           {{ with .note }}<span class="text-amber-600"> — {{ . }}</span>{{ end }}
         </a>
         {{ end }}
