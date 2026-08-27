@@ -131,6 +131,38 @@ export function treeEditor() {
       this.selected = id;
     },
 
+    // ── SVG rendering (string-based to avoid Alpine x-for inside SVG) ─────
+    renderSvg() {
+      const w = this.svgWidth, h = this.svgHeight;
+      let parts = [
+        `<svg width="${w}" height="${h}" class="block" xmlns="http://www.w3.org/2000/svg">`,
+        `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">`,
+        `<path d="M0,0 L0,6 L8,3 z" fill="#9ca3af"/></marker></defs>`,
+      ];
+      for (const e of this.svgEdges) {
+        const mx = (e.x1 + e.x2) / 2 + 4, my = (e.y1 + e.y2) / 2;
+        parts.push(`<g><line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>`);
+        parts.push(`<text x="${mx}" y="${my}" fill="#6b7280" font-size="10">${e.label}</text></g>`);
+      }
+      for (const nd of this.svgNodes) {
+        const stroke = nd.type === 'question' ? '#3b82f6' : '#22c55e';
+        const sw = this.selected === nd.id ? 3 : 1.5;
+        const fill = nd.type === 'question' ? '#1d4ed8' : '#15803d';
+        const cx = nd.x + nd.w / 2;
+        const label = nd.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const nid = nd.id.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        parts.push(
+          `<g data-nodeid="${nd.id}" style="cursor:pointer" onclick="this.dispatchEvent(new CustomEvent('pf-node-click',{bubbles:true,detail:'${nd.id.replace(/'/g, "\\'")}'}))">`,
+          `<rect x="${nd.x}" y="${nd.y}" width="${nd.w}" height="${nd.h}" rx="6" fill="white" stroke="${stroke}" stroke-width="${sw}"/>`,
+          `<text x="${cx}" y="${nd.y + 16}" text-anchor="middle" font-size="11" font-weight="600" fill="${fill}">${nid}</text>`,
+          `<text x="${cx}" y="${nd.y + 32}" text-anchor="middle" font-size="10" fill="#6b7280">${label}</text>`,
+          `</g>`,
+        );
+      }
+      parts.push('</svg>');
+      return parts.join('');
+    },
+
     // ── Add nodes ──────────────────────────────────────────────────────────
     _uniqueId(prefix) {
       let n = 1;

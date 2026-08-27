@@ -84,7 +84,7 @@
     {{ if eq $node.type "question" }}
     {{/* ── Question node ───────────────────────────────────────────────── */}}
     <p class="font-['Vollkorn'] text-xl font-bold text-gray-900 mb-3">{{ $node.text }}</p>
-    <div class="flex flex-wrap gap-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {{ range $node.options }}
       {{ $label := .label }}
       {{ $next  := .next }}
@@ -92,7 +92,7 @@
         data-next="{{ $next }}"
         data-label="{{ $label }}"
         @click="go($el.dataset.next, $el.dataset.label)"
-        class="group inline-flex items-center gap-2 text-left border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-700 bg-white hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-all cursor-pointer"
+        class="group flex items-center justify-between gap-2 text-left border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 bg-white hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-all cursor-pointer w-full"
       >
         <span>{{ $label }}</span>
         <svg class="w-3.5 h-3.5 shrink-0 text-gray-300 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@
     <p class="font-['Vollkorn'] text-xl font-bold text-gray-900 mb-4">{{ $node.headline }}</p>
 
     {{/* Primary tool cards */}}
-    <div class="flex flex-col gap-3 mb-4">
+    <div class="flex flex-col gap-2 mb-4">
       {{ range $node.tools }}
       {{ $meta    := index $toolMeta .id }}
       {{ $section := .section | default "jvm-tools" }}
@@ -163,9 +163,9 @@
 
     {{/* Follow-on callout (blue) */}}
     {{ with $node.followon }}
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2 mb-3">
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
       <p class="text-xs font-semibold text-blue-800 mb-2 uppercase tracking-wide">{{ .heading }}</p>
-      <div class="flex flex-col gap-1.5">
+      <div class="flex flex-col gap-2">
         {{ range .tools }}
         {{ $fSection := .section | default "jvm-tools" }}
         {{ $fHref    := printf "#%s" .id }}
@@ -184,9 +184,9 @@
 
     {{/* Related callouts (amber) */}}
     {{ range $node.related }}
-    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-2">
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
       <p class="text-xs font-semibold text-amber-800 mb-2 uppercase tracking-wide">{{ .label }}</p>
-      <div class="flex flex-col gap-1.5">
+      <div class="flex flex-col gap-2">
         {{ range .tools }}
         {{ $rSection := .section | default "jvm-tools" }}
         {{ $rHref    := printf "#%s" .id }}
@@ -204,7 +204,7 @@
     {{ end }}
 
     {{/* Start over link at bottom of result */}}
-    <button @click="reset()" class="mt-4 text-xs text-gray-400 hover:text-blue-600 transition-colors">
+    <button @click="reset()" class="mt-3 text-xs text-gray-400 hover:text-blue-600 transition-colors">
       ← Start over
     </button>
 
