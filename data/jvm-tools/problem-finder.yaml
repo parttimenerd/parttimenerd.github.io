@@ -161,6 +161,15 @@ r-cf:
         note: "Attach and store JFR events compactly for days or weeks."
       - id: jfr-query
         note: "Query the recordings with SQL."
+  related:
+    - label: "Got a JFR recording? View or query it with:"
+      tools:
+        - id: jfr-profiling
+          note: "Flame graphs — converts JFR to Firefox Profiler format."
+        - id: firefox-profiler
+          note: "Open .jfr files directly in the browser, no install."
+        - id: jfr-query
+          note: "SQL notebook — GC pauses, allocations, CPU correlation."
 
 r-jfr-visual:
   type: result
