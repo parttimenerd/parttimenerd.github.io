@@ -87,7 +87,7 @@
         <div class="project-card group">
           <div class="flex items-start justify-between gap-2">
             <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 min-w-0 flex-1">
-              <span class="font-semibold text-gray-900 leading-snug">{{ .id }}</span>
+              <span class="font-['Vollkorn'] font-bold text-gray-900 leading-snug">{{ .id }}</span>
               <span class="badge badge-{{ .tag }} flex-shrink-0" title="{{ if eq .tag `ready` }}Production-ready{{ else if eq .tag `experimental` }}Experimental — API may change{{ else if eq .tag `poc` }}Proof of concept{{ else if eq .tag `demo` }}Demo only{{ end }}">{{ .tag }}</span>
             </div>
             <a href="{{ $ghLink }}" target="_blank" rel="noopener"
