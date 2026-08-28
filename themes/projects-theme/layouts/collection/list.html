@@ -32,15 +32,27 @@
   </div>
 
   {{/* Problem finder decision tree — jvm-tools only */}}
-  {{ if eq .Section "jvm-tools" }}{{ partial "problem-finder.html" . }}{{ end }}
+  {{/* dropped: {{ if eq .Section "jvm-tools" }}{{ partial "problem-finder.html" . }}{{ end }} */}}
 
-{{/* Sticky anchor nav */}}
-  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-200 -mx-4 px-4 mb-8 overflow-x-auto">
+{{/* Sticky anchor nav — one entry per group, linking to the first tool in each group */}}
+  {{/* Build a JSON map of tool-id → first-tool-id-in-its-group for the scroll-spy */}}
+  {{ $toolGroupMap := dict }}
+  {{ range $groups }}
+    {{ $firstID := (index .entries 0).id }}
+    {{ range .entries }}
+      {{ $toolGroupMap = merge $toolGroupMap (dict .id $firstID) }}
+    {{ end }}
+  {{ end }}
+  <div id="tool-nav" class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b border-gray-200 -mx-4 px-4 mb-8 overflow-x-auto"
+       data-group-map='{{ $toolGroupMap | jsonify }}'>
     <div class="flex gap-0.5 text-sm py-1.5 min-w-max">
-    {{ range $static }}
-    <a href="#{{ .id }}" data-id="{{ .id }}"
-       title="{{ .tagline_short | default .tagline }}"
-       class="px-3 py-1.5 rounded text-gray-500 hover:text-blue-700 hover:bg-blue-50 transition-colors whitespace-nowrap">{{ .id }}</a>
+    {{ range $groups }}
+      {{ $firstTool := index .entries 0 }}
+      {{ if and .name $firstTool }}
+      <a href="#{{ $firstTool.id }}" data-id="{{ $firstTool.id }}"
+         title="{{ .name }}"
+         class="px-3 py-1.5 rounded text-gray-500 hover:text-blue-700 hover:bg-blue-50 transition-colors whitespace-nowrap">{{ .name }}</a>
+      {{ end }}
     {{ end }}
     </div>
   </div>
