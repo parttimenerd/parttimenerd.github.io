@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
 import { treeEditor } from './tree-editor.js';
+import { go, back, goTo, reset, pfHide, pfShow, pfIsHidden, matchesTool } from './jvm-tools-core.js';
 import hljs from 'highlight.js/lib/core';
 import java from 'highlight.js/lib/languages/java';
 import xml from 'highlight.js/lib/languages/xml';
@@ -15,6 +16,8 @@ hljs.registerLanguage('bash', bash);
 Alpine.plugin(focus);
 window.Alpine = Alpine;
 window.treeEditor = treeEditor;
+// Expose jvm-tools-core for use in Alpine x-data expressions on the jvm-tools page
+window.jvmCore = { go, back, goTo, reset, pfHide, pfShow, pfIsHidden, matchesTool };
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
