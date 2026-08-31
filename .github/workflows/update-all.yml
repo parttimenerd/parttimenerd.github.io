@@ -126,7 +126,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd /tmp
-          gh repo clone parttimenerd/parttimenerd profile-readme -- --depth 1
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/parttimenerd/parttimenerd.git" profile-readme
           cp $GITHUB_WORKSPACE/docs/profile-README.md profile-readme/README.md
           cd profile-readme
           git diff --quiet README.md || (
