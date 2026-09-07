@@ -3,6 +3,15 @@ defaultContentLanguage: "en"
 title: "parttimenerd"
 theme: "projects-theme"
 
+markup:
+  highlight:
+    codeFences: true
+    noClasses: false
+    style: "github"
+  goldmark:
+    renderer:
+      unsafe: true
+
 params:
   nav:
     - label: "femto libs"
