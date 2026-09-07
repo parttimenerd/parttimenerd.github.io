@@ -3,3 +3,4 @@ public/
 resources/
 scripts/.font_cache/
 static/main.css
+data/*/static.yaml
