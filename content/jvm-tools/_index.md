@@ -12,7 +12,6 @@ groups:
       - repo: https://github.com/SAP/cf-cli-java-plugin
   - name: "JFR / Profiling"
     tools:
-      - repo: https://github.com/parttimenerd/jfr-profiling
       - repo: https://github.com/parttimenerd/firefox-profiler
       - repo: https://github.com/parttimenerd/jfr-query
       - repo: https://github.com/parttimenerd/condensed-data

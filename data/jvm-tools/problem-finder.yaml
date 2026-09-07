@@ -129,8 +129,6 @@ r-jstall-local:
   tools:
     - id: jstall
       note: "CLI TUI — detects deadlocks, captures flame graphs, shows hot threads. Also available as an IntelliJ plugin and VS Code extension."
-    - id: jfr-profiling
-      note: "IntelliJ plugin — profile and view flame graphs directly in the IDE without leaving your editor."
   followon:
     heading: "Want to keep monitoring this JVM over time?"
     tools:
@@ -164,8 +162,6 @@ r-cf:
   related:
     - label: "Got a JFR recording? View or query it with:"
       tools:
-        - id: jfr-profiling
-          note: "Flame graphs — converts JFR to Firefox Profiler format."
         - id: firefox-profiler
           note: "Open .jfr files directly in the browser, no install."
         - id: jfr-query
@@ -175,8 +171,6 @@ r-jfr-visual:
   type: result
   headline: "You want to explore your JFR recording as a flame graph."
   tools:
-    - id: jfr-profiling
-      note: "Converts JFR to Firefox Profiler format; includes an IntelliJ plugin for in-IDE profiling."
     - id: firefox-profiler
       note: "Standalone hosted web app — open .jfr or .cjfr files natively in the browser, no install."
   followon:
