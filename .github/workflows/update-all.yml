@@ -1,8 +1,8 @@
-name: Weekly data update
+name: Daily data update
 
 on:
   schedule:
-    - cron: '23 4 * * 1'  # every Monday at 04:23 UTC
+    - cron: '23 4 * * 1-5'  # every weekday at 04:23 UTC
   workflow_dispatch:
 
 jobs:
@@ -98,7 +98,7 @@ jobs:
               data/experiments/releases.json \
               data/blog.json \
               data/talks.json
-            git commit -m "chore: weekly data update"
+            git commit -m "chore: daily data update"
             git push
           )
 
