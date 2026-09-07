@@ -237,7 +237,7 @@
           <thead>
             <tr>
               <th>Feature</th>
-              <th class="col-highlight">{{ $thisID }}</th>
+              <th class="col-highlight">{{ if .self_label }}{{ .self_label }}{{ else }}{{ $thisID }}{{ end }}</th>
               <th>{{ .name }}</th>
             </tr>
           </thead>
@@ -245,7 +245,7 @@
             {{ range .comparison }}
             <tr>
               <td class="font-medium text-gray-600">{{ .feature }}</td>
-              <td class="col-highlight">{{ .femto }}</td>
+              <td class="col-highlight">{{ .self }}</td>
               <td>{{ .other }}</td>
             </tr>
             {{ end }}
