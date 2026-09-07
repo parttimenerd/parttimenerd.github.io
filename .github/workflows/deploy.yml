@@ -41,6 +41,11 @@ jobs:
           sudo apt-get install -y libcairo2-dev libpango1.0-dev
           pip install cairosvg requests pyyaml
 
+      - name: Fetch tool metadata
+        run: python scripts/fetch_tool_metadata.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate og-images
         run: python scripts/gen_og_image.py
 
