@@ -337,6 +337,8 @@
       </div>
       {{ end }}
     </div>
+    {{ $moreURL := .github_pages | default (.github_url | default (printf "https://github.com/parttimenerd/%s" .id)) }}
+    <p class="text-sm text-gray-500 mb-5">Find more information at <a href="{{ $moreURL }}" target="_blank" rel="noopener" class="icon-ext text-blue-600 hover:text-blue-800">{{ $moreURL }}</a></p>
     {{ end }}
 
     {{/* Changelog */}}
