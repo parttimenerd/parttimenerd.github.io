@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Reads  data/categories.yaml
+Reads data/categories.yaml
 Writes data/<section>/static.yaml  for each collection
 
 Fetches .tool.yaml from each tool repo's raw GitHub URL and merges in
@@ -14,6 +14,7 @@ Exit codes:
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
 
 import requests
@@ -33,6 +34,53 @@ SCHEMA_HEADER = """\
 """
 
 
+def _get(url: str, headers: dict | None = None, timeout: int = 15, retries: int = 3) -> requests.Response:
+    """GET with exponential backoff on 429 / 5xx."""
+    headers = headers or {}
+    delay = 2.0
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, headers=headers, timeout=timeout)
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt < retries - 1:
+                retry_after = float(resp.headers.get("Retry-After", delay))
+                time.sleep(min(retry_after, 60))
+                delay *= 2
+                continue
+            return resp
+        except requests.exceptions.Timeout:
+            if attempt < retries - 1:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+    raise RuntimeError(f"GET {url} failed after {retries} attempts")
+
+
+class _LiteralStr(str):
+    pass
+
+
+def _literal_representer(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+
+
+class _Dumper(yaml.Dumper):
+    pass
+
+
+_Dumper.add_representer(_LiteralStr, _literal_representer)
+
+
+def _wrap(obj):
+    if isinstance(obj, str):
+        return _LiteralStr(obj) if "\n" in obj else obj
+    if isinstance(obj, list):
+        return [_wrap(i) for i in obj]
+    if isinstance(obj, dict):
+        return {k: _wrap(v) for k, v in obj.items()}
+    return obj
+
+
 def _raw_url(repo_url: str, filename: str) -> str:
     parts = repo_url.rstrip("/").replace("https://github.com/", "")
     return f"https://raw.githubusercontent.com/{parts}/HEAD/{filename}"
@@ -44,7 +92,7 @@ def _fetch_tool_yaml(repo_url: str) -> dict | None:
     if GITHUB_TOKEN:
         headers["Authorization"] = f"token {GITHUB_TOKEN}"
     try:
-        resp = requests.get(url, headers=headers, timeout=15)
+        resp = _get(url, headers=headers, timeout=15)
         if resp.status_code == 404:
             print(f"  WARNING: .tool.yaml not found in {repo_url}", file=sys.stderr)
             return None
@@ -79,26 +127,6 @@ def _repo_id(repo_url: str) -> str:
 
 
 def _build_static_yaml(tools: list[dict]) -> str:
-    class _LiteralStr(str):
-        pass
-
-    def _literal_representer(dumper, data):
-        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
-
-    class _Dumper(yaml.Dumper):
-        pass
-
-    _Dumper.add_representer(_LiteralStr, _literal_representer)
-
-    def _wrap(obj):
-        if isinstance(obj, str):
-            return _LiteralStr(obj) if "\n" in obj else obj
-        if isinstance(obj, list):
-            return [_wrap(i) for i in obj]
-        if isinstance(obj, dict):
-            return {k: _wrap(v) for k, v in obj.items()}
-        return obj
-
     dumped = yaml.dump(
         _wrap(tools),
         Dumper=_Dumper,
@@ -116,7 +144,10 @@ def fetch_section(section_id: str, collection: dict) -> list[dict]:
         group_name = group["name"]
 
         for tool_entry in group.get("tools", []):
-            repo_url = tool_entry["repo"]
+            repo_url = tool_entry.get("repo")
+            if repo_url is None:
+                print(f"  WARNING: tool entry in group '{group_name}' has no 'repo' key — skipping", file=sys.stderr)
+                continue
             tool_id = _repo_id(repo_url)
             data = _fetch_tool_yaml(repo_url)
             if data is None:
@@ -132,9 +163,12 @@ def fetch_section(section_id: str, collection: dict) -> list[dict]:
             print(f"  {tool_id}: ok")
 
         for fallback in group.get("fallback_tools", []):
+            if not fallback.get("id"):
+                print(f"  WARNING: fallback_tool entry in group '{group_name}' has no 'id' key — skipping", file=sys.stderr)
+                continue
             merged = {"group": group_name, **fallback}
             tools.append(merged)
-            print(f"  {fallback['id']}: ok (fallback)")
+            print(f"  {fallback.get('id', '<unknown>')}: ok (fallback)")
 
     return tools
 
