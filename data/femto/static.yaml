@@ -346,6 +346,38 @@
           String pretty  = PrettyPrinter.prettyPrint(obj);
           String compact = PrettyPrinter.compactPrint(obj);
       } catch (IOException e) { ... }
+  how_to:
+  - title: Parse JSON into a Map/List tree
+    body: |
+      `JSONParser.parse()` returns a plain Java object — `Map<String, Object>` for objects,
+      `List<Object>` for arrays, `String`, `Double`, `Boolean`, or `null` for scalars.
+      All numbers come back as `Double`.
+      ```java
+      import me.bechberger.util.json.JSONParser;
+
+      Map<String, Object> user = (Map<String, Object>)
+          JSONParser.parse("{\"name\": \"Alice\", \"age\": 30}");
+      String name = (String) user.get("name");   // "Alice"
+      double age  = (Double) user.get("age");    // 30.0
+
+      List<Object> tags = (List<Object>)
+          JSONParser.parse("[\"java\", \"profiling\"]");
+      ```
+      Throws `IOException` on malformed input — catch or declare it.
+  - title: Pretty-print or compact-print a JSON value
+    body: |
+      Pass any parsed value (or a manually constructed `Map`/`List`) to `PrettyPrinter`:
+      ```java
+      import me.bechberger.util.json.PrettyPrinter;
+
+      Object value = JSONParser.parse(rawJson);
+
+      // Indented output (2 spaces per level)
+      String pretty  = PrettyPrinter.prettyPrint(value);
+
+      // Single-line output
+      String compact = PrettyPrinter.compactPrint(value);
+      ```
   note: All numbers are parsed as Double.
 - id: femtoschema
   group: Libraries
@@ -425,6 +457,68 @@
     code: |
       String jsonSchema = Schemas.toJsonSchemaString(schema);
       TypeSchema imported = Schemas.fromJsonSchemaString(jsonSchema);
+  how_to:
+  - title: Define a schema and validate a value
+    body: |
+      Build a schema with `Schemas.object()`, declare required and optional fields,
+      then call `validate()`. Path-aware errors tell you exactly which field failed:
+      ```java
+      import me.bechberger.util.femtoschema.Schemas;
+      import me.bechberger.util.femtoschema.ValidationResult;
+
+      var userSchema = Schemas.object()
+          .required("name", Schemas.string().withMinLength(1))
+          .required("age",  Schemas.number().withMinimum(0))
+          .optional("email", Schemas.string());
+
+      ValidationResult r = userSchema.validate(
+          Map.of("name", "", "age", -1.0)
+      );
+      r.getErrors().forEach(e ->
+          System.out.println(e.path() + ": " + e.message())
+      );
+      // name: must have minimum length 1
+      // age: must be >= 0.0
+      ```
+  - title: Use enums and discriminated unions
+    body: |
+      ```java
+      // Enum — only the listed values are valid
+      var status = Schemas.enumOf("ACTIVE", "INACTIVE", "SUSPENDED");
+
+      // Discriminated union — dispatch on the "type" field
+      var notificationSchema = Schemas.sumType("type")
+          .variant("email", Schemas.object()
+              .required("type",    Schemas.enumOf("email"))
+              .required("address", Schemas.string()))
+          .variant("sms", Schemas.object()
+              .required("type",        Schemas.enumOf("sms"))
+              .required("phoneNumber", Schemas.string()));
+
+      notificationSchema.validate(
+          Map.of("type", "email", "address", "alice@example.com")
+      ).isValid(); // true
+      ```
+  - title: Export to JSON Schema and import back
+    body: |
+      Export any schema to a JSON Schema Draft 2020-12 `Map` (or string), then
+      read it back — useful for sharing schemas with external tooling:
+      ```java
+      import me.bechberger.util.femtoschema.Schemas;
+      import me.bechberger.util.femtoschema.TypeSchema;
+
+      var schema = Schemas.object()
+          .required("name", Schemas.string().withMinLength(1))
+          .required("age",  Schemas.number().withMinimum(0));
+
+      // Export to JSON string
+      String json = Schemas.toJsonSchemaString(schema);
+
+      // Import back
+      TypeSchema imported = Schemas.fromJsonSchemaString(json);
+      ```
+      Only the subset of keywords that `toJsonSchema()` produces is supported on import
+      (`$comment` is silently ignored at any nesting level).
 - id: femtojar
   group: Libraries
   tag: experimental
