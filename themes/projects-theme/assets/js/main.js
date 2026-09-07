@@ -22,50 +22,77 @@ Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
   hljs.highlightAll();
 
-  // Shell highlighting via ohm.js tokenizer (replaces hljs bash)
-  const SHELL_LANGS = new Set(['bash', 'shell', 'sh']);
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const TOKEN_STYLE = dark ? {
-    command:     'color:#DCDCAA',
-    flag:        'color:#C586C0',
-    variable:    'color:#C586C0',
-    placeholder: 'color:#569CD6',
-    string:      'color:#CE9178',
-    url:         'color:#8396A8',
-    comment:     'color:#6A9955;font-style:italic',
-    number:      'color:#B5CEA8',
-    operator:    'color:#D4D4D4',
-    path:        'color:#CE9178',
-    plain:       'color:#D4D4D4',
-  } : {
-    command:     'color:#6f42c1',
-    flag:        'color:#005cc5',
-    variable:    'color:#005cc5',
-    placeholder: 'color:#e36209',
-    string:      'color:#032f62',
-    url:         'color:#032f62',
-    comment:     'color:#6a737d;font-style:italic',
-    number:      'color:#005cc5',
-    operator:    'color:#d73a49',
-    path:        'color:#032f62',
-    plain:       'color:#24292e',
+  // ── Theme toggle ──────────────────────────────────────────────────────────
+  const DARK_SHELL = {
+    command:     'color:#DCDCAA', flag:        'color:#C586C0',
+    variable:    'color:#C586C0', placeholder: 'color:#569CD6',
+    string:      'color:#CE9178', url:         'color:#8396A8',
+    comment:     'color:#6A9955;font-style:italic', number: 'color:#B5CEA8',
+    operator:    'color:#D4D4D4', path:        'color:#CE9178', plain: 'color:#D4D4D4',
   };
+  const LIGHT_SHELL = {
+    command:     'color:#6f42c1', flag:        'color:#005cc5',
+    variable:    'color:#005cc5', placeholder: 'color:#e36209',
+    string:      'color:#032f62', url:         'color:#032f62',
+    comment:     'color:#6a737d;font-style:italic', number: 'color:#005cc5',
+    operator:    'color:#d73a49', path:        'color:#032f62', plain: 'color:#24292e',
+  };
+
+  const SHELL_LANGS = new Set(['bash', 'shell', 'sh']);
+
+  // Store original text so we can re-highlight on theme change
   document.querySelectorAll('pre code[class]').forEach(el => {
     const lang = [...el.classList].map(c => c.replace('language-', '')).find(l => SHELL_LANGS.has(l));
-    if (!lang) return;
-    const lines = highlightShell(el.textContent.trimEnd());
-    if (!lines) return;
-    const html = lines.map(line =>
-      '<span>' + line.map(tok => {
-        const style = TOKEN_STYLE[tok.types[0]] || TOKEN_STYLE.plain;
-        const content = tok.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return `<span style="${style}">${content}</span>`;
-      }).join('') + '</span>'
-    ).join('\n');
-    el.innerHTML = html;
-    el.classList.remove(...el.classList);
-    el.classList.add('hljs');
+    if (lang) el.dataset.rawText = el.textContent.trimEnd();
   });
+
+  function applyShellHighlight(isDark) {
+    const style = isDark ? DARK_SHELL : LIGHT_SHELL;
+    document.querySelectorAll('pre code[data-raw-text]').forEach(el => {
+      const lines = highlightShell(el.dataset.rawText);
+      if (!lines) return;
+      const html = lines.map(line =>
+        '<span>' + line.map(tok => {
+          const s = style[tok.types[0]] || style.plain;
+          const c = tok.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          return `<span style="${s}">${c}</span>`;
+        }).join('') + '</span>'
+      ).join('\n');
+      el.innerHTML = html;
+      el.className = 'hljs';
+    });
+  }
+
+  function isDark() {
+    const t = document.documentElement.getAttribute('data-theme');
+    if (t === 'dark') return true;
+    if (t === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function updateIcons(dark) {
+    document.getElementById('theme-icon-sun')?.classList.toggle('hidden', !dark);
+    document.getElementById('theme-icon-moon')?.classList.toggle('hidden', dark);
+    document.getElementById('theme-icon-sun-mobile')?.classList.toggle('hidden', !dark);
+    document.getElementById('theme-icon-moon-mobile')?.classList.toggle('hidden', dark);
+    const lbl = document.getElementById('theme-label-mobile');
+    if (lbl) lbl.textContent = dark ? 'Light mode' : 'Dark mode';
+  }
+
+  function toggleTheme() {
+    const next = isDark() ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateIcons(next === 'dark');
+    applyShellHighlight(next === 'dark');
+  }
+
+  // Initial state
+  applyShellHighlight(isDark());
+  updateIcons(isDark());
+
+  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+  document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
 
   // Copy-to-clipboard for code blocks
   document.querySelectorAll('.code-block-wrap').forEach(wrap => {
