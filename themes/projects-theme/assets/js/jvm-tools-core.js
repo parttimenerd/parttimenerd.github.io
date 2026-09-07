@@ -78,6 +78,7 @@ export function matchesTool(tool, query) {
     tool.tagline_short || '',
     ...(tool.when_to_use || []),
     ...(tool.features || []),
+    ...((tool.how_to || []).map(h => h.title || '')),
   ].join(' ').toLowerCase();
   return hay.includes(query.toLowerCase());
 }
