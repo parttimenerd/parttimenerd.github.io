@@ -731,8 +731,6 @@
   links:
   - label: Blog series ↗
     url: https://mostlynerdless.de/blog/category/profiling/
-  - label: foojay.io series ↗
-    url: https://foojay.io/today/writing-a-profiler-from-scratch-part-1/
   - label: GitHub repo ↗
     url: https://github.com/parttimenerd/writing-a-profiler
   no_release: true

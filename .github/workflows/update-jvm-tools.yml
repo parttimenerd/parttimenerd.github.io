@@ -20,6 +20,11 @@ jobs:
 
       - run: pip install requests pyyaml
 
+      - name: Fetch tool metadata (jvm-tools only)
+        run: python scripts/fetch_tool_metadata.py --section jvm-tools
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Fetch releases
         run: python scripts/fetch_releases.py --section jvm-tools
         env:
@@ -27,10 +32,10 @@ jobs:
 
       - name: Commit if changed
         run: |
-          git diff --quiet data/jvm-tools/releases.json || (
+          git diff --quiet data/jvm-tools/releases.json data/jvm-tools/static.yaml || (
             git config user.email "actions@github.com"
             git config user.name "github-actions"
-            git add data/jvm-tools/releases.json
+            git add data/jvm-tools/releases.json data/jvm-tools/static.yaml
             git commit -m "chore: update jvm-tools releases"
             git push
           )

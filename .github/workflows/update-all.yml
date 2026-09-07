@@ -6,11 +6,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  releases:
-    name: Fetch releases
+  fetch-metadata:
+    name: Fetch tool metadata
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install requests pyyaml
+      - name: Fetch tool metadata
+        run: python scripts/fetch_tool_metadata.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-yaml-data
+          path: |
+            data/jvm-tools/static.yaml
+            data/femto/static.yaml
+            data/experiments/static.yaml
+
+  releases:
+    name: Fetch releases
+    runs-on: ubuntu-latest
+    needs: [fetch-metadata]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: static-yaml-data
+          path: data
+          merge-multiple: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -62,12 +89,17 @@ jobs:
 
   commit:
     name: Commit changes
-    needs: [releases, blog, talks]
+    needs: [fetch-metadata, releases, blog, talks]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: static-yaml-data
+          path: data
+          merge-multiple: true
       - uses: actions/download-artifact@v4
         with:
           name: releases-data
@@ -84,6 +116,9 @@ jobs:
       - name: Commit if changed
         run: |
           git diff --quiet -- \
+            data/femto/static.yaml \
+            data/jvm-tools/static.yaml \
+            data/experiments/static.yaml \
             data/femto/releases.json \
             data/jvm-tools/releases.json \
             data/experiments/releases.json \
@@ -93,6 +128,9 @@ jobs:
             git config user.email "actions@github.com"
             git config user.name "github-actions"
             git add \
+              data/femto/static.yaml \
+              data/jvm-tools/static.yaml \
+              data/experiments/static.yaml \
               data/femto/releases.json \
               data/jvm-tools/releases.json \
               data/experiments/releases.json \
