@@ -297,6 +297,7 @@
     <div class="mb-5" x-data="{ tab: 0 }">
       <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Install</h3>
       {{ if $isReleased }}
+      {{ if gt (len .install) 1 }}
       <div class="flex gap-1 mb-3 border-b border-gray-200">
         {{ range $i, $t := .install }}
         <button @click="tab = {{ $i }}"
@@ -304,6 +305,7 @@
                 class="px-3 py-2 text-sm -mb-px transition-colors">{{ $t.label }}</button>
         {{ end }}
       </div>
+      {{ end }}
       {{ range $i, $t := .install }}
       {{ $code := replace $t.code "VERSION" $ver }}
       <div x-show="tab === {{ $i }}" {{ if ne $i 0 }}style="display:none"{{ end }} class="code-block-wrap">
@@ -323,15 +325,15 @@
     {{ if .usage }}
     <div class="mb-5" x-data="{ tab: 0 }">
       <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Usage</h3>
+      {{ if gt (len .usage) 1 }}
       <div class="flex gap-1 mb-3 border-b border-gray-200">
-        {{ $usageLen := len .usage }}
         {{ range $i, $t := .usage }}
-        {{ $tabLabel := $t.label }}{{ if and (eq $usageLen 1) (eq $i 0) }}{{ $tabLabel = "Basic Usage" }}{{ end }}
         <button @click="tab = {{ $i }}"
                 :class="tab === {{ $i }} ? 'border-b-2 border-blue-600 text-blue-700 font-semibold' : 'text-gray-500 hover:text-gray-700'"
-                class="px-3 py-2 text-sm -mb-px transition-colors">{{ $tabLabel }}</button>
+                class="px-3 py-2 text-sm -mb-px transition-colors">{{ $t.label }}</button>
         {{ end }}
       </div>
+      {{ end }}
       {{ range $i, $t := .usage }}
       <div x-show="tab === {{ $i }}" {{ if ne $i 0 }}style="display:none"{{ end }} class="code-block-wrap">
         <button class="copy-btn">Copy</button>

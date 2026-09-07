@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Shell highlighting via ohm.js tokenizer (replaces hljs bash)
   const SHELL_LANGS = new Set(['bash', 'shell', 'sh']);
-  const TOKEN_STYLE = {
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const TOKEN_STYLE = dark ? {
     command:     'color:#DCDCAA',
     flag:        'color:#C586C0',
     variable:    'color:#C586C0',
@@ -33,9 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
     url:         'color:#8396A8',
     comment:     'color:#6A9955;font-style:italic',
     number:      'color:#B5CEA8',
-    operator:    'color:#FFFFFF',
+    operator:    'color:#D4D4D4',
     path:        'color:#CE9178',
     plain:       'color:#D4D4D4',
+  } : {
+    command:     'color:#6f42c1',
+    flag:        'color:#005cc5',
+    variable:    'color:#005cc5',
+    placeholder: 'color:#e36209',
+    string:      'color:#032f62',
+    url:         'color:#032f62',
+    comment:     'color:#6a737d;font-style:italic',
+    number:      'color:#005cc5',
+    operator:    'color:#d73a49',
+    path:        'color:#032f62',
+    plain:       'color:#24292e',
   };
   document.querySelectorAll('pre code[class]').forEach(el => {
     const lang = [...el.classList].map(c => c.replace('language-', '')).find(l => SHELL_LANGS.has(l));
