@@ -1,7 +1,7 @@
 ---
 title: "femto libs"
-description: "Tiny Java libraries by Johannes Bechberger — zero dependencies, small JARs."
-og_title: "femto*"
+description: "Tiny zero-dependency Java libraries — LZ4 compressor, JSON parser, CLI framework, schema validator. Small JARs, simple APIs, no transitive dependencies."
+og_title: "Femto Libs — Tiny Zero-Dependency Java Libraries"
 og_subtitle: "Minimal by design. Powerful by choice."
 og_out: "femto-og.png"
 type: collection

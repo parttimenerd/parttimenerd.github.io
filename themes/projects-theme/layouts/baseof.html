@@ -9,6 +9,8 @@
   <meta name="description" content="{{ .Params.description | default "Johannes Bechberger — JVM engineer, profiling tools, eBPF, and tiny open-source libraries." }}">
   <meta name="author" content="Johannes Bechberger">
   <meta name="robots" content="index, follow">
+  <meta name="robots" content="max-image-preview:large">
+  <meta name="theme-color" content="#0070F2">
   <style>:root { --nav-h: {{ $navH }}px; --tool-nav-h: {{ $toolNavH }}px; }</style>
   <!-- Open Graph -->
   <meta property="og:type" content="{{ if .IsHome }}profile{{ else }}website{{ end }}">
@@ -32,7 +34,7 @@
   <!-- Structured data -->
   <script type="application/ld+json">
   {{ if .IsHome -}}
-  {"@context":"https://schema.org","@type":"Person","name":"Johannes Bechberger","url":"https://parttimenerd.github.io/","sameAs":["https://github.com/parttimenerd","https://twitter.com/parttimen3rd","https://mostlynerdless.de"]}
+  {"@context":"https://schema.org","@type":"Person","name":"Johannes Bechberger","jobTitle":"JVM Engineer","worksFor":{"@type":"Organization","name":"SAP SE","url":"https://sap.com"},"url":"https://parttimenerd.github.io/","sameAs":["https://github.com/parttimenerd","https://twitter.com/parttimen3rd","https://fosstodon.org/@parttimenerd","https://mostlynerdless.de"]}
   {{- else -}}
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"parttimenerd","item":"https://parttimenerd.github.io/"},{"@type":"ListItem","position":2,"name":"{{ .Title }}","item":"{{ .Permalink }}"}]}
   {{- end }}

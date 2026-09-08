@@ -1,7 +1,7 @@
 ---
 title: "experiments"
-description: "Experimental and fun projects by Johannes Bechberger — eBPF, schedulers, benchmarking, and misc tools."
-og_title: "experiments"
+description: "Experimental projects by Johannes Bechberger — hello-ebpf (eBPF for Java), Linux scheduler tools, concurrency fuzzing, and misc hacks."
+og_title: "Experiments — eBPF, Schedulers & Systems Programming by Johannes Bechberger"
 og_subtitle: "Things I build for fun."
 og_out: "experiments-og.png"
 type: collection

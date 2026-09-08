@@ -1,7 +1,7 @@
 ---
 title: "parttimenerd"
-description: "Johannes Bechberger — engineer at SAP/SapMachine, creator of jstall, hello-ebpf, jfr-query, and async-profiler contributor. Writes about profiling, flame graphs, and runtime internals."
-og_title: "parttimenerd"
+description: "Johannes Bechberger — JVM engineer at SAP/SapMachine. Creator of jstall, hello-ebpf, jfr-query. Contributor to async-profiler and FirefoxProfiler. Writes about profiling, flame graphs, and JVM internals."
+og_title: "Johannes Bechberger — JVM Engineer & Open Source Creator"
 og_subtitle: "JVM · Profiling · eBPF · Open Source"
 og_out: "home-og.png"
 ---
