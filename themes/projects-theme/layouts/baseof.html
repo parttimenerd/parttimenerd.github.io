@@ -29,6 +29,14 @@
   <meta name="twitter:image" content="{{ site.BaseURL }}{{ . }}">
   {{ end }}
   <link rel="canonical" href="{{ .Permalink }}">
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {{ if .IsHome -}}
+  {"@context":"https://schema.org","@type":"Person","name":"Johannes Bechberger","url":"https://parttimenerd.github.io/","sameAs":["https://github.com/parttimenerd","https://twitter.com/parttimen3rd","https://mostlynerdless.de"]}
+  {{- else -}}
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"parttimenerd","item":"https://parttimenerd.github.io/"},{"@type":"ListItem","position":2,"name":"{{ .Title }}","item":"{{ .Permalink }}"}]}
+  {{- end }}
+  </script>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">

@@ -1,6 +1,6 @@
 ---
 title: "jvm tools"
-description: "JVM tools by Johannes Bechberger — diagnose, profile, understand."
+description: "Open-source tools for diagnosing and profiling running applications — flame graphs, heap dump analysis, JFR recordings, deadlock detection, and more. By Johannes Bechberger."
 og_title: "jvm tools"
 og_subtitle: "Diagnose. Profile. Understand."
 og_out: "jvm-tools-og.png"
