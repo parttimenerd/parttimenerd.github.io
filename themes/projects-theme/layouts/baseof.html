@@ -16,7 +16,7 @@
   <meta property="og:type" content="{{ if .IsHome }}profile{{ else }}website{{ end }}">
   <meta property="og:site_name" content="parttimenerd">
   <meta property="og:title" content="{{ .Params.og_title | default .Title | default "Johannes Bechberger @parttimenerd" }}">
-  <meta property="og:description" content="{{ .Params.description | default "JVM engineer, profiling tools, eBPF, and open-source libraries." }}">
+  <meta property="og:description" content="{{ .Params.description | default "JVM engineer Johannes Bechberger — jstall, async-profiler, hello-ebpf, JFR tools, and more open-source Java projects." }}">
   <meta property="og:url" content="{{ .Permalink }}">
   {{ with .Params.og_out }}
   <meta property="og:image" content="{{ site.BaseURL }}{{ . }}">
@@ -26,22 +26,39 @@
   <meta name="twitter:site" content="@parttimen3rd">
   <meta name="twitter:creator" content="@parttimen3rd">
   <meta name="twitter:title" content="{{ .Params.og_title | default .Title | default "Johannes Bechberger @parttimenerd" }}">
-  <meta name="twitter:description" content="{{ .Params.description | default "JVM engineer, profiling tools, eBPF, and open-source libraries." }}">
+  <meta name="twitter:description" content="{{ .Params.description | default "JVM engineer Johannes Bechberger — jstall, async-profiler, hello-ebpf, JFR tools, and more open-source Java projects." }}">
   {{ with .Params.og_out }}
   <meta name="twitter:image" content="{{ site.BaseURL }}{{ . }}">
   {{ end }}
   <link rel="canonical" href="{{ .Permalink }}">
-  <!-- Structured data -->
+  <!-- Structured data: Person (sitewide) -->
   <script type="application/ld+json">
-  {{ if .IsHome -}}
   {"@context":"https://schema.org","@type":"Person","name":"Johannes Bechberger","jobTitle":"JVM Engineer","worksFor":{"@type":"Organization","name":"SAP SE","url":"https://sap.com"},"url":"https://parttimenerd.github.io/","sameAs":["https://github.com/parttimenerd","https://twitter.com/parttimen3rd","https://fosstodon.org/@parttimenerd","https://mostlynerdless.de"]}
-  {{- else -}}
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"parttimenerd","item":"https://parttimenerd.github.io/"},{"@type":"ListItem","position":2,"name":"{{ .Title }}","item":"{{ .Permalink }}"}]}
-  {{- end }}
   </script>
+  <!-- Structured data: WebSite with SearchAction -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"parttimenerd","url":"https://parttimenerd.github.io/","description":"JVM engineer Johannes Bechberger — profiling tools, eBPF, open-source Java libraries.","author":{"@type":"Person","name":"Johannes Bechberger"}}
+  </script>
+  {{ if .IsHome }}
+  <!-- Structured data: homepage breadcrumb -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"parttimenerd","item":"https://parttimenerd.github.io/"}]}
+  </script>
+  {{ else }}
+  <!-- Structured data: breadcrumb + CollectionPage -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"parttimenerd","item":"https://parttimenerd.github.io/"},{"@type":"ListItem","position":2,"name":"{{ .Title }}","item":"{{ .Permalink }}"}]}
+  </script>
+  {{ if eq .Type "collection" }}
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"{{ .Params.og_title | default .Title }}","description":"{{ .Params.description }}","url":"{{ .Permalink }}","author":{"@type":"Person","name":"Johannes Bechberger","url":"https://parttimenerd.github.io/"}}
+  </script>
+  {{ end }}
+  {{ end }}
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  {{ block "head_extra" . }}{{ end }}
   <!-- Font Awesome 6 Free -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <!-- Theme init: read localStorage before paint to prevent flash -->

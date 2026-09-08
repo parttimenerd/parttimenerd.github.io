@@ -1,6 +1,6 @@
 ---
 title: "jvm tools"
-description: "Open-source tools for JVM diagnostics and profiling — flame graphs, heap dump analysis, JFR recordings, deadlock detection, thread dump parsing, and memory leak detection. By Johannes Bechberger."
+description: "Open-source JVM diagnostic and profiling tools — flame graphs, heap dump analysis, JFR recordings, deadlock detection, thread dump parsing. By Johannes Bechberger / SapMachine."
 og_title: "JVM Diagnostic & Profiling Tools — jstall, async-profiler, jfr-query & more"
 og_subtitle: "Diagnose. Profile. Understand."
 og_out: "jvm-tools-og.png"

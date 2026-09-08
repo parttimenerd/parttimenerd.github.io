@@ -1,3 +1,19 @@
+{{ define "head_extra" }}
+{{ $section := .Section }}
+{{ $static  := index .Site.Data $section "static" }}
+{{ $items   := slice }}
+{{ $pos := 1 }}
+{{ range $static }}
+  {{ $ghURL := .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}
+  {{ $item  := dict "@type" "ListItem" "position" $pos "name" .id "url" $ghURL "description" (.tagline_short | default .tagline) }}
+  {{ $items = $items | append $item }}
+  {{ $pos = add $pos 1 }}
+{{ end }}
+<script type="application/ld+json">
+{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" (printf "%s" (.Params.og_title | default .Title)) "description" .Params.description "url" .Permalink "numberOfItems" (len $static) "itemListElement" $items | jsonify }}
+</script>
+{{ end }}
+
 {{ define "main" }}
 {{ $section  := .Section }}
 {{ $static   := index .Site.Data $section "static" }}
