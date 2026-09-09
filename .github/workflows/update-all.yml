@@ -127,7 +127,7 @@ jobs:
         run: python scripts/gen_profile_readme.py
       - name: Push to parttimenerd/parttimenerd
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PROFILE_REPO_TOKEN }}
         run: |
           cd /tmp
           git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/parttimenerd/parttimenerd.git" profile-readme
