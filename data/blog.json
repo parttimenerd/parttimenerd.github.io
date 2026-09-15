@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "title": "Java 27 is only boring on the surface.",
+      "url": "https://mostlynerdless.de/blog/2026/09/15/java-27-is-only-boring-on-the-surface/",
+      "date": "2026-09-14",
+      "date_display": "Sep 14"
+    },
+    {
       "title": "What do GitHub download statistics really mean?",
       "url": "https://mostlynerdless.de/blog/2026/09/08/what-do-github-download-statistics-really-mean/",
       "date": "2026-09-08",
@@ -11,12 +17,6 @@
       "url": "https://mostlynerdless.de/blog/2026/07/31/i-accidentally-became-google-ais-main-resource-for-graalvm-vs-openjdk/",
       "date": "2026-07-31",
       "date_display": "Jul 31"
-    },
-    {
-      "title": "Animating text as Handrawn with CSS",
-      "url": "https://mostlynerdless.de/blog/2026/07/17/animating-text-as-handrawn-with-css/",
-      "date": "2026-07-17",
-      "date_display": "Jul 17"
     }
   ]
 }
