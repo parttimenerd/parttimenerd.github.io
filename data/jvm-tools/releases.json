@@ -26,7 +26,7 @@
       "changelog": ""
     },
     "hprof-analyzer": {
-      "version": "0.2.0",
+      "version": "0.2.2",
       "date": "",
       "changelog": ""
     },
@@ -42,8 +42,8 @@
     },
     "execjar": {
       "version": "0.1.2",
-      "date": "2026-08-12",
-      "changelog": "Correct ZIP/ZIP64 internal offsets after prepending the launcher script, fixing ZIP64 archives and strict readers (e.g. OpenJDK `java`/`jar`) that follow absolute offsets rather than scanning for signatures ([#1](https://github.com/parttimenerd/execjar/issues/1)) \u00b7 `execjar.jar` - Executable JAR file (requires Java 11+) \u00b7 `execjar` - Standalone launcher script (Unix/Linux/macOS)"
+      "date": "2026-08-25",
+      "changelog": ""
     },
     "test-order": {
       "version": "0.1.0",
