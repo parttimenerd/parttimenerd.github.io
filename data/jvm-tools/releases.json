@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.7.1",
-      "date": "2026-05-17",
-      "changelog": "Local AI via generic OpenAI-compatible provider (`OpenAiLlmProvider`) with auto-launch of llama-server \u00b7 Tool-calling system for AI: 8 tools (`get_thread_stack_trace`, `search_stack_frames`, `get_lock_info`, `get_top_cpu_threads`, `compare_thread_across_dumps`, `get_dependency_tree`, `get_system_properties`, `get_raw_thread_dump_section`) \u00b7 `--no-tools` flag, `--think` flag for showing LLM reasoning, `--short` for succinct summaries \u00b7 Retry with exponential backoff on transient HTTP errors (429, 502, 503) \u00b7 Robust `<think>` tag handling for streaming (handles tags split across chunks) \u00b7 `Ta\u2026"
+      "version": "0.7.2",
+      "date": "2026-09-22",
+      "changelog": "`--ssh` mode now works when running jstall on Windows: replaced the `sh -c \"ssh ...\"` shell wrapper with a direct `ProcessBuilder` invocation, so no local Unix shell is required. The remote host still needs to be Linux/Mac. \u00b7 `jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - Minimal executable JAR (SapMachine only, see note below) \u00b7 `jstall-minimal` - Minimal launcher script (SapMachine only, see note below)"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
