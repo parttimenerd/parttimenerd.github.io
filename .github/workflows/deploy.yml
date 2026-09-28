@@ -38,7 +38,8 @@ jobs:
 
       - name: Install og-image deps
         run: |
-          sudo apt-get install -y libcairo2-dev libpango1.0-dev
+          sudo apt-get update
+          sudo apt-get install -y --fix-missing libcairo2-dev libpango1.0-dev
           pip install cairosvg requests pyyaml
 
       - name: Fetch tool metadata
