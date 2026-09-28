@@ -19,6 +19,8 @@ start:
       next: q-heap
     - label: "I want to speed up my build, tests, or JAR packaging"
       next: q-build
+    - label: "My lambdas and method references are opaque — I can't tell them apart in logs or stack traces"
+      next: r-lambda-stringer
     - label: "I want to learn how JVM profiling works from the inside"
       next: r-learn
 
@@ -322,3 +324,15 @@ r-learn:
       note: "Step-by-step blog series with code — from a basic safepoint-biased sampler to AsyncGetCallTrace."
     - id: tiny-profiler
       note: "A minimal working profiler readable in an afternoon. Companion to the blog series."
+
+r-lambda-stringer:
+  type: result
+  headline: "Your lambdas show as cryptic JVM-generated names — you can't tell them apart in logs or stack traces."
+  tools:
+    - id: lambda-stringer
+      note: "Java agent — no source changes needed. Attaches at startup or dynamically; gives every lambda and method reference a readable label like Lambda[Runnable @ OrderService.process(OrderService.java:88)]."
+  followon:
+    heading: "Also useful for:"
+    tools:
+      - id: lambda-stringer
+        note: "Stack traces — agent frames are stripped and a // ^ via annotation is injected pointing to the lambda's creation site."

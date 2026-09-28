@@ -31,6 +31,9 @@ groups:
   - name: "JAR Packaging"
     tools:
       - repo: https://github.com/parttimenerd/execjar
+  - name: "Debugging"
+    tools:
+      - repo: https://github.com/parttimenerd/lambda-stringer
   - name: "Agent Development"
     tools:
       - repo: https://github.com/parttimenerd/meta-agent
