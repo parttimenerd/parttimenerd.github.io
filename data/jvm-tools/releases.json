@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.7.3",
-      "date": "2026-09-25",
-      "changelog": "`--cf APP` and `--ssh` modes now work correctly on Windows: `.cmd`/`.bat` wrappers on PATH are resolved and invoked via `cmd.exe /c`, so fake-tool tests and real CF CLI scripts are both found when `allowAmbiguousCommands=false` is active \u00b7 Flamegraph HTML now auto-opens in the default browser on Windows (`cmd /c start`) \u00b7 `llama-server` detection uses `where` instead of `which` on Windows \u00b7 Replaced hardcoded `/dev/null` redirect with `ProcessBuilder.Redirect.DISCARD` (portable) \u00b7 All `split(\"\\\\n\")` calls in analyzers and LLM utilities replaced with `split(\"\\\\R\")` / `split(\"\\\\r?\\\\n\")` to co\u2026"
+      "version": "0.8.1",
+      "date": "2026-10-07",
+      "changelog": "`jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - Minimal executable JAR (SapMachine only, see note below) \u00b7 `jstall-minimal` - Minimal launcher script (SapMachine only, see note below)"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
