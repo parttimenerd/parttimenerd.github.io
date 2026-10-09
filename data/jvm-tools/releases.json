@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.8.1",
-      "date": "2026-10-07",
-      "changelog": "`jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - Minimal executable JAR (SapMachine only, see note below) \u00b7 `jstall-minimal` - Minimal launcher script (SapMachine only, see note below)"
+      "version": "0.8.2",
+      "date": "2026-10-08",
+      "changelog": "`vm-vitals`: robust rewrite of the parser covering all SapMachine 11\u201327 text and CSV variants \u00b7 `vm-vitals`: **Trends** table after the raw data \u2014 one row per non-delta column showing first value, last value, and a direction arrow (`\u2192` stable, `\u2191`/`\u2193` monotone with net delta, `~` oscillating with value range) \u00b7 `vm-vitals`: **Observations** section with automatic signals: heap pressure >80%, heap growing >5%, metaspace growing, metaspace near GC threshold, thread count grew \u22655, class count grew \u226550, CPU steal >10%, swap growing, RSS growing \u00b7 `vm-vitals`: fixed duplicate-column-name data lo\u2026"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
