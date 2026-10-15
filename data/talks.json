@@ -1,16 +1,6 @@
 {
   "talks": [
     {
-      "date": "2026-10-14",
-      "date_display": "Oct 14 - 15, 2026",
-      "conference": "BaselOne",
-      "conf_url": "https://baselone.org/",
-      "location": "Basel, Switzerland",
-      "title": "You Are Running the Wrong Tests First",
-      "link_text": "Program",
-      "link_url": "https://baselone.org/#programm"
-    },
-    {
       "date": "2026-10-21",
       "date_display": "Oct 21 - 22, 2026",
       "conference": "Hello Stavanger",
