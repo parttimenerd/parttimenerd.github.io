@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.8.4",
-      "date": "2026-10-12",
-      "changelog": "`vm-vitals`: `--vital-rows` option (default: 10) to control how many recent samples are shown, decoupled from `--top` (which controls thread counts in `status` and AI commands)"
+      "version": "0.8.6",
+      "date": "2026-10-15",
+      "changelog": "**feat: ASCII output mode** \u2014 adds `--unicode=auto|on|off` flag; `auto` (default) detects OS/terminal encoding and disables Unicode arrows on Windows CP1252 terminals, fixing garbled output like `\u0393\u00e5\u00c6` instead of `\u2192` \u00b7 **Symbols engine** (`util/render/Symbols`) \u2014 central symbol table with named accessors, `{placeholder}` templating, and a two-pass sanitizer guaranteeing no non-ASCII characters leak through in ASCII mode \u00b7 All user-facing analyzers updated: `VmVitalsAnalyzer`, `WaitingThreadsAnalyzer`, `VmClassloaderStatsAnalyzer`, `VmMetaspaceAnalyzer`, `GcHeapInfoAnalyzer`, `ClassHistogramD\u2026"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
