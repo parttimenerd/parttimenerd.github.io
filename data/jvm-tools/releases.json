@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.8.6",
-      "date": "2026-10-15",
-      "changelog": "**feat: ASCII output mode** \u2014 adds `--unicode=auto|on|off` flag; `auto` (default) detects OS/terminal encoding and disables Unicode arrows on Windows CP1252 terminals, fixing garbled output like `\u0393\u00e5\u00c6` instead of `\u2192` \u00b7 **Symbols engine** (`util/render/Symbols`) \u2014 central symbol table with named accessors, `{placeholder}` templating, and a two-pass sanitizer guaranteeing no non-ASCII characters leak through in ASCII mode \u00b7 All user-facing analyzers updated: `VmVitalsAnalyzer`, `WaitingThreadsAnalyzer`, `VmClassloaderStatsAnalyzer`, `VmMetaspaceAnalyzer`, `GcHeapInfoAnalyzer`, `ClassHistogramD\u2026"
+      "version": "0.8.9",
+      "date": "2026-10-19",
+      "changelog": "`vm-vitals`: category header lines (e.g. `system`/`process`/`jvm`) were indented 1 space less than the column-names line on 3-tier CF output \u2014 all header tiers now share the same indent, aligned with the right edge of the first data column \u00b7 `vm-vitals`: data values truncated or mis-sliced on 3-tier CF output (e.g. `120.3g` rendered as `20.3g`) \u2014 fixed by verifying data rows actually start at the expected offset before using fixed-width column parsing \u00b7 `jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - \u2026"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
@@ -26,7 +26,7 @@
       "changelog": ""
     },
     "hprof-analyzer": {
-      "version": "0.3.1",
+      "version": "0.3.2",
       "date": "",
       "changelog": ""
     },
@@ -46,8 +46,8 @@
       "changelog": ""
     },
     "test-order": {
-      "version": "0.1.0",
-      "date": "2026-07-27",
+      "version": "0.1.1",
+      "date": "2026-10-19",
       "changelog": ""
     },
     "jthreaddump": {
