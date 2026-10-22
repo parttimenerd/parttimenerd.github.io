@@ -1,17 +1,6 @@
 {
   "talks": [
     {
-      "date": "2026-10-21",
-      "date_display": "Oct 21 - 22, 2026",
-      "conference": "Hello Stavanger",
-      "conf_url": "https://www.hellostavanger.no/",
-      "location": "Stavanger, Norway",
-      "title": "You Are Running the Wrong Tests First",
-      "link_text": "",
-      "link_url": "",
-      "co_speaker": "Jake Hillion"
-    },
-    {
       "date": "2026-12-07",
       "date_display": "Dec 7 - 10, 2026",
       "conference": "Frankfurter IT-Tage",
