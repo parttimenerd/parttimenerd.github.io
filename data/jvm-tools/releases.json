@@ -1,9 +1,9 @@
 {
   "entries": {
     "jstall": {
-      "version": "0.8.9",
-      "date": "2026-10-19",
-      "changelog": "`vm-vitals`: category header lines (e.g. `system`/`process`/`jvm`) were indented 1 space less than the column-names line on 3-tier CF output \u2014 all header tiers now share the same indent, aligned with the right edge of the first data column \u00b7 `vm-vitals`: data values truncated or mis-sliced on 3-tier CF output (e.g. `120.3g` rendered as `20.3g`) \u2014 fixed by verifying data rows actually start at the expected offset before using fixed-width column parsing \u00b7 `jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - \u2026"
+      "version": "0.8.10",
+      "date": "2026-10-28",
+      "changelog": "`vm-vitals`: header rows and data columns now always align correctly (fixes garbled output on SapMachine 3-tier CF format) \u00b7 `vm-vitals`: ~5 s startup delay eliminated, first result now appears immediately \u00b7 `compiler-queue`, `gc-heap-info`, `jvm-support`, `vm-classloader-stats`, `vm-metaspace`: faster startup as these commands no longer collect unnecessary thread dumps \u00b7 Dependency: `ap-loader-all` bumped `4.5-13` \u2192 `4.6-14` \u00b7 `jstall.jar` - Executable JAR file (requires Java 21+) \u00b7 `jstall` - Standalone launcher script (Unix/Linux/macOS) \u00b7 `jstall-minimal.jar` - Minimal executable JAR (Sa\u2026"
     },
     "cf-cli-java-plugin": {
       "version": "4.0.2",
