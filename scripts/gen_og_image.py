@@ -6,6 +6,7 @@ Embeds fonts as base64 in an SVG, renders to static/<og_out> at 1200x630 via cai
 """
 
 import base64
+import html
 import re
 import sys
 from pathlib import Path
@@ -62,6 +63,9 @@ def make_svg(og_title: str, og_subtitle: str) -> str:
     subtitle_y = HEIGHT // 2 + 60
     byline_y   = HEIGHT - 60
 
+    title_esc    = html.escape(og_title)
+    subtitle_esc = html.escape(og_subtitle)
+
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg width="{WIDTH}" height="{HEIGHT}" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -91,13 +95,13 @@ def make_svg(og_title: str, og_subtitle: str) -> str:
   <text x="{WIDTH // 2}" y="{title_y}"
         font-family="Vollkorn" font-weight="700" font-size="108"
         fill="#111827" text-anchor="middle" dominant-baseline="middle">
-    {og_title}
+    {title_esc}
   </text>
   <!-- Subtitle -->
   <text x="{WIDTH // 2}" y="{subtitle_y}"
         font-family="Inter" font-weight="400" font-size="44"
         fill="#6b7280" text-anchor="middle" dominant-baseline="middle">
-    {og_subtitle}
+    {subtitle_esc}
   </text>
   <!-- Byline -->
   <text x="{WIDTH // 2}" y="{byline_y}"
