@@ -13,6 +13,7 @@ Exit codes:
 
 import argparse
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -84,6 +85,41 @@ def _wrap(obj):
 def _raw_url(repo_url: str, filename: str) -> str:
     parts = repo_url.rstrip("/").replace("https://github.com/", "")
     return f"https://raw.githubusercontent.com/{parts}/HEAD/{filename}"
+
+
+def _fetch_readme_h1(repo_url: str) -> str | None:
+    """Return the first H1 from a repo's README that looks like a project name, or None."""
+    headers = {}
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"token {GITHUB_TOKEN}"
+    for filename in ("README.md", "readme.md", "Readme.md"):
+        url = _raw_url(repo_url, filename)
+        try:
+            resp = _get(url, headers=headers, timeout=10)
+            if resp.status_code == 404:
+                continue
+            resp.raise_for_status()
+            in_fence = False
+            prev = ""
+            for line in resp.text.splitlines():
+                if line.startswith("```"):
+                    in_fence = not in_fence
+                    prev = ""
+                    continue
+                if in_fence:
+                    continue
+                if re.match(r"^=+\s*$", line) and prev.strip():
+                    return prev.strip()
+                m = re.match(r"^#\s+(.+)", line)
+                if m:
+                    h1 = m.group(1).strip()
+                    if len(h1) > 60 or re.search(r"\d{3,}", h1) or h1.endswith((".", "!", "?")):
+                        return None
+                    return h1
+                prev = line
+        except requests.RequestException:
+            continue
+    return None
 
 
 def _fetch_tool_yaml(repo_url: str) -> dict | None:
@@ -192,6 +228,9 @@ def fetch_section(section_id: str, frontmatter: dict) -> list[dict]:
                 "group": group_name,
                 **data,
             }
+            name = _fetch_readme_h1(repo_url)
+            if name:
+                merged["name"] = name
             if tool_entry.get("no_sap"):
                 merged["no_sap"] = True
             tools.append(merged)
