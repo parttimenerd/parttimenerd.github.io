@@ -5,7 +5,7 @@
 {{ $pos := 1 }}
 {{ range $static }}
   {{ $ghURL := .github_url | default (printf "https://github.com/parttimenerd/%s" .id) }}
-  {{ $item  := dict "@type" "ListItem" "position" $pos "name" .id "url" $ghURL "description" (.tagline_short | default .tagline) }}
+  {{ $item  := dict "@type" "ListItem" "position" $pos "name" (.name | default .id) "url" $ghURL "description" (.tagline_short | default .tagline) }}
   {{ $items = $items | append $item }}
   {{ $pos = add $pos 1 }}
 {{ end }}
@@ -103,7 +103,7 @@
         <div class="project-card group">
           <div class="flex items-start justify-between gap-2">
             <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 min-w-0 flex-1">
-              <span class="font-['Vollkorn'] font-bold text-gray-900 leading-snug">{{ .id }}</span>
+              <span class="font-['Vollkorn'] font-bold text-gray-900 leading-snug">{{ .name | default .id }}</span>
               <span class="badge badge-{{ .tag }} flex-shrink-0" title="{{ if eq .tag `ready` }}Production-ready{{ else if eq .tag `experimental` }}Experimental — API may change{{ else if eq .tag `poc` }}Proof of concept{{ else if eq .tag `demo` }}Demo only{{ end }}">{{ .tag }}</span>
             </div>
             <a href="{{ $ghLink }}" target="_blank" rel="noopener"
@@ -167,7 +167,7 @@
 
     {{/* Section header */}}
     <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-1">
-      <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .id }}</h2>
+      <h2 class="font-['Vollkorn'] text-2xl font-bold text-gray-900">{{ .name | default .id }}</h2>
       <span class="badge badge-{{ .tag }}" title="{{ if eq .tag `ready` }}Production-ready{{ else if eq .tag `experimental` }}Experimental — API may change{{ else if eq .tag `poc` }}Proof of concept{{ else if eq .tag `demo` }}Demo only{{ end }}">{{ .tag }}</span>
       {{ if $isReleased }}
       <a href="{{ $verURL }}" target="_blank" rel="noopener"
